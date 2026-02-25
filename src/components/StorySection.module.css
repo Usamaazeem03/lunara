@@ -1,0 +1,22 @@
+/* Story section soft zoom background */
+.storyBg {
+  background-image: url("/src/assets/images/salon-interior.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.01);
+  animation: storyZoom 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes storyZoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

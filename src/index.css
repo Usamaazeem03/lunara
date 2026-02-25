@@ -17,6 +17,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Utility for explicit Orbitron usage */
+.font-orbitron {
+  font-family: "Orbitron", sans-serif;
+}
+
 /* Headings aur Logo ke liye Orbitron */
 h1,
 h2,
@@ -30,8 +35,7 @@ h6 {
 
 /* Logo ya brand name */
 .logo,
-.brand-name,
-.initialLoader {
+.brand-name {
   font-family: "Orbitron", sans-serif;
   font-weight: 900; /* Extra Bold */
   letter-spacing: 2px; /* Spacing for style */
@@ -66,9 +70,47 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+html {
+  overflow-x: hidden;
+}
+
+/* Hide the vertical scrollbar but keep scroll behavior */
+html,
+body {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Subtle custom scrollbar for login form container */
+.scrollbar-wow {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(10, 10, 10, 0.45) rgba(10, 10, 10, 0.08);
+}
+
+.scrollbar-wow::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-wow::-webkit-scrollbar-track {
+  background: rgba(10, 10, 10, 0.08);
+  border-radius: 999px;
+}
+
+.scrollbar-wow::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.65), rgba(10, 10, 10, 0.25));
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.scrollbar-wow::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.75), rgba(10, 10, 10, 0.35));
 }
