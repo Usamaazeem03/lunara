@@ -1,6 +1,7 @@
 import skinGlow from "../assets/images/skin-glow.webp";
 import newHair from "../assets/images/new-hair.webp";
 import skinTip from "../assets/images/skin-tip.webp";
+import Button from "../Dashboard/Shared/Button";
 
 function NewsSection() {
   const articles = [
@@ -53,7 +54,7 @@ function NewsSection() {
                   loading={i === 0 ? "eager" : "lazy"}
                   decoding="async"
                   fetchPriority={i === 0 ? "high" : "low"}
-                  className="w-full aspect-[2/3] object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full `aspect-[2/3]` object-cover transition-transform duration-500 group-hover:scale-110"
                 />
 
                 {/* Overlay */}
@@ -64,10 +65,7 @@ function NewsSection() {
                   <h3 className="text-xl font-semibold tracking-wide">
                     {item.title}
                   </h3>
-                  <time
-                    dateTime={item.dateISO}
-                    className="text-sm opacity-80"
-                  >
+                  <time dateTime={item.dateISO} className="text-sm opacity-80">
                     {item.dateLabel}
                   </time>
                 </div>
@@ -77,12 +75,14 @@ function NewsSection() {
         </ul>
 
         {/* View All */}
-        <button
+        <Button
           type="button"
+          variant="custom"
+          unstyled
           className="mt-10 border border-[#2d2620] text-[#2d2620] px-8 py-3 text-sm tracking-widest uppercase hover:bg-[#2d2620] hover:text-white transition-colors"
         >
           See More
-        </button>
+        </Button>
       </div>
     </section>
   );

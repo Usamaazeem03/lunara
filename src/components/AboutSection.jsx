@@ -1,4 +1,5 @@
 import CornerWord from "./CornerWord";
+import Button from "../Dashboard/Shared/Button";
 
 function AboutSection() {
   return (
@@ -15,10 +16,14 @@ function AboutSection() {
           treatments, we focus on creating experiences that make you feel
           confident, refreshed, and truly radiant.
         </p>{" "}
-        <button className="mt-10 border border-[#2d2620] text-[#2d2620] px-8 py-3 text-sm tracking-widest uppercase hover:bg-[#2d2620] hover:text-white transition-colors">
-          {" "}
+        <Button
+          type="button"
+          variant="custom"
+          unstyled
+          className="mt-10 border border-[#2d2620] text-[#2d2620] px-8 py-3 text-sm tracking-widest uppercase hover:bg-[#2d2620] hover:text-white transition-colors"
+        >
           Read More
-        </button>
+        </Button>
       </div>
     </section>
   );

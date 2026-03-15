@@ -1,3 +1,5 @@
+import Button from "../Dashboard/Shared/Button";
+
 function Footer() {
   return (
     <footer className="bg-[#f3efe9] py-16 px-6">
@@ -20,9 +22,14 @@ function Footer() {
               placeholder="Email"
               className="bg-transparent border-b border-gray-400 outline-none py-2 w-64 placeholder-gray-400"
             />
-            <button className="bg-black text-white px-6 py-2  hover:bg-gray-800 transition">
+            <Button
+              type="button"
+              variant="custom"
+              unstyled
+              className="bg-black text-white px-6 py-2 hover:bg-gray-800 transition"
+            >
               Subscribe
-            </button>
+            </Button>
           </div>
         </div>
 

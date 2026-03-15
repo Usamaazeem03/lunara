@@ -4,6 +4,7 @@ import hairCareIcon from "../assets/icons/hair-care.svg";
 import skin from "../assets/images/skin.webp";
 import bodyRelax from "../assets/images/body.webp";
 import hairCare from "../assets/images/hair.webp";
+import Button from "../Dashboard/Shared/Button";
 function ServiceSection() {
   const services = [
     {
@@ -54,7 +55,7 @@ function ServiceSection() {
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 fetchPriority={i === 0 ? "high" : "low"}
-                className="w-full aspect-[2/3] object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full `aspect-[2/3]` object-cover transition-transform duration-500 group-hover:scale-110"
               />
 
               {/* Overlay */}
@@ -83,12 +84,14 @@ function ServiceSection() {
         </div>
 
         {/* View All */}
-        <button
+        <Button
           type="button"
+          variant="custom"
+          unstyled
           className="mt-10 border border-[#2d2620] text-[#2d2620] px-8 py-3 text-sm tracking-widest uppercase hover:bg-[#2d2620] hover:text-white transition-colors"
         >
           See More
-        </button>
+        </Button>
       </div>
     </section>
   );
