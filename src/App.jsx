@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import LandingPageLayout from "./pages/Landing/LandingPageLayout";
 import AuthModal from "./pages/Auth/AuthModal";
-import Dashboard from "./Dashboard/Client/Dashboard";
+import Dashboard from "./Dashboard/Shared/Dashboard";
 import LandingPage from "./pages/Landing/LandingPage";
 import GoToTopButton from "./components/GoToTopButton";
 

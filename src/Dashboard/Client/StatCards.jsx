@@ -31,9 +31,10 @@ const defaultStats = [
 ];
 
 function StatCards({ stats = defaultStats, lgGridCols = 4 }) {
-  const baseStyles = "mt-4 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-4";
+  const baseStyles =
+    "mt-3 grid grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3 md:grid-cols-3 lg:grid-cols-4 lg:mt-6 lg:gap-4";
   return (
-    <section className={`${baseStyles} lg:grid-cols-${lgGridCols}`}>
+    <section className={baseStyles}>
       {stats.map((stat) => (
         <StatCard key={stat.title} {...stat} />
       ))}
@@ -43,20 +44,20 @@ function StatCards({ stats = defaultStats, lgGridCols = 4 }) {
 
 const StatCard = ({ title, value, subtitle, icon }) => {
   return (
-    <div className="relative overflow-hidden  border border-[#2d2620]/20 bg-white/70 p-5">
-      <div className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-[#2d2620]/5"></div>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-[#5f544b]">
+    <div className="relative overflow-hidden border border-[#2d2620]/20 bg-white/70 p-3 sm:p-4 md:p-4 transition-all duration-300 hover:bg-white/90 hover:shadow-sm">
+      <div className="absolute -right-6 -top-6 h-16 w-16 rounded-full bg-[#2d2620]/5"></div>
+      <div className="flex flex-row items-start justify-between gap-2">
+        <div className="w-full">
+          <p className="text-[0.65rem] uppercase tracking-widest text-[#5f544b]/80 sm:text-xs">
             {title}
           </p>
-          <p className="mt-3 text-2xl font-semibold">{value}</p>
+          <p className="mt-2 text-xl font-semibold sm:text-2xl">{value}</p>
           {subtitle && (
-            <p className="mt-2 text-xs text-[#5f544b]">{subtitle}</p>
+            <p className="mt-1 text-xs text-[#5f544b] sm:mt-2">{subtitle}</p>
           )}
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#2d2620]/20 bg-[#f3efe9]">
-          <img src={icon} alt="" className="h-6 w-6 opacity-70" />
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-[#2d2620]/20 bg-[#f3efe9] sm:h-12 sm:w-12">
+          <img src={icon} alt="" className="h-5 w-5 opacity-70 sm:h-6 sm:w-6" />
         </div>
       </div>
     </div>

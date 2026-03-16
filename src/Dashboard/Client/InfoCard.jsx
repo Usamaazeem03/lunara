@@ -107,28 +107,3 @@ const InfoCard = ({
 };
 
 export default InfoCard;
-
-{
-  /* <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-2 border-[#2d2620] bg-[#f3efe9] px-4 py-2">
-        <div>
-          <p className="text-[0.65rem] uppercase tracking-widest text-[#5f544b]">
-            Booking Progress
-          </p>
-          <p className="text-sm font-semibold">
-            Step {step} of {steps.length} - {activeMeta.title}
-          </p>
-        </div>
-
-        <div className="w-full sm:w-52">
-          <div className="h-2 w-full overflow-hidden border-2 border-[#2d2620] bg-white/60">
-            <div
-              className="h-full bg-[#2d2620]"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="mt-2 text-[0.65rem] uppercase tracking-widest text-[#5f544b]">
-            {progress}% complete
-          </p>
-        </div>
-      </div> */
-}

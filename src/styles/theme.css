@@ -78,7 +78,15 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  overflow-x: hidden;
+  /* Hide scrollbar but keep scrolling */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar,
+::-webkit-scrollbar {
+  display: none;
 }
 
 html {
@@ -90,6 +98,7 @@ html,
 body {
   -ms-overflow-style: none; /* IE/Edge */
   scrollbar-width: none; /* Firefox */
+  overflow-x: hidden;
 }
 
 html::-webkit-scrollbar,

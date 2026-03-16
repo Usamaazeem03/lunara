@@ -1,14 +1,13 @@
-import Button from "../../Shared/Button";
 import DashboardHeader from "../../Shared/DashboardHeader";
+import Button from "../../Shared/Button";
 import NextAppointmentPanel from "../NextAppointmentPanel";
 import QuickActionPanal from "../QuickAction";
 import RedeemPointsPanal from "../RedeemPointsPanal";
 import StatCards from "../StatCards";
 
-// <section className="flex h-full flex-col gap-6 p-4 sm:p-6 lg:p-8">
 function HomePage({ setActiveMenu }) {
   return (
-    <section className="flex h-full flex-1 flex-col overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 lg:px-10 lg:py-8">
+    <section className="flex h-full flex-1 flex-col overflow-y-auto  scrollbar-hidden">
       {/* Welcome Section */}
       <DashboardHeader
         eyebrow={"Welcome back"}
@@ -16,7 +15,6 @@ function HomePage({ setActiveMenu }) {
         description={`Manage your appointments, tailor your glow routine, and stay on top of
           your beauty journey.`}
       >
-        {" "}
         <Button
           onClick={() => setActiveMenu("Book Appointment")}
           variant="primary"
@@ -31,11 +29,12 @@ function HomePage({ setActiveMenu }) {
       <StatCards />
 
       {/* Appointment + Side Panel */}
-      <section className="mt-4 grid min-h-0 flex-1 gap-4 sm:mt-6 lg:grid-cols-[1.4fr_1fr]">
+      <section className="mt-3 grid gap-3 sm:mt-5 md:gap-4 lg:mt-6 lg:grid-cols-[1.5fr_1fr] xl:gap-5">
         {/* Next Appointment */}
         <NextAppointmentPanel />
 
         {/* Side Panel */}
+        {/* <div className="grid grid-cols-1 gap-3 md:gap-4 lg:gap-4"> */}
         <div className="grid h-full gap-4">
           <RedeemPointsPanal />
           <QuickActionPanal />
