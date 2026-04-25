@@ -1,12 +1,13 @@
 import { useState } from "react";
 
-import calendarIcon from "../../assets/icons/calendar.svg";
-import clockIcon from "../../assets/icons/clock.svg";
-import creditCardIcon from "../../assets/icons/credit-card.svg";
-import giftIcon from "../../assets/icons/gift-box-benefits.svg";
-import DashboardHeader from "../Shared/DashboardHeader";
+import calendarIcon from "../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../Shared/assets/icons/clock.svg";
+import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
+import giftIcon from "../../Shared/assets/icons/gift-box-benefits.svg";
+import DashboardHeader from "../../Shared/layouts/DashboardHeader";
+
 import StatCards from "../Client/StatCards";
-import Button from "../Shared/Button";
+import Button from "../../Shared/Button";
 
 const ClientPage = () => {
   const stats = [
@@ -90,30 +91,30 @@ const ClientPage = () => {
       <StatCards stats={stats} lgGridCols={4} />
 
       <div className="mt-5 grid gap-3">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-2 border-ink/20 bg-white/90 p-3 sm:p-4">
-          <div className="flex w-full flex-1 items-center gap-2 border-2 border-ink/20 bg-white px-3 py-2 sm:w-auto">
+        <div className="border-ink/20 flex flex-wrap items-center justify-between gap-3 border-2 bg-white/90 p-3 sm:p-4">
+          <div className="border-ink/20 flex w-full flex-1 items-center gap-2 border-2 bg-white px-3 py-2 sm:w-auto">
             <img src={calendarIcon} alt="" className="h-4 w-4 opacity-60" />
             <input
               type="text"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search by name, email, or phone..."
-              className="w-full bg-transparent text-xs uppercase tracking-widest text-ink focus:outline-none"
+              className="text-ink w-full bg-transparent text-xs tracking-widest uppercase focus:outline-none"
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <button className="border-2 border-ink/30 bg-white px-4 py-2 text-xs uppercase tracking-widest transition hover:border-ink">
+            <button className="border-ink/30 hover:border-ink border-2 bg-white px-4 py-2 text-xs tracking-widest uppercase transition">
               Filter
             </button>
-            <button className="border-2 border-ink/30 bg-white px-4 py-2 text-xs uppercase tracking-widest transition hover:border-ink">
+            <button className="border-ink/30 hover:border-ink border-2 bg-white px-4 py-2 text-xs tracking-widest uppercase transition">
               Sort
             </button>
           </div>
         </div>
 
-        <div className="relative flex min-h-0 flex-1 flex-col border-2 border-ink/20 bg-white/90">
-          <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-ink/5"></div>
-          <div className="hidden border-b-2 border-ink/10 bg-cream px-4 py-3 text-xs uppercase tracking-widest text-ink-muted sm:grid sm:grid-cols-[1.4fr_1.6fr_1fr_0.9fr_0.8fr]">
+        <div className="border-ink/20 relative flex min-h-0 flex-1 flex-col border-2 bg-white/90">
+          <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
+          <div className="border-ink/10 bg-cream text-ink-muted hidden border-b-2 px-4 py-3 text-xs tracking-widest uppercase sm:grid sm:grid-cols-[1.4fr_1.6fr_1fr_0.9fr_0.8fr]">
             <span>Name</span>
             <span>Contact</span>
             <span>Last Visit</span>
@@ -134,26 +135,26 @@ const ClientPage = () => {
 
 const ClientRow = ({ client }) => {
   return (
-    <div className="grid gap-3 border-b border-ink/10 px-4 py-3 text-sm transition hover:bg-cream/50 sm:grid-cols-[1.4fr_1.6fr_1fr_0.9fr_0.8fr] sm:items-center">
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+    <div className="border-ink/10 hover:bg-cream/50 grid gap-3 border-b px-4 py-3 text-sm transition sm:grid-cols-[1.4fr_1.6fr_1fr_0.9fr_0.8fr] sm:items-center">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Name
       </p>
       <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/20 bg-cream text-xs font-semibold uppercase text-ink-muted">
+        <span className="border-ink/20 bg-cream text-ink-muted flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold uppercase">
           {client.initials}
         </span>
         <span className="font-semibold">{client.name}</span>
       </div>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Contact
       </p>
-      <div className="text-xs text-ink-muted">
+      <div className="text-ink-muted text-xs">
         <p>{client.phone}</p>
         <p>{client.email}</p>
       </div>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Last Visit
       </p>
       <div className="flex items-center gap-2">
@@ -161,15 +162,15 @@ const ClientRow = ({ client }) => {
         <span>{client.lastVisit}</span>
       </div>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Total Spent
       </p>
       <span className="font-semibold">{client.totalSpent}</span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Actions
       </p>
-      <button className="w-fit border-2 border-ink px-3 py-1 text-xs uppercase tracking-widest transition hover:bg-ink hover:text-cream">
+      <button className="border-ink hover:bg-ink hover:text-cream w-fit border-2 px-3 py-1 text-xs tracking-widest uppercase transition">
         View Profile
       </button>
     </div>

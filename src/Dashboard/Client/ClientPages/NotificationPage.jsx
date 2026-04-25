@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import bellIcon from "../../../assets/icons/bell.svg";
-import calendarIcon from "../../../assets/icons/calendar.svg";
-import creditCardIcon from "../../../assets/icons/credit-card.svg";
-import giftIcon from "../../../assets/icons/gift-box-benefits.svg";
-import DashboardHeader from "../../Shared/DashboardHeader";
-import Button from "../../Shared/Button";
+import bellIcon from "../../../Shared/assets/icons/bell.svg";
+import calendarIcon from "../../../Shared/assets/icons/calendar.svg";
+import creditCardIcon from "../../../Shared/assets/icons/credit-card.svg";
+import giftIcon from "../../../Shared/assets/icons/gift-box-benefits.svg";
+import DashboardHeader from "../../../Shared/layouts/DashboardHeader";
+import Button from "../../../Shared/Button";
 import StatCards from "../StatCards";
 import Checklist from "../../../components/Checklist";
 import Note from "../../../components/Note";
@@ -188,7 +188,7 @@ const NotificationPage = () => {
       <div className="mt-5 grid min-h-0 flex-1 gap-3 lg:grid-cols-[1.6fr_1fr]">
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="relative flex min-h-0 flex-1 flex-col border-2 border-[#2d2620]/20 bg-white/90 p-4 sm:p-5">
-            <div className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-[#2d2620]/5"></div>
+            <div className="absolute -top-8 -right-8 h-20 w-20 rounded-full bg-[#2d2620]/5"></div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1">
                 <h2 className="text-lg font-semibold">Notifications Feed</h2>
@@ -197,16 +197,16 @@ const NotificationPage = () => {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] uppercase tracking-widest text-[#2d2620]">
+                <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
                   {filteredNotifications.length} updates
                 </span>
-                <span className="rounded-full border-2 border-[#2d2620]/30 bg-white px-3 py-1 text-[0.65rem] uppercase tracking-widest text-[#2d2620]">
+                <span className="rounded-full border-2 border-[#2d2620]/30 bg-white px-3 py-1 text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
                   {unreadCount} unread
                 </span>
               </div>
             </div>
 
-            <div className="mt-3 grid w-full grid-cols-1 overflow-hidden border-2 border-[#2d2620]/20 text-xs uppercase tracking-widest sm:grid-cols-3">
+            <div className="mt-3 grid w-full grid-cols-1 overflow-hidden border-2 border-[#2d2620]/20 text-xs tracking-widest uppercase sm:grid-cols-3">
               {filterTabs.map((tab, index) => {
                 const isActive = tab.key === activeFilter;
                 const isLast = index === filterTabs.length - 1;
@@ -222,7 +222,7 @@ const NotificationPage = () => {
                       isActive ? "bg-[#f3efe9]" : "bg-white"
                     } ${
                       !isLast
-                        ? "border-b-2 border-[#2d2620]/20 sm:border-b-0 sm:border-r-2"
+                        ? "border-b-2 border-[#2d2620]/20 sm:border-r-2 sm:border-b-0"
                         : ""
                     }`}
                     aria-pressed={isActive}
@@ -337,9 +337,7 @@ const NotificationRow = ({ notification }) => {
   const rowTone = notification.unread
     ? "border-[#2d2620]/50 bg-[#f3efe9]/80"
     : "border-[#2d2620]/20 bg-white";
-  const rowAccent = notification.unread
-    ? "border-l-4 border-l-[#2d2620]"
-    : "";
+  const rowAccent = notification.unread ? "border-l-4 border-l-[#2d2620]" : "";
   return (
     <div
       className={`flex items-start justify-between gap-3 border-2 px-3 py-3 transition hover:bg-[#f3efe9]/60 ${rowTone} ${rowAccent}`}
@@ -353,7 +351,7 @@ const NotificationRow = ({ notification }) => {
           <p className="text-xs leading-relaxed text-[#5f544b]">
             {notification.message}
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-[0.65rem] uppercase tracking-widest text-[#5f544b]">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-[0.65rem] tracking-widest text-[#5f544b] uppercase">
             <span>{notification.time}</span>
             <span className="rounded-full border border-[#2d2620]/30 bg-white px-2 py-0.5 text-[#2d2620]">
               {notification.category}
@@ -363,11 +361,11 @@ const NotificationRow = ({ notification }) => {
       </div>
       <div className="shrink-0">
         {notification.unread ? (
-          <span className="inline-flex items-center rounded-full border-2 border-[#2d2620] bg-[#f3efe9] px-2 py-1 text-[0.6rem] uppercase tracking-widest text-[#2d2620]">
+          <span className="inline-flex items-center rounded-full border-2 border-[#2d2620] bg-[#f3efe9] px-2 py-1 text-[0.6rem] tracking-widest text-[#2d2620] uppercase">
             Unread
           </span>
         ) : (
-          <button className="inline-flex items-center rounded-full border-2 border-[#2d2620]/40 px-2 py-1 text-[0.6rem] uppercase tracking-widest text-[#2d2620] transition hover:border-[#2d2620] hover:bg-[#2d2620] hover:text-[#f3efe9]">
+          <button className="inline-flex items-center rounded-full border-2 border-[#2d2620]/40 px-2 py-1 text-[0.6rem] tracking-widest text-[#2d2620] uppercase transition hover:border-[#2d2620] hover:bg-[#2d2620] hover:text-[#f3efe9]">
             Delete
           </button>
         )}
@@ -378,7 +376,7 @@ const NotificationRow = ({ notification }) => {
 
 const FeedSectionHeader = ({ label, count }) => {
   return (
-    <div className="flex items-center justify-between border-2 border-[#2d2620]/10 bg-white/70 px-3 py-2 text-[0.65rem] uppercase tracking-widest text-[#5f544b]">
+    <div className="flex items-center justify-between border-2 border-[#2d2620]/10 bg-white/70 px-3 py-2 text-[0.65rem] tracking-widest text-[#5f544b] uppercase">
       <span>{label}</span>
       <span className="rounded-full border border-[#2d2620]/30 bg-[#f3efe9] px-2 py-0.5 text-[#2d2620]">
         {count}

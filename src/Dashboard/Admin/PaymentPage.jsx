@@ -1,10 +1,10 @@
-import calendarIcon from "../../assets/icons/calendar.svg";
-import clockIcon from "../../assets/icons/clock.svg";
-import creditCardIcon from "../../assets/icons/credit-card.svg";
-import giftIcon from "../../assets/icons/gift-box-benefits.svg";
-import DashboardHeader from "../Shared/DashboardHeader";
+import calendarIcon from "../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../Shared/assets/icons/clock.svg";
+import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
+import giftIcon from "../../Shared/assets/icons/gift-box-benefits.svg";
+import DashboardHeader from "../../Shared/layouts/DashboardHeader";
 import StatCards from "../Client/StatCards";
-import Button from "../Shared/Button";
+import Button from "../../Shared/Button";
 
 const PaymentPage = () => {
   const stats = [
@@ -44,9 +44,7 @@ const PaymentPage = () => {
     { day: "Sunday", value: 980 },
   ];
 
-  const maxWeeklyValue = Math.max(
-    ...weeklyBreakdown.map((item) => item.value),
-  );
+  const maxWeeklyValue = Math.max(...weeklyBreakdown.map((item) => item.value));
 
   const paymentMethods = [
     {
@@ -124,16 +122,16 @@ const PaymentPage = () => {
       <StatCards stats={stats} lgGridCols={4} />
 
       <section className="mt-5 grid gap-3 lg:grid-cols-[1.4fr_1fr]">
-        <div className="relative flex flex-col border-2 border-ink/20 bg-white/90 p-4 sm:p-5">
-          <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-ink/5"></div>
+        <div className="border-ink/20 relative flex flex-col border-2 bg-white/90 p-4 sm:p-5">
+          <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Weekly Breakdown</h2>
-              <p className="text-sm text-ink-muted">
+              <p className="text-ink-muted text-sm">
                 Revenue performance by day.
               </p>
             </div>
-            <span className="rounded-full border-2 border-ink/30 bg-cream px-3 py-1 text-[0.65rem] uppercase tracking-widest text-ink">
+            <span className="border-ink/30 bg-cream text-ink rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase">
               Last 7 days
             </span>
           </div>
@@ -147,9 +145,9 @@ const PaymentPage = () => {
                     <span className="font-semibold">{item.day}</span>
                     <span className="text-ink-muted">GBP {item.value}</span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full border border-ink/20 bg-cream">
+                  <div className="border-ink/20 bg-cream h-2 w-full overflow-hidden rounded-full border">
                     <div
-                      className="h-full bg-ink"
+                      className="bg-ink h-full"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
@@ -159,12 +157,12 @@ const PaymentPage = () => {
           </div>
         </div>
 
-        <div className="relative flex flex-col border-2 border-ink/20 bg-white/90 p-4 sm:p-5">
-          <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-ink/5"></div>
+        <div className="border-ink/20 relative flex flex-col border-2 bg-white/90 p-4 sm:p-5">
+          <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Payment Methods</h2>
-              <p className="text-sm text-ink-muted">
+              <p className="text-ink-muted text-sm">
                 Share of total revenue by method.
               </p>
             </div>
@@ -174,10 +172,10 @@ const PaymentPage = () => {
             {paymentMethods.map((method) => (
               <div
                 key={method.id}
-                className="flex items-center justify-between gap-3 border-2 border-ink/20 bg-cream/60 px-4 py-3"
+                className="border-ink/20 bg-cream/60 flex items-center justify-between gap-3 border-2 px-4 py-3"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-ink/20 bg-white">
+                  <div className="border-ink/20 flex h-12 w-12 items-center justify-center rounded-full border-2 bg-white">
                     <img
                       src={method.icon}
                       alt=""
@@ -186,7 +184,7 @@ const PaymentPage = () => {
                   </div>
                   <div>
                     <p className="text-sm font-semibold">{method.label}</p>
-                    <p className="text-xs text-ink-muted">{method.share}</p>
+                    <p className="text-ink-muted text-xs">{method.share}</p>
                   </div>
                 </div>
                 <span className="text-sm font-semibold">{method.total}</span>
@@ -196,21 +194,21 @@ const PaymentPage = () => {
         </div>
       </section>
 
-      <section className="mt-4 flex flex-col border-2 border-ink/20 bg-white/90 p-4 sm:p-5">
+      <section className="border-ink/20 mt-4 flex flex-col border-2 bg-white/90 p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold">Recent Payments</h2>
-            <p className="text-sm text-ink-muted">
+            <p className="text-ink-muted text-sm">
               Latest transactions and payment status.
             </p>
           </div>
-          <button className="border-2 border-ink px-3 py-1 text-[0.65rem] uppercase tracking-widest transition hover:bg-ink hover:text-cream">
+          <button className="border-ink hover:bg-ink hover:text-cream border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase transition">
             View all
           </button>
         </div>
 
         <div className="mt-4 flex flex-col">
-          <div className="hidden border-b-2 border-ink/10 bg-cream px-4 py-3 text-xs uppercase tracking-widest text-ink-muted sm:grid sm:grid-cols-[1fr_1.2fr_1.4fr_0.9fr_0.8fr_0.9fr_0.8fr]">
+          <div className="border-ink/10 bg-cream text-ink-muted hidden border-b-2 px-4 py-3 text-xs tracking-widest uppercase sm:grid sm:grid-cols-[1fr_1.2fr_1.4fr_0.9fr_0.8fr_0.9fr_0.8fr]">
             <span>Date</span>
             <span>Client</span>
             <span>Service</span>
@@ -239,47 +237,47 @@ const PaymentRow = ({ payment }) => {
   };
 
   return (
-    <div className="grid gap-3 border-b border-ink/10 px-4 py-3 text-sm transition hover:bg-cream/50 sm:grid-cols-[1fr_1.2fr_1.4fr_0.9fr_0.8fr_0.9fr_0.8fr] sm:items-center">
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+    <div className="border-ink/10 hover:bg-cream/50 grid gap-3 border-b px-4 py-3 text-sm transition sm:grid-cols-[1fr_1.2fr_1.4fr_0.9fr_0.8fr_0.9fr_0.8fr] sm:items-center">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Date
       </p>
       <span>{payment.date}</span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Client
       </p>
       <span className="font-semibold">{payment.client}</span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Service
       </p>
       <span>{payment.service}</span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Amount
       </p>
       <span className="font-semibold">{payment.amount}</span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Method
       </p>
       <span>{payment.method}</span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Status
       </p>
       <span
-        className={`w-fit rounded-full border-2 px-3 py-1 text-[0.65rem] uppercase tracking-widest ${
+        className={`w-fit rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase ${
           statusStyles[payment.status] ?? "border-ink/30 text-ink-muted"
         }`}
       >
         {payment.status}
       </span>
 
-      <p className="text-xs uppercase tracking-widest text-ink-muted sm:hidden">
+      <p className="text-ink-muted text-xs tracking-widest uppercase sm:hidden">
         Actions
       </p>
-      <button className="w-fit border-2 border-ink px-3 py-1 text-xs uppercase tracking-widest transition hover:bg-ink hover:text-cream">
+      <button className="border-ink hover:bg-ink hover:text-cream w-fit border-2 px-3 py-1 text-xs tracking-widest uppercase transition">
         Invoice
       </button>
     </div>

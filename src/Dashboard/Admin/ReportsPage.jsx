@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import calendarIcon from "../../assets/icons/calendar.svg";
-import clockIcon from "../../assets/icons/clock.svg";
-import creditCardIcon from "../../assets/icons/credit-card.svg";
-import giftIcon from "../../assets/icons/gift-box-benefits.svg";
-import DashboardHeader from "../Shared/DashboardHeader";
-import Button from "../Shared/Button";
+import calendarIcon from "../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../Shared/assets/icons/clock.svg";
+import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
+import giftIcon from "../../Shared/assets/icons/gift-box-benefits.svg";
+import DashboardHeader from "../../Shared/layouts/DashboardHeader";
+import Button from "../../Shared/Button";
 
 const ReportsPage = () => {
   const tabs = [
@@ -137,9 +137,7 @@ const ReportsPage = () => {
               type="button"
               onClick={() => setActiveTab(tab)}
               className={`rounded-xl px-4 py-2 text-xs uppercase tracking-widest transition ${
-                isActive
-                  ? "bg-ink text-cream"
-                  : "text-ink-muted hover:bg-cream"
+                isActive ? "bg-ink text-cream" : "text-ink-muted hover:bg-cream"
               }`}
             >
               {tab}
@@ -353,13 +351,7 @@ const RevenueTrendChart = ({ labels, actual, target }) => {
           const x = (index / (actual.length - 1)) * chartWidth;
           const y = chartHeight - ((value - minValue) / range) * chartHeight;
           return (
-            <circle
-              key={value}
-              cx={x}
-              cy={y}
-              r="3"
-              fill="var(--color-ink)"
-            />
+            <circle key={value} cx={x} cy={y} r="3" fill="var(--color-ink)" />
           );
         })}
       </svg>

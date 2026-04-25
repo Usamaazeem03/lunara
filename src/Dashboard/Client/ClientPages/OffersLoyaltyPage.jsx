@@ -1,10 +1,10 @@
-import giftIcon from "../../../assets/icons/gift-box-benefits.svg";
-import calendarIcon from "../../../assets/icons/calendar.svg";
-import hairCareIcon from "../../../assets/icons/hair-care.svg";
-import skinCareIcon from "../../../assets/icons/skin-care.svg";
-import bodyRelaxIcon from "../../../assets/icons/body-relax.svg";
-import DashboardHeader from "../../Shared/DashboardHeader";
-import InfoCard from "../InfoCard";
+import giftIcon from "../../../Shared/assets/icons/gift-box-benefits.svg";
+import calendarIcon from "../../../Shared/assets/icons/calendar.svg";
+import hairCareIcon from "../../../Shared/assets/icons/hair-care.svg";
+import skinCareIcon from "../../../Shared/assets/icons/skin-care.svg";
+import bodyRelaxIcon from "../../../Shared/assets/icons/body-relax.svg";
+import DashboardHeader from "../../../Shared/layouts/DashboardHeader";
+import InfoCard from "../../../Shared/ui/InfoCard";
 
 const OffersLoyaltyPage = () => {
   const loyaltyPoints = 550;
@@ -78,17 +78,6 @@ const OffersLoyaltyPage = () => {
 
   return (
     <section className="flex h-full flex-col">
-      {/* <header className="flex flex-col gap-2">
-        <span className="w-fit rounded-full bg-[#e9e1d8] px-4 py-1 text-xs uppercase tracking-widest text-[#5f544b]">
-          Offers & Loyalty
-        </span>
-        <h1 className="text-2xl font-semibold tracking-wide sm:text-3xl">
-          Offers & Loyalty
-        </h1>
-        <p className="max-w-2xl text-sm text-[#5f544b]">
-          Redeem your points and discover exclusive member-only rewards.
-        </p>
-      </header> */}
       <DashboardHeader
         eyebrow={"Offers & Loyalty"}
         title={"Offers & Loyalty"}
@@ -119,13 +108,13 @@ const OffersLoyaltyPage = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] uppercase tracking-widest text-[#2d2620]">
+              <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
                 {rewards.length} rewards
               </span>
             </div>
           </div>
-          <div className="mt-3 flex min-h-0 flex-1 flex-col ">
-            <div className="hidden border-b-2 border-[#2d2620] bg-[#f3efe9] text-xs uppercase tracking-widest text-[#5f544b] sm:grid sm:grid-cols-[1.6fr_0.6fr_0.6fr]">
+          <div className="mt-3 flex min-h-0 flex-1 flex-col">
+            <div className="hidden border-b-2 border-[#2d2620] bg-[#f3efe9] text-xs tracking-widest text-[#5f544b] uppercase sm:grid sm:grid-cols-[1.6fr_0.6fr_0.6fr]">
               <span className="px-3 py-2">Reward</span>
               <span className="px-3 py-2">Points</span>
               <span className="px-3 py-2">Action</span>
@@ -140,20 +129,20 @@ const OffersLoyaltyPage = () => {
 
         <aside className="flex flex-col gap-3">
           <div className="bg-[#2d2620] p-3 text-[#f3efe9]">
-            <p className="text-xs uppercase tracking-widest text-[#f3efe9]/70">
+            <p className="text-xs tracking-widest text-[#f3efe9]/70 uppercase">
               Member Tier
             </p>
             <p className="mt-2 text-2xl font-semibold">Gold Member</p>
             <p className="mt-2 text-xs text-[#f3efe9]/80">
               Enjoy priority booking, birthday perks, and bonus points.
             </p>
-            <button className="mt-3 w-full border border-[#f3efe9] px-4 py-2 text-[0.65rem] uppercase tracking-widest transition hover:bg-[#f3efe9] hover:text-[#2d2620] sm:text-xs">
+            <button className="mt-3 w-full border border-[#f3efe9] px-4 py-2 text-[0.65rem] tracking-widest uppercase transition hover:bg-[#f3efe9] hover:text-[#2d2620] sm:text-xs">
               View Benefits
             </button>
           </div>
 
           <div className="border-2 border-[#2d2620]/20 bg-white/80 p-3">
-            <p className="text-xs uppercase tracking-widest text-[#5f544b]">
+            <p className="text-xs tracking-widest text-[#5f544b] uppercase">
               How to Earn Points
             </p>
             <div className="mt-2 space-y-3">
@@ -164,7 +153,7 @@ const OffersLoyaltyPage = () => {
           </div>
 
           <div className="border-2 border-dashed border-[#2d2620]/40 bg-[#f7f2ec] p-3 text-sm">
-            <p className="text-xs uppercase tracking-widest text-[#5f544b]">
+            <p className="text-xs tracking-widest text-[#5f544b] uppercase">
               Refer & Earn
             </p>
             <p className="mt-2 font-semibold">
@@ -185,7 +174,7 @@ const OfferCard = ({ offer }) => {
     <div className="flex h-full min-h-[140px] flex-col gap-3 border-2 border-[#2d2620]/30 bg-white p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-sm font-semibold leading-snug">{offer.title}</p>
+          <p className="text-sm leading-snug font-semibold">{offer.title}</p>
           <p className="text-xs leading-relaxed text-[#5f544b]">
             {offer.description}
           </p>
@@ -194,7 +183,7 @@ const OfferCard = ({ offer }) => {
           <img src={offer.icon} alt="" className="h-4 w-4 opacity-70" />
         </div>
       </div>
-      <div className="mt-auto flex items-center justify-between gap-2 text-[0.65rem] uppercase tracking-widest text-[#5f544b]">
+      <div className="mt-auto flex items-center justify-between gap-2 text-[0.65rem] tracking-widest text-[#5f544b] uppercase">
         <span>{offer.validUntil}</span>
         <span className="rounded-full border border-[#2d2620]/30 bg-[#f3efe9] px-2 py-0.5 text-[#2d2620]">
           {offer.code}
@@ -208,7 +197,7 @@ const RewardRow = ({ reward }) => {
   return (
     <div className="grid gap-3 px-4 py-2.5 text-sm transition hover:bg-[#f3efe9]/60 sm:grid-cols-[1.6fr_0.6fr_0.6fr] sm:items-center">
       <div className="space-y-2">
-        <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+        <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
           Reward
         </p>
         <div className="flex items-center gap-3">
@@ -223,19 +212,19 @@ const RewardRow = ({ reward }) => {
       </div>
 
       <div className="flex items-center justify-between gap-3 sm:justify-start">
-        <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+        <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
           Points
         </p>
-        <span className="text-xs uppercase tracking-widest text-[#5f544b]">
+        <span className="text-xs tracking-widest text-[#5f544b] uppercase">
           {reward.points} pts
         </span>
       </div>
 
       <div className="flex items-center justify-between gap-3 sm:justify-end">
-        <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+        <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
           Action
         </p>
-        <button className="border-2 border-[#2d2620] px-3 py-1 text-[0.65rem] uppercase tracking-widest transition hover:bg-[#2d2620] hover:text-[#f3efe9]">
+        <button className="border-2 border-[#2d2620] px-3 py-1 text-[0.65rem] tracking-widest uppercase transition hover:bg-[#2d2620] hover:text-[#f3efe9]">
           Redeem
         </button>
       </div>

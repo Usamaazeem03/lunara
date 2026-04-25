@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Button from "../Dashboard/Shared/Button";
+import Button from "../Shared/Button";
 
 function Navbar() {
   const navigate = useNavigate();

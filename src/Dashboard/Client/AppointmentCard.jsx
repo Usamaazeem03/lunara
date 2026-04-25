@@ -1,7 +1,7 @@
-import calendarIcon from "../../assets/icons/calendar.svg";
-import clockIcon from "../../assets/icons/clock.svg";
-import creditCardIcon from "../../assets/icons/credit-card.svg";
-import hairCareIcon from "../../assets/icons/hair-care.svg";
+import calendarIcon from "../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../Shared/assets/icons/clock.svg";
+import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
+import hairCareIcon from "../../Shared/assets/icons/hair-care.svg";
 
 function AppointmentCard({ appointment }) {
   const statusStyles = {

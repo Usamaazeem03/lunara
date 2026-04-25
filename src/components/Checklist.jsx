@@ -6,7 +6,7 @@ const defaultItems = [
 
 function Checklist({ title = "Visit Checklist", items = defaultItems }) {
   return (
-    <div className="border-2 border-[#2d2620]/20 bg-white/80 p-4">
+    <div className="border-2 border-[#2d2620]/20 bg-white/80 p-4 sm:p-5">
       <p className="text-xs uppercase tracking-widest text-[#5f544b]">
         {title}
       </p>
@@ -14,10 +14,10 @@ function Checklist({ title = "Visit Checklist", items = defaultItems }) {
         {items.map((item) => (
           <div
             key={`${item.label}-${item.detail}`}
-            className="flex items-start justify-between"
+            className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-0"
           >
             <span className="font-semibold">{item.label}</span>
-            <span className="text-xs uppercase tracking-widest text-[#5f544b]">
+            <span className="text-[0.65rem] uppercase tracking-widest text-[#5f544b] sm:text-xs">
               {item.detail}
             </span>
           </div>

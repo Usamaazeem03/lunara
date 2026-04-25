@@ -1,8 +1,9 @@
-import calendarIcon from "../../assets/icons/calendar.svg";
-import clockIcon from "../../assets/icons/clock.svg";
-import creditCardIcon from "../../assets/icons/credit-card.svg";
-import giftIcon from "../../assets/icons/gift-box-benefits.svg";
-import DashboardHeader from "../Shared/DashboardHeader";
+import calendarIcon from "../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../Shared/assets/icons/clock.svg";
+import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
+import giftIcon from "../../Shared/assets/icons/gift-box-benefits.svg";
+import DashboardHeader from "../../Shared/layouts/DashboardHeader";
+
 import StatCards from "../Client/StatCards";
 
 const AdminDashboard = () => {
@@ -101,18 +102,18 @@ const AdminDashboard = () => {
       <StatCards stats={stats} lgGridCols={4} />
 
       <section className="mt-5 grid min-h-0 flex-1 gap-3 lg:grid-cols-[1.5fr_1fr]">
-        <div className="relative flex min-h-0 flex-1 flex-col border-2 border-ink/20 bg-white/90 p-4 sm:p-5">
-          <div className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-ink/5"></div>
+        <div className="border-ink/20 relative flex min-h-0 flex-1 flex-col border-2 bg-white/90 p-4 sm:p-5">
+          <div className="bg-ink/5 absolute -top-8 -right-8 h-20 w-20 rounded-full"></div>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Recent Appointments</h2>
-              <p className="text-sm text-ink-muted">
+              <p className="text-ink-muted text-sm">
                 Latest bookings and status updates.
               </p>
             </div>
             <button
               type="button"
-              className="border-2 border-ink px-3 py-1 text-[0.65rem] uppercase tracking-widest transition hover:bg-ink hover:text-cream"
+              className="border-ink hover:bg-ink hover:text-cream border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase transition"
             >
               View all
             </button>
@@ -120,10 +121,7 @@ const AdminDashboard = () => {
 
           <div className="scrollbar-hidden mt-4 flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto pr-2">
             {recentAppointments.map((appointment) => (
-              <AppointmentRow
-                key={appointment.id}
-                appointment={appointment}
-              />
+              <AppointmentRow key={appointment.id} appointment={appointment} />
             ))}
           </div>
 
@@ -131,9 +129,9 @@ const AdminDashboard = () => {
             {revenueHighlights.map((item) => (
               <div
                 key={item.label}
-                className="border-2 border-ink/20 bg-cream px-4 py-3 text-center"
+                className="border-ink/20 bg-cream border-2 px-4 py-3 text-center"
               >
-                <p className="text-xs uppercase tracking-widest text-ink-muted">
+                <p className="text-ink-muted text-xs tracking-widest uppercase">
                   {item.label}
                 </p>
                 <p className="mt-2 text-xl font-semibold">{item.value}</p>
@@ -142,16 +140,16 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="relative flex flex-col border-2 border-ink/20 bg-white/90 p-4 sm:p-5">
-          <div className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-ink/5"></div>
+        <div className="border-ink/20 relative flex flex-col border-2 bg-white/90 p-4 sm:p-5">
+          <div className="bg-ink/5 absolute -top-8 -right-8 h-20 w-20 rounded-full"></div>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold">Monthly Revenue</h2>
-              <p className="text-sm text-ink-muted">
+              <p className="text-ink-muted text-sm">
                 Revenue trends for the past 12 months.
               </p>
             </div>
-            <span className="rounded-full border-2 border-ink/30 bg-cream px-3 py-1 text-[0.65rem] uppercase tracking-widest text-ink">
+            <span className="border-ink/30 bg-cream text-ink rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase">
               Updated today
             </span>
           </div>
@@ -173,14 +171,14 @@ const AppointmentRow = ({ appointment }) => {
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-2 border-ink/20 bg-white px-3 py-3">
+    <div className="border-ink/20 flex flex-wrap items-center justify-between gap-3 border-2 bg-white px-3 py-3">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-ink/20 bg-cream text-xs font-semibold uppercase text-ink-muted">
+        <div className="border-ink/20 bg-cream text-ink-muted flex h-12 w-12 items-center justify-center rounded-full border-2 text-xs font-semibold uppercase">
           {appointment.initials}
         </div>
         <div>
           <p className="text-sm font-semibold">{appointment.client}</p>
-          <p className="text-xs text-ink-muted">
+          <p className="text-ink-muted text-xs">
             {appointment.service} | {appointment.staff}
           </p>
         </div>
@@ -188,12 +186,11 @@ const AppointmentRow = ({ appointment }) => {
       <div className="flex flex-wrap items-center gap-3">
         <div className="text-right">
           <p className="text-sm font-semibold">{appointment.amount}</p>
-          <p className="text-xs text-ink-muted">{appointment.time}</p>
+          <p className="text-ink-muted text-xs">{appointment.time}</p>
         </div>
         <span
-          className={`rounded-full border-2 px-3 py-1 text-[0.65rem] uppercase tracking-widest ${
-            statusStyles[appointment.status] ??
-            "border-ink/30 text-ink-muted"
+          className={`rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase ${
+            statusStyles[appointment.status] ?? "border-ink/30 text-ink-muted"
           }`}
         >
           {appointment.status}
@@ -267,7 +264,7 @@ const RevenueChart = ({ data, labels }) => {
           })}
         </svg>
       </div>
-      <div className="mt-2 grid grid-cols-6 gap-y-1 text-[0.6rem] uppercase tracking-widest text-ink-muted">
+      <div className="text-ink-muted mt-2 grid grid-cols-6 gap-y-1 text-[0.6rem] tracking-widest uppercase">
         {labels.map((label) => (
           <span key={label} className="text-center">
             {label}

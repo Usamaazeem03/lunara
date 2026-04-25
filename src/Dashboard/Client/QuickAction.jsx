@@ -1,6 +1,6 @@
-import bellIcon from "../../assets/icons/bell.svg";
-import skinCareIcon from "../../assets/icons/skin-care.svg";
-import bodyRelaxIcon from "../../assets/icons/body-relax.svg";
+import bellIcon from "../../Shared/assets/icons/bell.svg";
+import skinCareIcon from "../../Shared/assets/icons/skin-care.svg";
+import bodyRelaxIcon from "../../Shared/assets/icons/body-relax.svg";
 
 export const quickActions = [
   {

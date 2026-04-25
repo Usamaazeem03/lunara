@@ -1,13 +1,14 @@
 import { useState } from "react";
-import calendarIcon from "../../../assets/icons/calendar.svg";
-import clockIcon from "../../../assets/icons/clock.svg";
-import creditCardIcon from "../../../assets/icons/credit-card.svg";
-import DashboardHeader from "../../Shared/DashboardHeader";
-import Button from "../../Shared/Button";
-import InfoCard from "../InfoCard";
+import calendarIcon from "../../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../../Shared/assets/icons/clock.svg";
+import creditCardIcon from "../../../Shared/assets/icons/credit-card.svg";
+import DashboardHeader from "../../../Shared/layouts/DashboardHeader";
+import Button from "../../../Shared/Button";
+
 import StatCards from "../StatCards";
 import Checklist from "../../../components/Checklist";
 import Note from "../../../components/Note";
+import InfoCard from "../../../Shared/ui/InfoCard";
 
 const PaymentHistoryPage = () => {
   const statsPaymentHistory = [
@@ -159,17 +160,6 @@ const PaymentHistoryPage = () => {
 
   return (
     <section className="flex h-full flex-col">
-      {/* <header className="flex flex-col gap-3">
-        <span className="w-fit rounded-full bg-[#e9e1d8] px-4 py-1 text-xs uppercase tracking-widest text-[#5f544b]">
-          Payment History
-        </span>
-        <h1 className="text-3xl font-semibold tracking-wide sm:text-4xl">
-          Payment History
-        </h1>
-        <p className="max-w-2xl text-sm text-[#5f544b] sm:text-base">
-          View all your transactions, receipts, and saved payment methods.
-        </p>
-      </header> */}
       <DashboardHeader
         eyebrow={"Payment History"}
         title={"Payment History"}
@@ -184,26 +174,11 @@ const PaymentHistoryPage = () => {
         className="mt-3 border-2 border-[#2d2620] bg-[#f3efe9]"
       />
 
-      {/* <div className="mt-3 flex flex-wrap items-center gap-3 border-2 border-[#2d2620] bg-[#f3efe9] px-4 py-2">
-        <span className="text-[0.65rem] uppercase tracking-widest text-[#5f544b]">
-          Current Balance
-        </span>
-        <span className="text-sm font-semibold">GBP 0 outstanding</span>
-        <span className="text-xs text-[#5f544b]">
-          Next statement: March 31, 2026
-        </span>
-      </div> */}
-
-      {/* <section className="mt-4 grid gap-3 sm:grid-cols-3">
-        {statsPaymentHistory.map((stat) => (
-          <SummaryCard key={stat.title} {...stat} />
-        ))}
-      </section> */}
       <StatCards stats={statsPaymentHistory} lgGridCols={3} />
 
       <section className="mt-5 grid min-h-0 flex-1 gap-3 lg:grid-cols-[1.6fr_1fr]">
         <div className="relative flex min-h-0 flex-col border-2 border-[#2d2620]/20 bg-white/90 p-4 sm:p-5">
-          <div className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-[#2d2620]/5"></div>
+          <div className="absolute -top-8 -right-8 h-20 w-20 rounded-full bg-[#2d2620]/5"></div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-1">
               <h2 className="text-lg font-semibold">Transaction History</h2>
@@ -212,13 +187,13 @@ const PaymentHistoryPage = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] uppercase tracking-widest text-[#2d2620]">
+              <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
                 {filteredTransactions.length} records
               </span>
             </div>
           </div>
 
-          <div className="mt-3 grid w-full grid-cols-1 overflow-hidden border-2 border-[#2d2620]/20 text-xs uppercase tracking-widest sm:grid-cols-4">
+          <div className="mt-3 grid w-full grid-cols-1 overflow-hidden border-2 border-[#2d2620]/20 text-xs tracking-widest uppercase sm:grid-cols-4">
             {filterTabs.map((tab, index) => {
               const isActive = tab.key === activeFilter;
               const isLast = index === filterTabs.length - 1;
@@ -234,7 +209,7 @@ const PaymentHistoryPage = () => {
                     isActive ? "bg-[#f3efe9]" : "bg-white"
                   } ${
                     !isLast
-                      ? "border-b-2 border-[#2d2620]/20 sm:border-b-0 sm:border-r-2"
+                      ? "border-b-2 border-[#2d2620]/20 sm:border-r-2 sm:border-b-0"
                       : ""
                   }`}
                   aria-pressed={isActive}
@@ -249,13 +224,13 @@ const PaymentHistoryPage = () => {
           </div>
 
           <div className="mt-3 flex min-h-0 flex-1 flex-col">
-            <div className="hidden border-b-2 border-[#2d2620]  bg-[#f3efe9] text-xs uppercase tracking-widest text-[#5f544b] sm:grid sm:grid-cols-[1fr_1.4fr_1fr_0.8fr_0.7fr_0.7fr_0.9fr]">
-              <span className=" px-3 py-2">Date</span>
-              <span className=" px-3 py-2">Service</span>
-              <span className=" px-3 py-2">Staff</span>
-              <span className=" px-3 py-2">Amount</span>
-              <span className=" px-3 py-2">Method</span>
-              <span className=" px-3 py-2">Status</span>
+            <div className="hidden border-b-2 border-[#2d2620] bg-[#f3efe9] text-xs tracking-widest text-[#5f544b] uppercase sm:grid sm:grid-cols-[1fr_1.4fr_1fr_0.8fr_0.7fr_0.7fr_0.9fr]">
+              <span className="px-3 py-2">Date</span>
+              <span className="px-3 py-2">Service</span>
+              <span className="px-3 py-2">Staff</span>
+              <span className="px-3 py-2">Amount</span>
+              <span className="px-3 py-2">Method</span>
+              <span className="px-3 py-2">Status</span>
               <span className="px-3 py-2">Actions</span>
             </div>
 
@@ -295,14 +270,14 @@ const PaymentHistoryPage = () => {
                       <p className="text-xs text-[#5f544b]">{method.meta}</p>
                     </div>
                   </div>
-                  <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] uppercase tracking-widest text-[#2d2620]">
+                  <span className="rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
                     {method.status}
                   </span>
                 </div>
               ))}
             </div>
 
-            <button className="mt-3 w-full border-2 border-[#2d2620] px-4 py-2 text-xs uppercase tracking-widest transition hover:bg-[#2d2620] hover:text-[#f3efe9]">
+            <button className="mt-3 w-full border-2 border-[#2d2620] px-4 py-2 text-xs tracking-widest uppercase transition hover:bg-[#2d2620] hover:text-[#f3efe9]">
               Add New Payment Method
             </button>
           </div>
@@ -354,42 +329,42 @@ const PaymentHistoryPage = () => {
 const TransactionRow = ({ transaction }) => {
   return (
     <div className="grid gap-3 px-4 py-2.5 text-sm transition hover:bg-[#f3efe9]/60 sm:grid-cols-[1fr_1.4fr_1fr_0.8fr_0.7fr_0.7fr_0.9fr] sm:items-center">
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Date
       </p>
       <p>{transaction.date}</p>
 
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Service
       </p>
       <p className="font-semibold">{transaction.service}</p>
 
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Staff
       </p>
       <p>{transaction.staff}</p>
 
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Amount
       </p>
       <p>{transaction.amount}</p>
 
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Method
       </p>
       <p>{transaction.method}</p>
 
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Status
       </p>
-      <span className="w-fit rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] uppercase tracking-widest text-[#2d2620]">
+      <span className="w-fit rounded-full border-2 border-[#2d2620]/30 bg-[#f3efe9] px-3 py-1 text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
         {transaction.status}
       </span>
 
-      <p className="text-xs uppercase tracking-widest text-[#5f544b] sm:hidden">
+      <p className="text-xs tracking-widest text-[#5f544b] uppercase sm:hidden">
         Actions
       </p>
-      <button className="w-fit border-2 border-[#2d2620] px-3 py-1 text-xs uppercase tracking-widest transition hover:bg-[#2d2620] hover:text-[#f3efe9]">
+      <button className="w-fit border-2 border-[#2d2620] px-3 py-1 text-xs tracking-widest uppercase transition hover:bg-[#2d2620] hover:text-[#f3efe9]">
         Invoice
       </button>
     </div>

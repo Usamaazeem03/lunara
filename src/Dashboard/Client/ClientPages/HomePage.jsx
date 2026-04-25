@@ -1,5 +1,5 @@
-import DashboardHeader from "../../Shared/DashboardHeader";
-import Button from "../../Shared/Button";
+import DashboardHeader from "../../../Shared/layouts/DashboardHeader";
+import Button from "../../../Shared/Button";
 import NextAppointmentPanel from "../NextAppointmentPanel";
 import QuickActionPanal from "../QuickAction";
 import RedeemPointsPanal from "../RedeemPointsPanal";
@@ -7,7 +7,7 @@ import StatCards from "../StatCards";
 
 function HomePage({ setActiveMenu }) {
   return (
-    <section className="flex h-full flex-1 flex-col overflow-y-auto  scrollbar-hidden">
+    <section className="scrollbar-hidden flex h-full flex-1 flex-col overflow-y-auto">
       {/* Welcome Section */}
       <DashboardHeader
         eyebrow={"Welcome back"}
@@ -21,8 +21,8 @@ function HomePage({ setActiveMenu }) {
         >
           Book Appointment
         </Button>
-        <Button onClick={() => setActiveMenu("Contact")} variant="secondary">
-          Contact Salon
+        <Button onClick={() => setActiveMenu("My Appointment")} variant="secondary">
+          My Appointments
         </Button>
       </DashboardHeader>
       {/* Stats Cards */}

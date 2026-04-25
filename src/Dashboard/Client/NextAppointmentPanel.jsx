@@ -1,6 +1,6 @@
-import calendarIcon from "../../assets/icons/calendar.svg";
-import clockIcon from "../../assets/icons/clock.svg";
-import hairCareIcon from "../../assets/icons/hair-care.svg";
+import calendarIcon from "../../Shared/assets/icons/calendar.svg";
+import clockIcon from "../../Shared/assets/icons/clock.svg";
+import hairCareIcon from "../../Shared/assets/icons/hair-care.svg";
 const qrData = "Lunara Check-in | Alex | March 2, 2026 10:00 AM";
 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
   qrData,
