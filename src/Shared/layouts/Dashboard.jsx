@@ -18,6 +18,7 @@ import HomePage from "../../Dashboard/Client/ClientPages/HomePage";
 import AdminDashboard from "../../Dashboard/Admin/AdminDashboard";
 import AppointmentPage from "../../Dashboard/Admin/AppointmentPage";
 import ClientPage from "../../Dashboard/Admin/ClientPage";
+import ClientProfilePage from "../../Dashboard/Admin/ClientProfilePage";
 import ServicesPage from "../../Dashboard/Admin/ServicesPage";
 import StaffPage from "../../Dashboard/Admin/StaffPage";
 import PaymentPage from "../../Dashboard/Admin/PaymentPage";
@@ -91,7 +92,12 @@ function Dashboard() {
   const location = useLocation();
   const profileRouteMatch = useMatch("/profile");
   const isProfileRoute = Boolean(profileRouteMatch);
-  const { role: routeRole, slug: routeSlug, page: routePage } = useParams();
+  const {
+    role: routeRole,
+    slug: routeSlug,
+    page: routePage,
+    clientSlug: routeClientSlug,
+  } = useParams();
   const { user, profile, loading } = useAuth();
 
   const userRole = user?.user_metadata?.role;
@@ -107,7 +113,11 @@ function Dashboard() {
     ? Boolean(pages[normalizedRoutePage])
     : false;
   const activeSegment = hasValidRoutePage ? normalizedRoutePage : defaultSegment;
-  const ActivePage = pages[activeSegment];
+  const hasClientProfileRoute =
+    activeSegment === "clients" && Boolean(routeClientSlug);
+  const ActivePage = hasClientProfileRoute
+    ? ClientProfilePage
+    : pages[activeSegment];
 
   const buildDashboardPath = useCallback(
     (segment = defaultSegment) => {

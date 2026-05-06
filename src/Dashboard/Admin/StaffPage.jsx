@@ -31,14 +31,43 @@ const getInitials = (name) => {
 };
 
 // FIX: Ensure specialties is always an array
+// const ensureArray = (value) => {
+//   if (Array.isArray(value)) return value;
+//   if (typeof value === "string")
+//     return value
+//       .split(",")
+//       .map((s) => s.trim())
+//       .filter(Boolean);
+//   if (value === null || value === undefined) return [];
+//   return [];
+// };
+
 const ensureArray = (value) => {
-  if (Array.isArray(value)) return value;
-  if (typeof value === "string")
+  if (Array.isArray(value)) {
+    return value.map((v) =>
+      typeof v === "string" ? v.replace(/"/g, "").trim() : v,
+    );
+  }
+
+  if (typeof value === "string") {
+    try {
+      // Try parsing JSON first
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return parsed.map((v) =>
+          typeof v === "string" ? v.replace(/"/g, "").trim() : v,
+        );
+      }
+    } catch (e) {
+      // fallback if not JSON
+    }
+
     return value
       .split(",")
-      .map((s) => s.trim())
+      .map((s) => s.replace(/"/g, "").trim())
       .filter(Boolean);
-  if (value === null || value === undefined) return [];
+  }
+
   return [];
 };
 

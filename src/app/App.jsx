@@ -61,8 +61,13 @@ const router = createBrowserRouter([
       { path: "dashboard", element: dashboardElement },
       { path: "dashboard/:page", element: dashboardElement },
       { path: "owner/salon/:slug", element: dashboardElement },
+      { path: "owner/salon/:slug/:page/:clientSlug", element: dashboardElement },
       { path: "owner/salon/:slug/:page", element: dashboardElement },
       { path: "dashboard/:role/salon/:slug", element: dashboardElement },
+      {
+        path: "dashboard/:role/salon/:slug/:page/:clientSlug",
+        element: dashboardElement,
+      },
       {
         path: "dashboard/:role/salon/:slug/:page",
         element: dashboardElement,

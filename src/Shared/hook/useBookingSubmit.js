@@ -11,6 +11,211 @@ const isMissingTableError = (error) => {
   return msg.includes("relation") && msg.includes("does not exist");
 };
 
+const isClientForeignKeyError = (error) => {
+  if (!error) return false;
+  const message = `${error.message ?? ""} ${error.details ?? ""} ${
+    error.hint ?? ""
+  }`.toLowerCase();
+
+  return (
+    error.code === "23503" &&
+    (message.includes("appointments_client_id_fkey") ||
+      (message.includes("client_id") && message.includes("foreign key")))
+  );
+};
+
+const normalizeComparableText = (value) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase();
+
+const normalizePhoneText = (value) =>
+  String(value ?? "").replace(/\D/g, "");
+
+const findClientProfileMatch = (
+  rows,
+  { normalizedName, normalizedPhone, normalizedEmail, userId = null },
+) =>
+  (rows ?? []).find((row) => {
+    if (userId && String(row.auth_id ?? "") === String(userId)) {
+      return true;
+    }
+
+    const rowName = normalizeComparableText(row.full_name);
+    const rowPhone = normalizePhoneText(row.phone);
+    const rowEmail = normalizeComparableText(row.email);
+
+    return (
+      (normalizedEmail && rowEmail && rowEmail === normalizedEmail) ||
+      (normalizedPhone && rowPhone && rowPhone === normalizedPhone) ||
+      (normalizedName && rowName === normalizedName)
+    );
+  }) ?? null;
+
+const resolveOwnerClientProfile = async ({
+  ownerId,
+  clientId,
+  clientName,
+  clientPhone,
+  clientEmail,
+}) => {
+  const displayName = String(clientName ?? "").trim();
+  const normalizedName = normalizeComparableText(displayName);
+  const normalizedPhone = normalizePhoneText(clientPhone);
+  const normalizedEmail = normalizeComparableText(clientEmail);
+
+  if (!ownerId) {
+    throw new Error("Owner ID is required to create a client profile.");
+  }
+
+  if (!normalizedName && !clientId) {
+    throw new Error("Please select a client or enter a client name.");
+  }
+
+  if (clientId) {
+    const { data: matchedById, error: lookupByIdError } = await supabase
+      .from("profiles")
+      .select("id, auth_id, full_name, phone, email")
+      .eq("id", clientId)
+      .eq("owner_id", ownerId)
+      .eq("role", "client")
+      .limit(1);
+
+    if (lookupByIdError) throw lookupByIdError;
+    if (matchedById?.[0]) return matchedById[0];
+  }
+
+  const { data: ownerClients, error: lookupError } = await supabase
+    .from("profiles")
+    .select("id, auth_id, full_name, phone, email")
+    .eq("owner_id", ownerId)
+    .eq("role", "client");
+
+  if (lookupError) throw lookupError;
+
+  const matchedClient = findClientProfileMatch(ownerClients, {
+    normalizedName,
+    normalizedPhone,
+    normalizedEmail,
+  });
+
+  if (matchedClient) return matchedClient;
+
+  if (!normalizedName) {
+    throw new Error("Please enter a client name.");
+  }
+
+  const { data: createdClient, error: createError } = await supabase
+    .from("profiles")
+    .insert([
+      {
+        full_name: displayName,
+        phone: clientPhone || null,
+        email: clientEmail || null,
+        role: "client",
+        owner_id: ownerId,
+      },
+    ])
+    .select("id, full_name, phone, email")
+    .single();
+
+  if (createError) throw createError;
+
+  return createdClient;
+};
+
+const resolveClientSalonProfile = async ({
+  ownerId,
+  userId,
+  fullName,
+  clientPhone,
+  clientEmail,
+}) => {
+  const displayName = String(fullName ?? "").trim();
+  const normalizedName = normalizeComparableText(displayName);
+  const normalizedPhone = normalizePhoneText(clientPhone);
+  const normalizedEmail = normalizeComparableText(clientEmail);
+
+  if (!ownerId) {
+    throw new Error("Owner ID is required to link this salon profile.");
+  }
+
+  if (!userId) {
+    throw new Error("User ID is required to link this salon profile.");
+  }
+
+  const { data: salonClients, error: lookupError } = await supabase
+    .from("profiles")
+    .select("id, auth_id, full_name, phone, email")
+    .eq("owner_id", ownerId)
+    .eq("role", "client");
+
+  if (lookupError) throw lookupError;
+
+  const matchedClient = findClientProfileMatch(salonClients, {
+    normalizedName,
+    normalizedPhone,
+    normalizedEmail,
+    userId,
+  });
+
+  if (matchedClient) {
+    if (!matchedClient.auth_id) {
+      const { error: linkError } = await supabase
+        .from("profiles")
+        .update({ auth_id: userId })
+        .eq("id", matchedClient.id);
+
+      if (linkError) {
+        console.warn("Could not link salon profile to auth user:", linkError);
+      } else {
+        matchedClient.auth_id = userId;
+      }
+    }
+
+    return matchedClient;
+  }
+
+  if (!normalizedName) {
+    throw new Error("Please enter a client name.");
+  }
+
+  const createSalonClient = async (includeAuthId) =>
+    supabase
+      .from("profiles")
+      .insert([
+        {
+          full_name: displayName,
+          phone: clientPhone || null,
+          email: clientEmail || null,
+          role: "client",
+          owner_id: ownerId,
+          ...(includeAuthId ? { auth_id: userId } : {}),
+        },
+      ])
+      .select("id, auth_id, full_name, phone, email")
+      .single();
+
+  let { data: createdClient, error: createError } =
+    await createSalonClient(true);
+
+  if (
+    createError &&
+    (createError.code === "23505" ||
+      `${createError.message ?? ""} ${createError.details ?? ""}`
+        .toLowerCase()
+        .includes("auth_id"))
+  ) {
+    ({ data: createdClient, error: createError } = await createSalonClient(
+      false,
+    ));
+  }
+
+  if (createError) throw createError;
+
+  return createdClient;
+};
+
 // ─── Main Hook ────────────────────────────────────────────────────────────────
 // mode = "client" → client side (alert dikhata hai, profile fetch karta hai)
 // mode = "owner"  → owner side  (state use karta hai, local draft support hai)
@@ -47,6 +252,7 @@ export function useBookingSubmit(mode = "client") {
       paymentOption = null,
       paymentMethod = null,
       // owner side client info (form se)
+      clientId = null,
       clientName = null,
       clientPhone = null,
       clientEmail = null,
@@ -66,7 +272,8 @@ export function useBookingSubmit(mode = "client") {
     setSaveSuccess("");
 
     // ── Step 1: Client side mein user + profile fetch karo ─────────────────
-    let finalClientId = null;
+    // let finalClientId = null;
+    let finalClientId = isOwner ? (clientId ?? null) : null;
     let finalClientName = clientName;
     let finalClientPhone = clientPhone;
     let finalClientEmail = clientEmail;
@@ -85,6 +292,20 @@ export function useBookingSubmit(mode = "client") {
       finalClientName = profile?.full_name ?? user.email;
       finalClientPhone = profile?.phone ?? null;
       finalClientEmail = profile?.email ?? user.email;
+
+      if (ownerId) {
+        try {
+          await resolveClientSalonProfile({
+            ownerId,
+            userId: user.id,
+            fullName: finalClientName,
+            clientPhone: finalClientPhone,
+            clientEmail: finalClientEmail,
+          });
+        } catch (linkError) {
+          console.warn("Could not create salon-specific client profile:", linkError);
+        }
+      }
     }
 
     // ── Step 2: Date + Time validate karo ──────────────────────────────────
@@ -140,6 +361,21 @@ export function useBookingSubmit(mode = "client") {
     }
 
     // ── Step 5: Single combined appointment ─────────────────────────
+    if (isOwner) {
+      const resolvedClient = await resolveOwnerClientProfile({
+        ownerId,
+        clientId,
+        clientName,
+        clientPhone,
+        clientEmail,
+      });
+
+      finalClientId = resolvedClient.auth_id ?? resolvedClient.id;
+      finalClientName = resolvedClient.full_name ?? finalClientName;
+      finalClientPhone = resolvedClient.phone ?? finalClientPhone;
+      finalClientEmail = resolvedClient.email ?? finalClientEmail;
+    }
+
     const totalPrice = services.reduce(
       (sum, s) => sum + (s.priceValue || 0),
       0,
@@ -190,15 +426,30 @@ export function useBookingSubmit(mode = "client") {
     }
 
     // ── Step 7: Supabase mein insert karo ──────────────────────────────────
-    const { data, error } = await supabase
-      .from("appointments")
-      .insert([payload])
-      .select("*");
+    const insertAppointment = (appointmentPayload) =>
+      supabase.from("appointments").insert([appointmentPayload]).select("*");
+
+    let savePayload = payload;
+    let { data, error } = await insertAppointment(savePayload);
+
+    if (
+      error &&
+      isOwner &&
+      savePayload.client_id !== null &&
+      isClientForeignKeyError(error)
+    ) {
+      console.warn(
+        "Client link failed, retrying appointment insert without client_id.",
+        error,
+      );
+      savePayload = { ...savePayload, client_id: null };
+      ({ data, error } = await insertAppointment(savePayload));
+    }
 
     if (error) {
       if (isOwner && isMissingTableError(error)) {
         // onMissingTable?.(payloads);
-        onMissingTable?.([payload]);
+        onMissingTable?.([savePayload]);
         onDone?.();
       } else {
         const msg = "Booking failed: " + error.message;

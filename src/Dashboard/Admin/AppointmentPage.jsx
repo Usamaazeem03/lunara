@@ -34,6 +34,7 @@ const STATUS_OPTIONS = APPOINTMENT_STATUSES.map((status) => ({
 }));
 
 const EMPTY_FORM = {
+  clientId: "",
   clientName: "",
   clientPhone: "",
   clientEmail: "",
@@ -119,59 +120,11 @@ const toStartOfDay = (isoDate) => {
   return new Date(year, month - 1, day);
 };
 
-// const formatNumber = (value) =>
-//   Number.isInteger(value) ? value.toString() : value.toFixed(2);
-
 const formatPrice = (value) => {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return "N/A";
   return `${CURRENCY_CODE} ${formatNumber(numeric)}`;
 };
-
-// const getInitials = (name) => {
-//   if (!name) return "??";
-//   return name
-//     .split(" ")
-//     .map((part) => part[0])
-//     .join("")
-//     .toUpperCase()
-//     .slice(0, 2);
-// };
-
-// const parseTimeToMinutes = (value) => {
-//   if (value === null || value === undefined) return null;
-
-//   const raw = String(value).trim();
-//   if (!raw) return null;
-
-//   const fromDateTime = raw.match(/T(\d{2}):(\d{2})/);
-//   if (fromDateTime) {
-//     const hours = Number(fromDateTime[1]);
-//     const minutes = Number(fromDateTime[2]);
-//     return hours * 60 + minutes;
-//   }
-
-//   const amPmMatch = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)$/i);
-//   if (amPmMatch) {
-//     let hours = Number(amPmMatch[1]) % 12;
-//     const minutes = Number(amPmMatch[2]);
-//     const period = amPmMatch[3].toUpperCase();
-//     if (period === "PM") {
-//       hours += 12;
-//     }
-//     return hours * 60 + minutes;
-//   }
-
-//   const twentyFourMatch = raw.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
-//   if (twentyFourMatch) {
-//     const hours = Number(twentyFourMatch[1]);
-//     const minutes = Number(twentyFourMatch[2]);
-//     if (hours > 23 || minutes > 59) return null;
-//     return hours * 60 + minutes;
-//   }
-
-//   return null;
-// };
 
 const formatMinutesToTimeLabel = (minutes) => {
   const hours = Math.floor(minutes / 60);
@@ -182,16 +135,6 @@ const formatMinutesToTimeLabel = (minutes) => {
     .toString()
     .padStart(2, "0")} ${period}`;
 };
-
-// const toTime24 = (value) => {
-//   const minutes = parseTimeToMinutes(value);
-//   if (minutes === null) return "";
-//   const hours = Math.floor(minutes / 60)
-//     .toString()
-//     .padStart(2, "0");
-//   const mins = (minutes % 60).toString().padStart(2, "0");
-//   return `${hours}:${mins}`;
-// };
 
 const formatTimeLabel = (value) => {
   const minutes = parseTimeToMinutes(value);
@@ -425,6 +368,7 @@ const AppointmentPage = () => {
   const [workingHours, setWorkingHours] = useState(getDefaultWorkingHours());
   const [appointments, setAppointments] = useState([]);
   const [localDraftAppointments, setLocalDraftAppointments] = useState([]);
+  const [clients, setClients] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -435,16 +379,9 @@ const AppointmentPage = () => {
   const [formState, setFormState] = useState(EMPTY_FORM);
   const [serviceSearchQuery, setServiceSearchQuery] = useState("");
   const [staffSearchValue, setStaffSearchValue] = useState("");
-  // const [isSaving, setIsSaving] = useState(false);
-  // const [saveError, setSaveError] = useState("");
-  // const [saveSuccess, setSaveSuccess] = useState("");
-  // /////////////////////////////////////////////////////////////////
-  // fix owner side booking logic i add code theas line 21 , 324 901 to 994
-  ///////////////////////////////////////////////////////////////////////
-  //// for editing existing appointments in the future
+
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
-  ///////////////////////////////////////////////////
   const {
     handleBooking,
     isSaving,
@@ -493,26 +430,32 @@ const AppointmentPage = () => {
       setIsLoading(true);
       setLoadError("");
 
-      const [servicesRes, staffRes, workingHoursRes, appointmentsRes] =
-        await Promise.all([
-          supabase
-            .from("services")
-            .select(
-              "id, name, description, category, price, duration_minutes, is_active, owner_id",
-            )
-            .eq("owner_id", ownerId),
-          supabase
-            .from("staff")
-            .select("id, name, role, is_on_shift, owner_id")
-            .eq("owner_id", ownerId),
-          supabase
-            .from("working_hours")
-            .select(
-              "day_of_week, day_name, is_open, open_time, close_time, owner_id",
-            )
-            .eq("owner_id", ownerId),
-          supabase.from("appointments").select("*").eq("owner_id", ownerId),
-        ]);
+      const [
+        servicesRes,
+        staffRes,
+        workingHoursRes,
+        appointmentsRes,
+        clientsRes,
+      ] = await Promise.all([
+        supabase
+          .from("services")
+          .select(
+            "id, name, description, category, price, duration_minutes, is_active, owner_id",
+          )
+          .eq("owner_id", ownerId),
+        supabase
+          .from("staff")
+          .select("id, name, role, is_on_shift, owner_id")
+          .eq("owner_id", ownerId),
+        supabase
+          .from("working_hours")
+          .select(
+            "day_of_week, day_name, is_open, open_time, close_time, owner_id",
+          )
+          .eq("owner_id", ownerId),
+        supabase.from("appointments").select("*").eq("owner_id", ownerId),
+        supabase.from("profiles").select("*").eq("owner_id", ownerId),
+      ]);
 
       if (!isMounted) return;
 
@@ -557,6 +500,13 @@ const AppointmentPage = () => {
         setAppointments(appointmentsRes.data ?? []);
         setIsAppointmentTableReady(true);
         setTableMessage("");
+      }
+
+      if (clientsRes.error) {
+        console.warn("Could not load clients:", clientsRes.error.message);
+        setClients([]);
+      } else {
+        setClients(clientsRes.data ?? []);
       }
 
       if (issues.length > 0) {
@@ -968,6 +918,7 @@ const AppointmentPage = () => {
 
     handleBooking({
       ownerId,
+      clientId: formState.clientId || null,
       services: selectedServices, // already { id, title, priceValue, durationValue }
       staff: selectedStaff ?? null,
       appointmentDate: formState.appointmentDate,
@@ -1124,7 +1075,7 @@ const AppointmentPage = () => {
                 </p>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="text-ink-muted text-xs tracking-widest uppercase">
+                  {/* <label className="text-ink-muted text-xs tracking-widest uppercase">
                     Client Name *
                     <input
                       name="clientName"
@@ -1135,6 +1086,50 @@ const AppointmentPage = () => {
                       className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
                       required
                     />
+                  </label> */}
+                  <label className="text-ink-muted text-xs tracking-widest uppercase">
+                    Client Name *
+                    <SearchableSelectBox
+                      value={formState.clientName}
+                      onValueChange={(val) => {
+                        setFormState((prev) => ({
+                          ...prev,
+                          clientName: val,
+                          clientId: "",
+                        }));
+                      }}
+                      options={clients.map((c) => ({
+                        value: c.id,
+                        label: c.full_name,
+                      }))}
+                      selectedValue={formState.clientId}
+                      onOptionSelect={(option) => {
+                        const client = clients.find(
+                          (c) => c.id === option.value,
+                        );
+                        if (!client) return;
+                        setFormState((prev) => ({
+                          ...prev,
+                          clientId: client.id,
+                          clientName: client.full_name,
+                          clientPhone: client.phone ?? prev.clientPhone,
+                          clientEmail: client.email ?? prev.clientEmail,
+                        }));
+                      }}
+                      placeholder="Search existing client or type name"
+                      noOptionsText="No clients found"
+                      className="mt-2"
+                    />
+                    {formState.clientId && (
+                      <p className="mt-1 text-[0.65rem] tracking-widest text-green-600 uppercase">
+                        ✓ Linked to existing client profile
+                      </p>
+                    )}
+                    {!formState.clientId && formState.clientName && (
+                      <p className="mt-1 text-[0.65rem] tracking-widest text-amber-600 uppercase">
+                        New client profile will be created automatically
+                      </p>
+                    )}
                   </label>
 
                   <label className="text-ink-muted text-xs tracking-widest uppercase">
@@ -1814,15 +1809,3 @@ const AppointmentRow = ({ appointment, onSelect }) => {
 };
 
 export default AppointmentPage;
-
-// show this not box
-// {appointment.notes && (
-//         <div className="sm:col-span-7 flex items-start gap-2 border-t border-ink/10 pt-2 mt-1">
-//           <span className="text-ink-muted text-[0.65rem] tracking-widest uppercase shrink-0">
-//             Notes:
-//           </span>
-//           <span className="text-xs text-ink-muted italic">{appointment.notes}</span>
-//         </div>
-//       )}
-//     </div>
-//   );
