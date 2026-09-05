@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import Icon from "../../Shared/ui/Icon";
+import Icon from "../Shared/ui/Icon";
 
 /**
  * Salon Share Card

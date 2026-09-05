@@ -1,6 +1,6 @@
 // import { useState, useEffect } from "react";
 // import { useParams, useNavigate } from "react-router-dom";
-// import { supabase } from "../Shared/lib/supabaseClient";
+// import { supabase } from "../services/supabase";
 // import { notify } from "../Shared/lib/toast.jsx";
 // import Icon from "../Shared/ui/Icon";
 // import { QRCodeSVG } from "qrcode.react";
@@ -363,7 +363,7 @@
 
 // import { useState, useEffect } from "react";
 // import { useParams, useNavigate } from "react-router-dom";
-// import { supabase } from "../Shared/lib/supabaseClient";
+// import { supabase } from "../services/supabase";
 // import { notify } from "../Shared/lib/toast.jsx";
 // import Icon from "../Shared/ui/Icon";
 // import { QRCodeSVG } from "qrcode.react";
@@ -648,10 +648,12 @@
 /////////////////////////////////////////////////////////////////////////
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../Shared/lib/supabaseClient";
+import { supabase } from "../services/supabase";
 import { notify } from "../Shared/lib/toast.jsx";
 import Icon from "../Shared/ui/Icon";
 import { QRCodeSVG } from "qrcode.react";
+import { getCurrency } from "../services/apiSettings";
+import { formatCurrency } from "../utils/currency";
 
 const PREVIEW_COUNT = 3;
 
@@ -664,6 +666,7 @@ function PublicSalonPage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currencyCode, setCurrencyCode] = useState("USD");
   const [showAllStaff, setShowAllStaff] = useState(false);
   const [showAllServices, setShowAllServices] = useState(false);
 
@@ -695,6 +698,9 @@ function PublicSalonPage() {
         }
         setOwnerProfile(profile);
         console.log("✅ Owner Profile ID:", profile.id);
+
+        const savedCurrency = await getCurrency(profile.id);
+        setCurrencyCode(savedCurrency || "USD");
 
         // 2. Staff
         const { data: staffData } = await supabase
@@ -899,7 +905,11 @@ function PublicSalonPage() {
                   {/* 3-column card row */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {visibleServices.map((service) => (
-                      <ServiceCard key={service.id} service={service} />
+                      <ServiceCard
+                        key={service.id}
+                        service={service}
+                        currencyCode={currencyCode}
+                      />
                     ))}
                   </div>
 
@@ -994,7 +1004,7 @@ function PublicSalonPage() {
 }
 
 // ─── Service Card (one of three in a row) ─────────────────────────────────────
-function ServiceCard({ service }) {
+function ServiceCard({ service, currencyCode }) {
   const duration = service.duration_minutes
     ? `${service.duration_minutes} min`
     : service.duration || null;
@@ -1018,7 +1028,7 @@ function ServiceCard({ service }) {
           <span />
         )}
         <span className="text-ink font-bold">
-          £{Number(service.price || 0).toFixed(0)}
+          {formatCurrency(service.price, currencyCode)}
         </span>
       </div>
     </div>

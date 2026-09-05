@@ -10,8 +10,11 @@ import {
   removeSavedAccount,
 } from "../../utils/deviceMemory";
 import { generateSlugFromName } from "../../utils/slugGenerator";
-import { supabase } from "../../Shared/lib/supabaseClient";
+import { supabase } from "../../services/supabase";
 import { notify } from "../../Shared/lib/toast.jsx";
+import { initializeCurrencyCode } from "../settings/initialCurrencyCodeUplode.js";
+import { useCountryDetection } from "../../hook/useCountryDetection.js";
+import { getCurrencyFromCountry } from "../../utils/currency.js";
 
 const INPUT_BASE =
   "w-full border border-ink/20 bg-white/90 px-4 py-2.5 md:py-3 text-sm text-ink placeholder:text-ink/40 focus:border-ink/60 focus:ring-1 focus:ring-inset focus:ring-ink/20 focus:outline-none transition";
@@ -47,6 +50,8 @@ PhoneTextInput.displayName = "PhoneTextInput";
 function AuthForm({ role, mode, onModeChange }) {
   const navigate = useNavigate();
   const { signUp, signIn, signInWithGoogle, updateProfile } = useAuth();
+  const { country } = useCountryDetection();
+  const currencyCode = getCurrencyFromCountry(country);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -175,6 +180,10 @@ function AuthForm({ role, mode, onModeChange }) {
         };
         if (role === "owner") {
           profileUpdates.salon_slug = generateSlugFromName(formData.fullName);
+          await withTimeout(
+            initializeCurrencyCode(user.id, currencyCode),
+            8000,
+          );
         }
 
         // ✅ FIX: Await the profile update instead of fire-and-forget.

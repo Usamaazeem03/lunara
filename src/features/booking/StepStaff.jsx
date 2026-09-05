@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../Shared/lib/supabaseClient";
+import { supabase } from "../../services/supabase";
 import { notify } from "../../Shared/lib/toast.jsx";
 
 // Helper to get initials from name

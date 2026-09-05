@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { supabase } from "../Shared/lib/supabaseClient";
+import { supabase } from "../services/supabase";
 import { uploadAvatar } from "../services/avatarService";
 
 export function useAuth() {

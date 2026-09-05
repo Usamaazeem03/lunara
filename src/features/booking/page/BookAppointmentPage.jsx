@@ -3,14 +3,14 @@ import { useSearchParams } from "react-router-dom";
 
 import calendarIcon from "../../../Shared/assets/icons/calendar.svg";
 import clockIcon from "../../../Shared/assets/icons/clock.svg";
-import DashboardHeader from "../../../Shared/layouts/DashboardHeader";
+import AppHeader from "../../../AppLayout/AppHeader.jsx";
 import InfoCard from "../../../Shared/ui/InfoCard";
 import Button from "../../../Shared/Button";
 import BookingStepViews from "../BookingStepViews";
-import SummaryPanal from "../../../Dashboard/Client/SummaryPanal";
+import SummaryPanal from "../../Dashboard/Client/SummaryPanal";
 import Checklist from "../../../components/Checklist";
 import Note from "../../../components/Note";
-import { supabase } from "../../../Shared/lib/supabaseClient";
+import { supabase } from "../../../services/supabase";
 import {
   getCategoryLabel,
   getServiceIcon,
@@ -18,6 +18,8 @@ import {
 import { formatNumber } from "../../../Shared/utils/appointmentUtils";
 import { useBookingSubmit } from "../../../Shared/hook/useBookingSubmit";
 import { notify } from "../../../Shared/lib/toast.jsx";
+import { formatCurrency } from "../../../utils/currency.js";
+import { useCurrencyCode } from "../../settings/useCurrencyCode.js";
 
 const BOOKING_STEPS = [
   {
@@ -47,8 +49,6 @@ const BOOKING_STEPS = [
   },
 ];
 
-const CURRENCY_CODE = "GBP";
-
 const DATE_OPTIONS = [
   { day: "Sunday", date: "Feb 08" },
   { day: "Monday", date: "Feb 09" },
@@ -70,30 +70,7 @@ const TIME_SLOTS = [
   "07:30 PM",
 ];
 
-const PAYMENT_OPTIONS = [
-  {
-    title: "Pay at Salon",
-    description: "Pay when you arrive for your appointment",
-  },
-  {
-    title: "Pay Online - Full Amount",
-    description: "Secure online payment for GBP 45",
-  },
-  {
-    title: "Pay Advance - 50%",
-    description: "Pay GBP 23 now, rest at salon",
-  },
-];
-
 const PAYMENT_METHODS = ["Card", "UPI", "Wallet"];
-
-const numberFromText = (value = "") => {
-  const match = value.match(/[\d.]+/);
-  return match ? Number(match[0]) : 0;
-};
-
-// const formatNumber = (value) =>
-//   Number.isInteger(value) ? value.toString() : value.toFixed(2);
 
 const clampIndex = (list, index) => list[index] ?? list[0];
 
@@ -128,6 +105,7 @@ function BookAppointmentPage({ onBack }) {
   const [searchParams] = useSearchParams();
   const ownerId =
     searchParams.get("owner_id") || localStorage.getItem("owner_id");
+  const { currencyCode } = useCurrencyCode(ownerId);
 
   // //////
   const { handleBooking } = useBookingSubmit("client");
@@ -148,7 +126,6 @@ function BookAppointmentPage({ onBack }) {
 
   // const activeStaff = clampIndex(dynamicStaff, selectedStaff);
   const activeStaff = selectedStaff;
-  const activePayment = clampIndex(PAYMENT_OPTIONS, selectedPayment);
   const activeMethod = clampIndex(PAYMENT_METHODS, selectedMethod);
 
   const selectedServiceList = selectedServices
@@ -182,18 +159,30 @@ function BookAppointmentPage({ onBack }) {
     );
 
   const totalPriceValue = selectedServiceList.reduce(
-    (sum, service) => sum + numberFromText(service.price),
+    (sum, service) => sum + service.priceValue,
     0,
   );
   const totalDurationValue = selectedServiceList.reduce(
-    (sum, service) => sum + numberFromText(service.duration),
+    (sum, service) => sum + service.durationValue,
     0,
   );
-  const currency = primaryService?.price?.split(" ")[0] ?? "";
-  const totalPriceLabel = currency
-    ? `${currency} ${formatNumber(totalPriceValue)}`
-    : formatNumber(totalPriceValue);
+  const totalPriceLabel = formatCurrency(totalPriceValue, currencyCode);
   const totalDurationLabel = `${formatNumber(totalDurationValue)} min`;
+  const paymentOptions = [
+    {
+      title: "Pay at Salon",
+      description: "Pay when you arrive for your appointment",
+    },
+    {
+      title: "Pay Online - Full Amount",
+      description: `Secure online payment for ${totalPriceLabel}`,
+    },
+    {
+      title: "Pay Advance - 50%",
+      description: `Pay ${formatCurrency(totalPriceValue / 2, currencyCode)} now, rest at salon`,
+    },
+  ];
+  const activePayment = clampIndex(paymentOptions, selectedPayment);
 
   const progress = Math.round((step / stepCount) * 100);
 
@@ -240,8 +229,8 @@ function BookAppointmentPage({ onBack }) {
     const normalizedServices = selectedServiceList.map((s) => ({
       id: s.id,
       title: s.title,
-      priceValue: numberFromText(s.price),
-      durationValue: numberFromText(s.duration),
+      priceValue: s.priceValue,
+      durationValue: s.durationValue,
     }));
 
     handleBooking({
@@ -301,11 +290,13 @@ function BookAppointmentPage({ onBack }) {
           id: service.id,
           title: service.name ?? "Untitled Service",
           description: service.description ?? "",
+          priceValue: Number.isFinite(priceValue) ? priceValue : 0,
+          durationValue: Number.isFinite(durationValue) ? durationValue : 0,
           duration: Number.isFinite(durationValue)
             ? `${durationValue} min`
             : "",
           price: Number.isFinite(priceValue)
-            ? `${CURRENCY_CODE} ${priceValue}`
+            ? formatCurrency(priceValue, currencyCode)
             : "",
           iconName: getServiceIcon(categoryLabel),
           category: categoryLabel,
@@ -321,7 +312,7 @@ function BookAppointmentPage({ onBack }) {
     return () => {
       isMounted = false;
     };
-  }, [ownerId]);
+  }, [currencyCode, ownerId]);
 
   // Fetch staff from Supabase - mirrors services fetch pattern
   // useEffect(() => {
@@ -406,7 +397,7 @@ function BookAppointmentPage({ onBack }) {
 
   return (
     <section className="flex flex-col lg:h-full">
-      <DashboardHeader
+      <AppHeader
         eyebrow="Book an Appointment"
         title="Book an Appointment"
         description="Schedule your next visit in a few simple steps"
@@ -502,7 +493,7 @@ function BookAppointmentPage({ onBack }) {
           activeStaff={activeStaff}
           selectedServiceList={selectedServiceList}
           totalPriceLabel={totalPriceLabel}
-          paymentOptions={PAYMENT_OPTIONS}
+          paymentOptions={paymentOptions}
           selectedPayment={selectedPayment}
           setSelectedPayment={setSelectedPayment}
           paymentMethods={PAYMENT_METHODS}

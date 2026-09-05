@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useAuth } from "../hooks/useAuth";
-import { supabase } from "../Shared/lib/supabaseClient";
+import { supabase } from "../services/supabase";
 
 // ─── Shared input style ───────────────────────────────────────────────────────
 const inputBase =

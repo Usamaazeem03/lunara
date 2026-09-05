@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { supabase } from "../../Shared/lib/supabaseClient";
+import { supabase } from "../../services/supabase";
 import { notify } from "../../Shared/lib/toast.jsx";
 import Icon from "../../Shared/ui/Icon";
 import AuthHeader from "./AuthHeader";

@@ -6,7 +6,7 @@ import AuthHeroPanel from "../features/auth/AuthHeroPanel";
 import AuthShell from "../features/auth/AuthShell";
 import { ROLE_CONTENT, ROLE_IMAGES } from "../features/auth/authContent";
 import { useAuth } from "../hooks/useAuth";
-import { supabase } from "../Shared/lib/supabaseClient";
+import { supabase } from "../services/supabase";
 import { notify } from "../Shared/lib/toast.jsx";
 import Icon from "../Shared/ui/Icon";
 

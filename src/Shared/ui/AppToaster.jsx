@@ -10,15 +10,22 @@ const ToastCard = ({ t, handlers }) => {
   const isError = t.type === "error";
   const isLoading = t.type === "loading";
   const isCustom = t.type === "custom";
+  const isWarning = t.icon === "warning";
 
   // Accent color per type
-  const accentColor = isError ? "#b0412e" : isLoading ? "#b68a4f" : "#2d2620";
+  const accentColor = isError
+    ? "#b0412e"
+    : isWarning || isLoading
+      ? "#b68a4f"
+      : "#2d2620";
 
   // Label per type
   const typeLabel = isError
     ? "Error"
     : isSuccess
       ? "Success"
+      : isWarning
+        ? "Warning"
       : isLoading
         ? "Loading"
         : "Notice";
@@ -46,6 +53,27 @@ const ToastCard = ({ t, handlers }) => {
             strokeDasharray="20 14"
           />
         </svg>
+      );
+    }
+    if (isWarning) {
+      return (
+        <span
+          style={{
+            width: "14px",
+            height: "14px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "50%",
+            background: "#b68a4f",
+            color: "#fff",
+            fontSize: "10px",
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+        >
+          !
+        </span>
       );
     }
     if (isError) {
@@ -145,6 +173,8 @@ const ToastCard = ({ t, handlers }) => {
         width: "min(380px, calc(100vw - 2rem))",
         background: isError
           ? "rgba(255, 248, 246, 0.98)"
+          : isWarning
+            ? "rgba(255, 248, 223, 0.98)"
           : "rgba(247, 245, 240, 0.98)",
         border: "2px solid rgba(45, 38, 32, 0.12)",
         borderLeft: `3px solid ${accentColor}`,

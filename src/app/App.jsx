@@ -10,27 +10,29 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import AuthCallback from "../features/auth/AuthCallback";
 import AuthModal from "../features/auth/AuthModal";
 import AuthLayout from "../layouts/AuthLayout";
-import DashboardLayout from "../layouts/DashboardLayout";
+import AppLayoutByRole from "../AppLayout/AppLayoutByRole";
 import PublicLayout from "../layouts/PublicLayout";
 import LandingPage from "../pages/LandingPage";
 import PublicSalonPage from "../pages/PublicSalonPage";
 import ClientBookingPage from "../pages/ClientBookingPage";
 import AppToaster from "../Shared/ui/AppToaster";
+import Spinner from "../ui/Spinner";
 
-const Dashboard = lazy(() => import("../Shared/layouts/Dashboard"));
+const Dashboard = lazy(() => import("../AppLayout/AppLayoutByRole"));
 
 const dashboardElement = (
   <Suspense
     fallback={
       <div className="flex h-screen items-center justify-center bg-[#f7f5f0]">
         <div className="text-center">
-          <div className="border-ink mx-auto h-12 w-12 animate-spin rounded-full border-b-2" />
+          {/* <div className="border-ink mx-auto h-12 w-12 animate-spin rounded-full border-b-2" /> */}
+          <Spinner />
           <p className="text-ink/60 mt-4 font-medium">Loading dashboard...</p>
         </div>
       </div>
     }
   >
-    <Dashboard />
+    <AppLayoutByRole />
   </Suspense>
 );
 
@@ -53,7 +55,7 @@ const router = createBrowserRouter([
   {
     element: (
       <ProtectedRoute>
-        <DashboardLayout />
+        <AppLayoutByRole />
       </ProtectedRoute>
     ),
     children: [
@@ -61,7 +63,10 @@ const router = createBrowserRouter([
       { path: "dashboard", element: dashboardElement },
       { path: "dashboard/:page", element: dashboardElement },
       { path: "owner/salon/:slug", element: dashboardElement },
-      { path: "owner/salon/:slug/:page/:clientSlug", element: dashboardElement },
+      {
+        path: "owner/salon/:slug/:page/:clientSlug",
+        element: dashboardElement,
+      },
       { path: "owner/salon/:slug/:page", element: dashboardElement },
       { path: "dashboard/:role/salon/:slug", element: dashboardElement },
       {

@@ -1,4 +1,4 @@
-import { supabase } from "../Shared/lib/supabaseClient";
+import { supabase } from "./supabase";
 
 /**
  * Avatar Service - Handles avatar image uploads and retrieval

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../../services/supabase";
 import { toTime24 } from "../utils/appointmentUtils";
 import { notify } from "../lib/toast.jsx";
 
@@ -29,8 +29,7 @@ const normalizeComparableText = (value) =>
     .trim()
     .toLowerCase();
 
-const normalizePhoneText = (value) =>
-  String(value ?? "").replace(/\D/g, "");
+const normalizePhoneText = (value) => String(value ?? "").replace(/\D/g, "");
 
 const findClientProfileMatch = (
   rows,
@@ -206,9 +205,8 @@ const resolveClientSalonProfile = async ({
         .toLowerCase()
         .includes("auth_id"))
   ) {
-    ({ data: createdClient, error: createError } = await createSalonClient(
-      false,
-    ));
+    ({ data: createdClient, error: createError } =
+      await createSalonClient(false));
   }
 
   if (createError) throw createError;
@@ -303,7 +301,10 @@ export function useBookingSubmit(mode = "client") {
             clientEmail: finalClientEmail,
           });
         } catch (linkError) {
-          console.warn("Could not create salon-specific client profile:", linkError);
+          console.warn(
+            "Could not create salon-specific client profile:",
+            linkError,
+          );
         }
       }
     }
@@ -397,7 +398,7 @@ export function useBookingSubmit(mode = "client") {
 
       // ✅ combined services
       service_name: serviceNames,
-      service_id: null, // optional (since multiple)
+      service_id: services[0]?.id ?? null,
 
       staff_id: staffId,
       staff_name: staffName,

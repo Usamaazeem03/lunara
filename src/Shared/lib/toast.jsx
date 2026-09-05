@@ -23,6 +23,9 @@ export const notify = {
   error(message, options) {
     return toast.error(normalizeMessage(message), options);
   },
+  warning(message, options) {
+    return toast(normalizeMessage(message), { ...options, icon: "warning" });
+  },
   info(message, options) {
     return toast(normalizeMessage(message), options);
   },
