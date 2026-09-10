@@ -13,7 +13,7 @@ import { generateSlugFromName } from "../../utils/slugGenerator";
 import { supabase } from "../../services/supabase";
 import { notify } from "../../Shared/lib/toast.jsx";
 import { initializeCurrencyCode } from "../settings/initialCurrencyCodeUplode.js";
-import { useCountryDetection } from "../../hook/useCountryDetection.js";
+import { useCountryDetection } from "../../globalHooks/useCountryDetection.js";
 import { getCurrencyFromCountry } from "../../utils/currency.js";
 
 const INPUT_BASE =

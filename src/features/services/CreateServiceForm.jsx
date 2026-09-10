@@ -45,7 +45,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
     isActive: true,
   };
 
-  async function onSubmit(data, event) {
+  async function onSubmitService(data, event) {
     event.preventDefault();
     const servicePayload = {
       name: data.name,
@@ -128,7 +128,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
       </div>
 
       <div className="overflow-y-auto p-4 sm:p-5">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmitService)} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             {/* Service Name */}
             <label className="text-ink-muted text-xs tracking-widest uppercase">

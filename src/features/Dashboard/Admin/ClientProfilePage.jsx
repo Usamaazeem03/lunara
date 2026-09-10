@@ -9,11 +9,12 @@ import AppHeader from "../../../AppLayout/AppHeader";
 import AppointmentDetailsModal from "./AppointmentDetailsModal";
 import StatCards from "../Client/StatCards";
 import { supabase } from "../../../services/supabase";
+
 import {
   formatNumber,
   getInitials,
   parseTimeToMinutes,
-} from "../../../Shared/utils/appointmentUtils";
+} from "../../../utils/appointmentUtils";
 
 const normalizeComparableText = (value) =>
   String(value ?? "")

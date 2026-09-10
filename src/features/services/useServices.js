@@ -6,6 +6,8 @@ import {
 } from "../../Shared/lib/serviceCategories.js";
 import { formatCurrency } from "../../utils/currency.js";
 
+const EMPTY_SERVICES = [];
+
 const mapService = (service, currencyCode) => {
   const priceValue = Number(service.price);
   const durationValue = Number(service.duration_minutes);
@@ -40,7 +42,9 @@ export function useServices(ownerId, currencyCode) {
   return {
     isLoading,
     isFetching,
-    services: (data ?? []).map((service) => mapService(service, currencyCode)),
+    services: (data ?? EMPTY_SERVICES).map((service) =>
+      mapService(service, currencyCode),
+    ),
     error,
     isError,
   };

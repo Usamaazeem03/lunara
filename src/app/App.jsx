@@ -4,6 +4,7 @@ import {
   Navigate,
   RouterProvider,
   createBrowserRouter,
+  useRouteError,
 } from "react-router-dom";
 
 import ProtectedRoute from "../components/ProtectedRoute";
@@ -36,8 +37,38 @@ const dashboardElement = (
   </Suspense>
 );
 
+function RouteErrorBoundary() {
+  const error = useRouteError();
+  const message =
+    error instanceof Error
+      ? error.message
+      : "Something went wrong while loading this page.";
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#f7f5f0] px-6 py-12">
+      <section className="border-ink/20 w-full max-w-lg border-2 bg-white p-8 text-center shadow-sm">
+        <p className="text-ink-muted text-xs tracking-[0.2em] uppercase">
+          Page unavailable
+        </p>
+        <h1 className="text-ink mt-3 text-2xl font-semibold">
+          We couldn&apos;t load this page
+        </h1>
+        <p className="text-ink-muted mt-3 text-sm leading-6">{message}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="bg-ink text-cream border-ink hover:text-ink mt-6 border-2 px-5 py-3 text-xs tracking-widest uppercase transition hover:bg-transparent"
+        >
+          Try again
+        </button>
+      </section>
+    </main>
+  );
+}
+
 const router = createBrowserRouter([
   {
+    errorElement: <RouteErrorBoundary />,
     element: <PublicLayout />,
     children: [
       { index: true, element: <LandingPage /> },
@@ -46,6 +77,7 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     element: <AuthLayout />,
     children: [
       { path: "auth/:role", element: <AuthModal /> },
@@ -53,6 +85,7 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     element: (
       <ProtectedRoute>
         <AppLayoutByRole />
@@ -80,6 +113,7 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "auth/callback", element: <AuthCallback /> },
       {
@@ -89,6 +123,7 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     path: "*",
     element: <Navigate to="/" replace />,
   },

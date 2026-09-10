@@ -15,8 +15,8 @@ import {
   getCategoryLabel,
   getServiceIcon,
 } from "../../../Shared/lib/serviceCategories";
-import { formatNumber } from "../../../Shared/utils/appointmentUtils";
-import { useBookingSubmit } from "../../../Shared/hook/useBookingSubmit";
+import { formatNumber } from "../../../utils/appointmentUtils.js";
+import { useBookingSubmit } from "../../../globalHooks/useBookingSubmit.js";
 import { notify } from "../../../Shared/lib/toast.jsx";
 import { formatCurrency } from "../../../utils/currency.js";
 import { useCurrencyCode } from "../../settings/useCurrencyCode.js";

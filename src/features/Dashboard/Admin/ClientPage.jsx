@@ -10,7 +10,8 @@ import AppHeader from "../../../AppLayout/AppHeader";
 import StatCards from "../Client/StatCards";
 import Button from "../../../Shared/Button";
 import { supabase } from "../../../services/supabase";
-import { getInitials } from "../../../Shared/utils/appointmentUtils";
+import { getInitials } from "../../../utils/appointmentUtils";
+// import { getInitials } from "../../../Shared/utils/appointmentUtils";
 
 const normalizeComparableText = (value) =>
   String(value ?? "")

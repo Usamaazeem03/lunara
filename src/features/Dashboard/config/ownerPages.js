@@ -1,5 +1,5 @@
 import AdminDashboard from "../Admin/AdminDashboard";
-import AppointmentPage from "../Admin/AppointmentPage";
+import AppointmentPage from "../../Appointments/AppointmentPage";
 import ClientPage from "../Admin/ClientPage";
 import ServicesPage from "../../services/ServicesPage";
 import StaffPage from "../../staff/StaffPage";

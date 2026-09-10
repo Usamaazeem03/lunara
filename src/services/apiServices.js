@@ -36,21 +36,6 @@ export async function getServices(ownerId) {
   return data;
 }
 
-// Get appointments for service statistics
-export async function getAppointmentsByOwner(ownerId) {
-  const { data, error } = await supabase
-    .from("appointments")
-    .select("service_id, status")
-    .eq("owner_id", ownerId)
-    .neq("status", "Cancelled");
-
-  if (error) {
-    throw new Error(error.message || "Appointments could not be loaded!");
-  }
-
-  return data ?? [];
-}
-
 // Create new service
 export async function createService(payload) {
   const { data, error } = await supabase

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import clockIcon from "../../../Shared/assets/icons/clock.svg";
-import AppHeader from "../../../AppLayout/AppLayout";
-import Button from "../../../Shared/Button";
+import AppHeader from "../../../AppLayout/AppHeader.jsx";
+import Button from "../../../Shared/Button.jsx";
 import { supabase } from "../../../services/supabase";
 import { notify } from "../../../Shared/lib/toast.jsx";
 
@@ -200,7 +200,7 @@ const WorkingSchedulePage = () => {
       </AppHeader>
 
       {error && (
-        <div className="mb-4 border-2 border-[#b0412e]/40 bg-[#b0412e]/10 p-3 text-sm text-[#b0412e]">
+        <div className="border-danger/40 bg-danger/10 text-danger mb-4 border-2 p-3 text-sm">
           {error}
         </div>
       )}
@@ -219,7 +219,7 @@ const WorkingSchedulePage = () => {
               key={day.day_of_week}
               className="border-ink/10 flex flex-wrap items-center justify-between gap-3 border-b pb-4 last:border-0"
             >
-              <label className="flex min-w-[140px] items-center gap-3">
+              <label className="flex min-w-35 items-center gap-3">
                 <input
                   type="checkbox"
                   checked={day.is_open}
@@ -331,7 +331,7 @@ const WorkingSchedulePage = () => {
                 </span>
               ))}
             {generateAvailableDates().length === 0 && (
-              <span className="text-sm text-[#b0412e]">No available dates</span>
+              <span className="text-danger text-sm">No available dates</span>
             )}
           </div>
         </div>
