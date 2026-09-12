@@ -5,10 +5,19 @@ export const ServiceCard = ({ service, onEdit, onDelete, isDeleting }) => {
   const iconName = service.iconName || getServiceIcon(service.category);
   return (
     <article className="border-ink/20 relative flex h-full flex-col border-2 bg-white/90 p-4 sm:p-5">
-      {/* <div className="bg-ink/5 absolute -top-8 -right-8 h-20 w-20 rounded-full"></div> */}
       <div className="flex items-start justify-between gap-3">
         <div className="border-ink/20 bg-cream flex h-12 w-12 items-center justify-center rounded-2xl border-2">
-          <Icon name={iconName} size={24} className="text-ink/70" />
+          <div className="border-ink/20 bg-cream flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-2">
+            {service.image ? (
+              <img
+                src={service.image}
+                alt={service.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Icon name={iconName} size={24} className="text-ink/70" />
+            )}
+          </div>
         </div>
         <div className="flex flex-col items-end gap-2">
           <span className="border-ink/20 bg-cream text-ink-muted rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase">

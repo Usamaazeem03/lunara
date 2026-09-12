@@ -17,7 +17,11 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
   const { currencyCode } = useCurrencyCode();
   const { id: editId, ...editValues } = formState ?? {};
   const isEditSession = Boolean(editId);
+
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [imageHovered, setImageHovered] = useState(false);
+  const [fileInputKey, setFileInputKey] = useState(0); // forces file input to remount/clear on reset
+
   const {
     register,
     handleSubmit,
@@ -36,6 +40,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
       isActive: true,
     },
   });
+
   const emptyFormValues = {
     name: "",
     category: "",
@@ -53,6 +58,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
       description: data.description,
       price: data.price,
       duration_minutes: data.duration,
+      image: data.image?.[0] ?? null,
       is_active: data.isActive,
       owner_id: ownerId,
     };
@@ -63,6 +69,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
         {
           onSuccess: () => {
             reset(emptyFormValues);
+            setFileInputKey((k) => k + 1);
             onCloseForm();
           },
         },
@@ -73,10 +80,12 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
     createService(servicePayload, {
       onSuccess: () => {
         reset(emptyFormValues);
+        setFileInputKey((k) => k + 1);
         onCloseForm();
       },
     });
   }
+
   useEffect(() => {
     reset({
       name: editValues.name ?? "",
@@ -97,6 +106,9 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
   ]);
 
   const selectedCategory = watch("category");
+  const selectedImage = watch("image");
+  const imageFileName = selectedImage?.[0]?.name;
+  const hasImage = Boolean(imageFileName);
 
   return (
     <div
@@ -131,25 +143,63 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
         <form onSubmit={handleSubmit(onSubmitService)} className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2">
             {/* Service Name */}
-            <label className="text-ink-muted text-xs tracking-widest uppercase">
-              Service Name
-              <input
-                id="name"
-                type="text"
-                placeholder="e.g. Classic Haircut"
-                className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
-                {...register("name", {
-                  required: "Service name is required",
-                  validate: (value) =>
-                    value.trim() !== "" || "Service name is required",
-                })}
-              />
-              {errors.name && (
-                <p className="text-danger mt-1 text-xs">
-                  {errors.name.message}
-                </p>
-              )}
-            </label>
+            <div className="flex flex-col gap-4">
+              <label className="text-ink-muted text-xs tracking-widest uppercase">
+                Service Name
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="e.g. Classic Haircut"
+                  className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
+                  {...register("name", {
+                    required: "Service name is required",
+                    validate: (value) =>
+                      value.trim() !== "" || "Service name is required",
+                  })}
+                />
+                {errors.name && (
+                  <p className="text-danger mt-1 text-xs">
+                    {errors.name.message}
+                  </p>
+                )}
+              </label>
+              {/* Image */}
+              <div className="text-ink-muted text-xs tracking-widest uppercase sm:col-span-2">
+                <span>Image</span>
+                <div className="mt-2">
+                  <input
+                    key={fileInputKey}
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    {...register("image")}
+                  />
+                  <label
+                    htmlFor="image"
+                    onMouseEnter={() => setImageHovered(true)}
+                    onMouseLeave={() => setImageHovered(false)}
+                    aria-pressed={hasImage}
+                    className={`text-1rem flex w-full cursor-pointer items-center justify-center gap-2 border-2 px-3 py-2 tracking-widest uppercase transition-all duration-200 ease-out ${
+                      hasImage || imageHovered
+                        ? "border-ink bg-cream text-ink shadow-sm"
+                        : "border-ink/20 text-ink-muted"
+                    }`}
+                  >
+                    <Icon
+                      name="add-image"
+                      size={16}
+                      className={`shrink-0 transition-colors duration-200 ease-out ${
+                        hasImage || imageHovered ? "text-ink" : "text-ink/70"
+                      }`}
+                    />
+                    <span className="truncate">
+                      {hasImage ? imageFileName : "Upload Image"}
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
 
             {/* Category */}
             <label className="text-ink-muted text-xs tracking-widest uppercase">
