@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "orders": "Orders",
+    "promotions": "Promotions",
+    "stores": "Stores",
+    "inventory": "Inventory",
+    "supplierContracts": "Supplier contracts",
+    "analytics": "Analytics",
+    "revenues": "Revenues",
+    "expenses": "Expenses",
+    "netProfits": "Net profits"
+  }
+}

@@ -5,7 +5,14 @@ import { useAuth } from "../hooks/useAuth";
 function ProtectedRoute({ children }) {
   const location = useLocation();
   const { role: routeRole } = useParams();
-  const { isAuthenticated, role, profile, loading } = useAuth();
+  const {
+    isAuthenticated,
+    role,
+    profile,
+    loading,
+    profileError,
+    refetchProfile,
+  } = useAuth();
 
   if (loading) {
     return (
@@ -25,6 +32,24 @@ function ProtectedRoute({ children }) {
   }
 
   const isRouteRoleScoped = routeRole === "owner" || routeRole === "client";
+  if (!profile && profileError) {
+    return (
+      <div className="bg-cream flex min-h-screen items-center justify-center p-6">
+        <section className="text-center">
+          <p role="alert">
+            Your account could not be loaded. Please try again.
+          </p>
+          <button
+            type="button"
+            onClick={() => refetchProfile()}
+            className="bg-ink text-cream mt-4 px-5 py-3"
+          >
+            Try again
+          </button>
+        </section>
+      </div>
+    );
+  }
   const currentRole = role === "owner" || role === "client" ? role : "client";
 
   if (isRouteRoleScoped && routeRole !== currentRole) {

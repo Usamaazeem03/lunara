@@ -8,8 +8,7 @@ export function useCurrencyCode(ownerId) {
 
   const { isLoading, data, error } = useQuery({
     queryKey: ["currencyCode", resolvedOwnerId ?? "authenticated-user"],
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: 0,
     queryFn: async () => {
       if (!resolvedOwnerId) {
         throw new Error("Authenticated owner could not be found");

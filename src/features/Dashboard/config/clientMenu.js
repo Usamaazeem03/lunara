@@ -5,16 +5,17 @@ export const CLIENT_MENU_ITEMS = [
     text: "Book Appointment",
     segment: "book-appointment",
   },
-  { iconName: "clock", text: "My Appointment", segment: "my-appointment" },
+  { iconName: "clock", text: "My visits", segment: "my-appointment" },
   {
     iconName: "credit-card",
-    text: "Payment History",
+    text: "Booking costs",
     segment: "payment-history",
   },
   {
     iconName: "gift-box-benefits",
-    text: "Offers & Loyalty",
+    text: "Offers & rewards",
     segment: "offers-loyalty",
   },
-  { iconName: "bell", text: "Notifications", segment: "notifications" },
+  { iconName: "bell", text: "Visit updates", segment: "notifications" },
+  { iconName: "settings", text: "Settings", segment: "settings" },
 ];

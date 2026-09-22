@@ -2,7 +2,7 @@ const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
 
 function AuthRoleToggle({ value, options, onChange }) {
   return (
-    <div className="border-ink/10 mt-4 flex rounded-full border bg-white/70 p-1 md:border-black/10 md:bg-black/5">
+    <div className="auth-role-toggle border-ink/10 mt-4 flex rounded-full border bg-white/70 p-1 md:border-black/10 md:bg-black/5">
       {options.map((role) => {
         const isActive = value === role;
         return (

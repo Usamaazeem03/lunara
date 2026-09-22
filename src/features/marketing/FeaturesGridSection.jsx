@@ -1,93 +1,28 @@
-import Icon from "../../Shared/ui/Icon";
+﻿import Icon from "../../Shared/ui/Icon";
 
-const defaultFeatures = [
-  {
-    title: "Smart Scheduling",
-    description:
-      "Prevent double bookings, balance staff time, and keep calendars clean.",
-    icon: <Icon name="calendar" />,
-  },
-  {
-    title: "Automated Reminders",
-    description: "Text and email nudges that reduce last-minute cancellations.",
-    icon: <Icon name="bell" />,
-  },
-  {
-    title: "Payments and Deposits",
-    description: "Collect deposits or full payment before the visit.",
-    icon: <Icon name="credit-card" />,
-  },
-  {
-    title: "Team Availability",
-    description: "Control shifts, breaks, and services per specialist.",
-    icon: <Icon name="clock" />,
-  },
-  {
-    title: "Client Profiles",
-    description: "Track preferences, visit history, and notes in one view.",
-    icon: <Icon name="home" />,
-  },
-  {
-    title: "Packages and Gifts",
-    description: "Offer bundles, memberships, and gift cards with ease.",
-    icon: <Icon name="gift-box-benefits" />,
-  },
+const features = [
+  { number: "01", icon: "calendar-week", title: "A schedule that makes sense.", description: "Review appointment requests, confirm visits, and keep track of completed and cancelled bookings.", detail: "Appointments, all together", tone: "sage" },
+  { number: "02", icon: "razor-barber", title: "Your team. In sync.", description: "Manage your staff and services, set prices and durations, and keep salon opening hours up to date.", detail: "Staff · Services · Working hours", tone: "cream" },
+  { number: "03", icon: "users", title: "Remember the little things.", description: "Keep client profiles and appointment history together, so the next visit starts with a familiar face.", detail: "A home for every client", tone: "peach" },
+  { number: "04", icon: "sparkles", title: "A reason to come back.", description: "Give clients rewards they can view in their account and apply to an eligible booking.", detail: "Client rewards", tone: "cream" },
+  { number: "05", icon: "tachometer-average", title: "See the bigger picture.", description: "Review revenue records, popular services, and staff performance. Export reports when you need them.", detail: "Reports & payment records", tone: "cream" },
+  { number: "06", icon: "date-time", title: "Their next visit, sorted.", description: "Clients choose a salon, service, specialist, and time. Appointment updates and a booking pass stay close at hand.", detail: "A dedicated client space", tone: "sage" },
 ];
 
-function FeatureCard({ title, description, icon }) {
+export default function FeaturesGridSection() {
   return (
-    <div className="group border border-black/10 bg-white/70 p-6 transition hover:-translate-y-1 hover:shadow-lg">
-      <div className="flex items-center gap-4">
-        {icon && (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white">
-            {typeof icon === "string" ? (
-              <img src={icon} alt="" className="h-6 w-6" aria-hidden="true" />
-            ) : (
-              icon
-            )}
-          </div>
-        )}
-        {title && <h3 className="text-xl font-semibold tracking-wide">{title}</h3>}
+    <section id="features" className="marketing-section marketing-container">
+      <div className="marketing-section-heading">
+        <div><p className="marketing-eyebrow">Built around your everyday</p><h2>Good days start<br />with a little <em>order.</em></h2></div>
+        <p>Useful tools for the work behind the beauty. All connected, without the clutter.</p>
       </div>
-      {description && <p className="mt-4 text-sm text-black/70">{description}</p>}
-    </div>
-  );
-}
-
-function FeaturesGridSection({ features = defaultFeatures }) {
-  return (
-    <section
-      id="features"
-      className="bg-[#f3efe9] px-6 py-16 md:px-12 lg:px-20"
-    >
-      <div className="text-center">
-        <h2 className="text-3xl font-semibold tracking-widest sm:text-4xl">
-          FEATURES BUILT FOR BOOKING
-        </h2>
-        <p className="mt-4 text-lg text-black/70">
-          Everything you need to run schedules, protect revenue, and grow your
-          client base.
-        </p>
-      </div>
-
-      <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => {
-          const title = feature.title || feature.label || "";
-          const description = feature.description || feature.subtitle || "";
-          const key = feature.id || title || index;
-
-          return (
-            <FeatureCard
-              key={key}
-              title={title}
-              description={description}
-              icon={feature.icon}
-            />
-          );
-        })}
+      <div className="marketing-features">
+        {features.map(feature => <article key={feature.number} className={`marketing-feature marketing-tone-${feature.tone}`}>
+          <div className="marketing-feature-top"><Icon name={feature.icon} size={25} aria-hidden="true" /><span>{feature.number}</span></div>
+          <h3>{feature.title}</h3><p>{feature.description}</p>
+          <div className="marketing-feature-detail">{feature.detail}<span aria-hidden="true">↗</span></div>
+        </article>)}
       </div>
     </section>
   );
 }
-
-export default FeaturesGridSection;

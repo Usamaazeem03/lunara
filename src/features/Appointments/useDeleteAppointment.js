@@ -16,7 +16,12 @@ export function useDeleteAppointment(ownerId) {
       return data;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["client-booking-passes"] });
       if (ownerId) {
+        queryClient.invalidateQueries({ queryKey: ["payments", ownerId] });
+        queryClient.invalidateQueries({ queryKey: ["clients", ownerId] });
+        queryClient.invalidateQueries({ queryKey: ["booking-staff", ownerId] });
+        queryClient.invalidateQueries({ queryKey: ["staff", ownerId] });
         queryClient.invalidateQueries({
           queryKey: appointmentsQueryKey(ownerId, true),
         });

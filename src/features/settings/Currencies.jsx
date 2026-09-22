@@ -3,7 +3,6 @@ import countryToCurrency from "country-to-currency";
 
 import SearchableSelectBox from "../../Shared/ui/SearchableSelectBox";
 import { SectionTitle } from "./SettingsPage";
-import { ToggleRow } from "./SettingsPage";
 import { useCurrencyCode } from "./useCurrencyCode.js";
 import { useUpdateCurrency } from "./useUpdateCurrency.js";
 
@@ -55,7 +54,7 @@ const formattedCurrencyOptions = [...currencyOptions.values()]
   }));
 
 function Currencies({ creditCardIcon, ownerId }) {
-  const { currencyCode } = useCurrencyCode();
+  const { currencyCode } = useCurrencyCode(ownerId);
 
   // Currency & Payments State
   const [currency, setCurrency] = useState(currencyCode);
@@ -64,7 +63,6 @@ function Currencies({ creditCardIcon, ownerId }) {
       ?.label || "",
   );
   const [taxRate, setTaxRate] = useState("8.5");
-  const [enablePayments, setEnablePayments] = useState(true);
   // update currency
   const { mutate } = useUpdateCurrency(ownerId);
 
@@ -104,11 +102,10 @@ function Currencies({ creditCardIcon, ownerId }) {
           />
         </div>
 
-        <ToggleRow
-          label="Enable online payments"
-          checked={enablePayments}
-          onChange={() => setEnablePayments((prev) => !prev)}
-        />
+        <div className="border-ink/15 rounded-xl border p-4">
+          <p className="font-semibold">Online payments - Coming soon</p>
+          <p className="mt-2 text-sm text-ink-muted">Clients pay in full at the salon using a method you accept. Online payments and deposits are not available yet.</p>
+        </div>
       </div>
     </div>
   );

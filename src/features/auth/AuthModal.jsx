@@ -33,7 +33,7 @@ function AuthModal() {
         ? "signup"
         : modeParam === "reset-password"
           ? "reset-password"
-        : DEFAULT_MODE;
+          : DEFAULT_MODE;
   const mode =
     pathMode === "reset-password"
       ? "reset-password"
@@ -58,8 +58,10 @@ function AuthModal() {
   const handleClose = () => navigate("/");
 
   useEffect(() => {
-    const shouldCanonicalizeRole = roleParam && !VALID_ROLES.includes(roleParam);
-    const shouldCanonicalizeMode = modeParam && !VALID_MODES.includes(modeParam);
+    const shouldCanonicalizeRole =
+      roleParam && !VALID_ROLES.includes(roleParam);
+    const shouldCanonicalizeMode =
+      modeParam && !VALID_MODES.includes(modeParam);
 
     if (
       !modeParam ||

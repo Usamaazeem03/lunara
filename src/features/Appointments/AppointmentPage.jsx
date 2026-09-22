@@ -1,4 +1,11 @@
-import { startTransition, useCallback, useEffect, useMemo } from "react";
+import VerifyBookingDialog from "./bookingPass/VerifyBookingDialog.jsx";
+import {
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import Button from "../../Shared/Button.jsx";
 import AppHeader from "../../AppLayout/AppHeader.jsx";
@@ -296,6 +303,7 @@ const mapAppointmentRow = (
     timeLabel: formatTimeLabel(rawTime),
     timeSortValue: parseTimeToMinutes(rawTime) ?? 0,
     client: clientName,
+    client_id: row.client_id ?? null,
     initials: getInitials(clientName),
     service: serviceName,
     staff: staffName,
@@ -323,6 +331,7 @@ const sortAppointments = (appointments) =>
   });
 
 const AppointmentPage = () => {
+  const [showVerification, setShowVerification] = useState(false);
   const { ownerId } = useOwnerId();
   const { currencyCode } = useCurrencyCode(ownerId);
   const displayCurrencyCode = currencyCode ?? "USD";
@@ -839,6 +848,7 @@ const AppointmentPage = () => {
       clientEmail: formData.clientEmail.trim() || null,
       status: formState.status,
       notes: formData.notes.trim() || null,
+      rewardCode: formData.rewardCode || "",
       isAppointmentTableReady,
 
       // ─ Callbacks: owner side ke UI update ───────────────────────────────
@@ -882,6 +892,13 @@ const AppointmentPage = () => {
         description="Manage your appointment schedule and create bookings using your real services, staff, and working hours."
       >
         <Button
+          variant="secondary"
+          onClick={() => setShowVerification(true)}
+          disabled={!ownerId}
+        >
+          Verify booking / Scan QR
+        </Button>
+        <Button
           variant="primary"
           type="button"
           onClick={showForm ? handleCancelForm : handleOpenForm}
@@ -889,6 +906,26 @@ const AppointmentPage = () => {
           {showForm ? "Close" : "New Appointment"}
         </Button>
       </AppHeader>
+
+      {showVerification && (
+        <VerifyBookingDialog
+          ownerId={ownerId}
+          currencyCode={currencyCode}
+          onClose={() => setShowVerification(false)}
+          onViewDetails={(booking) => {
+            setShowVerification(false);
+            setSelectedAppointment(
+              mapAppointmentRow(
+                booking,
+                0,
+                servicesById,
+                staffById,
+                displayCurrencyCode,
+              ),
+            );
+          }}
+        />
+      )}
 
       {showForm && (
         <CreateAppointmentForm

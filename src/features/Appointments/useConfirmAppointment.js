@@ -17,6 +17,7 @@ export const useConfirmAppointment = (ownerId) => {
     },
     onSuccess: () => {
       if (ownerId) {
+        queryClient.invalidateQueries({ queryKey: ["payments", ownerId] });
         queryClient.invalidateQueries({
           queryKey: appointmentsQueryKey(ownerId, true),
         });

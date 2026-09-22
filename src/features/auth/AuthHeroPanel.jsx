@@ -1,6 +1,6 @@
 function AuthHeroPanel({ role, imageSrc, content }) {
   return (
-    <div className="hidden md:block relative min-h-[240px] md:min-h-full">
+    <div className="auth-hero relative hidden min-h-[240px] md:block md:min-h-full">
       <img
         src={imageSrc}
         alt={role === "owner" ? "Owner login" : "Client login"}
@@ -8,11 +8,11 @@ function AuthHeroPanel({ role, imageSrc, content }) {
       />
       <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/50 to-black/10" />
 
-      <div className="absolute -left-16 -top-16 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-      <div className="absolute -bottom-20 right-0 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute -top-16 -left-16 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+      <div className="absolute right-0 -bottom-20 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
 
       <div className="relative z-10 flex h-full flex-col p-10 text-white">
-        <h1 className="mb-4 text-4xl uppercase tracking-[0.4em] text-white/70">
+        <h1 className="mb-4 text-4xl tracking-[0.4em] text-white/70 uppercase">
           LUNARA
         </h1>
 
@@ -22,7 +22,7 @@ function AuthHeroPanel({ role, imageSrc, content }) {
             {content.heroBody}
           </p>
 
-          <div className="mt-6 grid gap-4 text-xs uppercase tracking-[0.2em] text-white/80 sm:grid-cols-3">
+          <div className="mt-6 grid gap-4 text-xs tracking-[0.2em] text-white/80 uppercase sm:grid-cols-3">
             {content.steps.map((step, index) => (
               <div
                 key={`${step}-${index}`}

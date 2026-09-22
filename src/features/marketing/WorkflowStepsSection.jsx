@@ -1,53 +1,11 @@
-function WorkflowStepCard({ index, title, description }) {
-  return (
-    <div className="border border-black/20 bg-white/70 p-6">
-      <div className="flex items-center gap-4">
-        <span className="flex h-10 w-10 items-center justify-center rounded-full border border-black/20 bg-black text-sm font-semibold text-white">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-        {title && <h3 className="text-xl font-semibold tracking-wide">{title}</h3>}
-      </div>
-      {description && <p className="mt-4 text-sm text-black/70">{description}</p>}
-    </div>
-  );
+﻿const steps = [
+  ["Make it yours", "Create your salon account. Add services, prices, staff, and opening hours."],
+  ["Open the door", "Share your salon page so clients can choose a service, specialist, and time."],
+  ["Find your rhythm", "Manage requests, complete visits, and keep client history ready for next time."],
+];
+export default function WorkflowStepsSection() {
+  return <section id="workflow" className="marketing-section marketing-container">
+    <div className="marketing-section-heading"><div><p className="marketing-eyebrow">From setup to your next appointment</p><h2>A simpler way<br />to <em>get going.</em></h2></div><p>Start with your salon essentials. Bring the rest of your day into focus.</p></div>
+    <ol className="marketing-workflow">{steps.map(([title, text], index) => <li key={title}><span className="marketing-step-number">0{index + 1}</span><h3>{title}</h3><p>{text}</p></li>)}</ol>
+  </section>;
 }
-
-function WorkflowStepsSection({ steps }) {
-  const data = steps ?? [];
-
-  return (
-    <section
-      id="workflow"
-      className="relative overflow-hidden bg-[#ede2d3] px-6 py-16 md:px-12 lg:px-20"
-    >
-      <div className="absolute -right-10 top-10 h-40 w-40 rounded-full bg-black/10 blur-3xl" />
-      <div className="relative z-10">
-        <p className="text-xs uppercase tracking-[0.4em] text-black/50">
-          How it works
-        </p>
-        <h2 className="mt-4 text-3xl font-semibold tracking-widest sm:text-4xl">
-          A smooth flow for teams and clients.
-        </h2>
-
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {data.map((step, index) => {
-            const title = step.title || step.label || "";
-            const description = step.text || step.description || step.subtitle || "";
-            const key = step.id || title || index;
-
-            return (
-              <WorkflowStepCard
-                key={key}
-                index={index}
-                title={title}
-                description={description}
-              />
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export default WorkflowStepsSection;

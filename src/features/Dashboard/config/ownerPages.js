@@ -1,19 +1,19 @@
 import AdminDashboard from "../Admin/AdminDashboard";
 import AppointmentPage from "../../Appointments/AppointmentPage";
-import ClientPage from "../Admin/ClientPage";
+import ClientsPage from "../../clients/ClientsPage";
 import ServicesPage from "../../services/ServicesPage";
 import StaffPage from "../../staff/StaffPage";
-import PaymentPage from "../Admin/PaymentPage";
-import ReportsPage from "../Admin/ReportsPage";
+import PaymentsPage from "../../payments/PaymentsPage";
+import ReportsPage from "../../reports/ReportsPage";
 import SettingsPage from "../../settings/SettingsPage";
-import WorkingSchedule from "../Admin/WorkingSchedulePage";
+import WorkingSchedule from "../../schedule/WorkingSchedulePage";
 export const OWNER_PAGES = {
   dashboard: AdminDashboard,
   appointments: AppointmentPage,
-  clients: ClientPage,
+  clients: ClientsPage,
   services: ServicesPage,
   staff: StaffPage,
-  payment: PaymentPage,
+  payment: PaymentsPage,
   reports: ReportsPage,
   schedule: WorkingSchedule,
   settings: SettingsPage,

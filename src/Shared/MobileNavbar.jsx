@@ -1,3 +1,4 @@
+import UserAvatar from "./ui/UserAvatar";
 /**
  * MobileNavbar Component
  *
@@ -24,23 +25,19 @@ function MobileNavbar({
   onProfileClick = null,
 }) {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b border-ink/10 bg-white/30 backdrop-blur-md px-4 py-3 shadow-sm lg:hidden">
+    <header className="border-ink/10 sticky top-0 z-30 flex items-center justify-between border-b bg-white/30 px-4 py-3 shadow-sm backdrop-blur-md lg:hidden">
       {/* Profile Avatar Button */}
       <button
         type="button"
         onClick={onProfileClick}
         aria-label="Open profile"
-        className="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden shadow-sm transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ink/50"
+        className="focus:ring-ink/50 flex h-10 w-10 items-center justify-center overflow-hidden rounded-full shadow-sm transition-transform duration-200 hover:scale-105 focus:ring-2 focus:outline-none"
       >
-        <img
-          src={profileImg}
-          alt={profileAlt}
-          className="h-full w-full object-cover rounded-full"
-        />
+        <UserAvatar src={profileImg} alt={profileAlt} />
       </button>
 
       {/* Brand Name */}
-      <h1 className="text-lg sm:text-xl font-bold tracking-widest text-ink">
+      <h1 className="text-ink text-lg font-bold tracking-widest sm:text-xl">
         {brand}
       </h1>
 
@@ -50,10 +47,10 @@ function MobileNavbar({
         onClick={onHamburgerClick}
         aria-label="Toggle menu"
         aria-expanded={isDrawerOpen}
-        className="flex h-10 w-10 items-center justify-center rounded-lg shadow-sm transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ink/50"
+        className="focus:ring-ink/50 flex h-10 w-10 items-center justify-center rounded-lg shadow-sm transition-transform duration-200 hover:scale-105 focus:ring-2 focus:outline-none"
       >
         <svg
-          className={`h-6 w-6 text-ink transition-transform duration-300 ${
+          className={`text-ink h-6 w-6 transition-transform duration-300 ${
             isDrawerOpen ? "rotate-90 opacity-70" : "rotate-0 opacity-100"
           }`}
           fill="none"

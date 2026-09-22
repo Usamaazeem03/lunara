@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "menu": "Menü",
+    "dashboard": "Kontrol Paneli",
+    "orders": "Siparişler",
+    "promotions": "Kampanyalar",
+    "stores": "Mağazalar",
+    "inventory": "Stok",
+    "supplierContracts": "Tedarikçi sözleşmeleri",
+    "analytics": "Analizler",
+    "revenues": "Gelirler",
+    "expenses": "Giderler",
+    "netProfits": "Net kâr"
+  }
+}

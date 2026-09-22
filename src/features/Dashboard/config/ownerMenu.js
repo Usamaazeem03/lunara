@@ -7,5 +7,5 @@ export const OWNER_MENU_ITEMS = [
   { iconName: "credit-card", text: "Payment", segment: "payment" },
   { iconName: "report", text: "Reports", segment: "reports" },
   { iconName: "date-time", text: "Schedule", segment: "schedule" },
-  { iconName: "bell", text: "Settings", segment: "settings" },
+  { iconName: "settings", text: "Settings", segment: "settings" },
 ];

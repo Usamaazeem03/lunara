@@ -11,7 +11,7 @@ import { CLIENT_PAGES } from "../config/clientPages";
 import { OWNER_PAGES } from "../config/ownerPages";
 import { CLIENT_MENU_ITEMS } from "../config/clientMenu";
 import { OWNER_MENU_ITEMS } from "../config/ownerMenu";
-import ClientProfilePage from "../Admin/ClientProfilePage";
+import ClientProfilePage from "../../clients/ClientProfilePage";
 
 const DEFAULT_SEGMENT = { owner: "dashboard", client: "home" };
 const VALID_ROLES = ["owner", "client"];
@@ -120,8 +120,8 @@ export function useDashboardRouting() {
 
   // ---------- 5. UI helpers ----------
   const avatarUrl = useMemo(
-    () => profile?.avatar_img || user?.user_metadata?.picture || null,
-    [profile?.avatar_img, user?.user_metadata?.picture],
+    () => profile?.avatar_img || null,
+    [profile?.avatar_img],
   );
 
   const openProfile = useCallback(() => {

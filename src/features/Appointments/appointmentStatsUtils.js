@@ -1,10 +1,17 @@
-const getTodayIsoDate = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
+const getLocalIsoDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
+
+export const isCompletedAppointment = (appointment) =>
+  appointment.status?.trim().toLowerCase() === "completed";
+
+const sumCompletedRevenue = (appointments) =>
+  appointments
+    .filter(isCompletedAppointment)
+    .reduce((sum, appointment) => sum + getAppointmentAmount(appointment), 0);
 
 const toStartOfDay = (isoDate) => {
   if (!isoDate || typeof isoDate !== "string") return null;
@@ -38,7 +45,10 @@ const getAppointmentAmount = (appointment) => {
   return Number.isFinite(numericAmount) ? numericAmount : 0;
 };
 
-export const getMonthlyRevenue = (appointments = [], year = new Date().getFullYear()) => {
+export const getMonthlyRevenue = (
+  appointments = [],
+  year = new Date().getFullYear(),
+) => {
   const revenue = Array.from({ length: 12 }, (_, month) => ({
     month: new Date(year, month, 1).toLocaleString("en-US", {
       month: "short",
@@ -47,9 +57,11 @@ export const getMonthlyRevenue = (appointments = [], year = new Date().getFullYe
   }));
 
   appointments.forEach((appointment) => {
+    if (!isCompletedAppointment(appointment)) return;
     const dateValue = getAppointmentDate(appointment);
-    const date = new Date(dateValue);
-    if (Number.isNaN(date.getTime()) || date.getFullYear() !== year) return;
+    const date = toStartOfDay(dateValue.split("T")[0]);
+    if (!date || Number.isNaN(date.getTime()) || date.getFullYear() !== year)
+      return;
 
     revenue[date.getMonth()].revenue += getAppointmentAmount(appointment);
   });
@@ -57,8 +69,8 @@ export const getMonthlyRevenue = (appointments = [], year = new Date().getFullYe
   return revenue;
 };
 
-export const getAppointmentStats = (appointments = []) => {
-  const todayIso = getTodayIsoDate();
+export const getAppointmentStats = (appointments = [], now = new Date()) => {
+  const todayIso = getLocalIsoDate(now);
   const startOfToday = toStartOfDay(todayIso);
   const endOfWeek = new Date(startOfToday ?? new Date());
   endOfWeek.setDate((startOfToday ?? new Date()).getDate() + 6);
@@ -83,11 +95,31 @@ export const getAppointmentStats = (appointments = []) => {
   const todayAppointments = appointments.filter(
     (appointment) => getAppointmentDate(appointment).split("T")[0] === todayIso,
   );
-  const weekAppointments = appointments.filter((appointment) => {
+  const startOfWeek = new Date(startOfToday);
+  startOfWeek.setDate(startOfWeek.getDate() - ((startOfWeek.getDay() + 6) % 7));
+  const startOfNextWeek = new Date(startOfWeek);
+  startOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
+  const currentWeekAppointments = appointments.filter((appointment) => {
     const date = toStartOfDay(getAppointmentDate(appointment).split("T")[0]);
-    if (!date || !startOfToday) return false;
-    return date >= startOfToday && date <= endOfWeek;
+    return date && date >= startOfWeek && date < startOfNextWeek;
   });
+  const monthAppointments = appointments.filter((appointment) => {
+    const date = toStartOfDay(getAppointmentDate(appointment).split("T")[0]);
+    return (
+      date &&
+      date.getFullYear() === now.getFullYear() &&
+      date.getMonth() === now.getMonth()
+    );
+  });
+  const pendingAmount = appointments.reduce((sum, appointment) => {
+    const status = appointment.status?.trim().toLowerCase();
+    return (
+      sum +
+      (status === "pending" || status === "confirmed"
+        ? getAppointmentAmount(appointment)
+        : 0)
+    );
+  }, 0);
 
   return {
     todayCount,
@@ -95,13 +127,9 @@ export const getAppointmentStats = (appointments = []) => {
     confirmedCount,
     pendingCount,
     todayAppointments,
-    todayRevenue: todayAppointments.reduce(
-      (total, appointment) => total + getAppointmentAmount(appointment),
-      0,
-    ),
-    weekRevenue: weekAppointments.reduce(
-      (total, appointment) => total + getAppointmentAmount(appointment),
-      0,
-    ),
+    todayRevenue: sumCompletedRevenue(todayAppointments),
+    weekRevenue: sumCompletedRevenue(currentWeekAppointments),
+    monthRevenue: sumCompletedRevenue(monthAppointments),
+    pendingAmount,
   };
 };

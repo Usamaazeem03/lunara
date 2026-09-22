@@ -66,7 +66,9 @@ function AppLayout({
         {/* Mobile Drawer */}
         <MobileDrawer
           isOpen={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
+          onClose={() => setIsDrawerOpen(!isDrawerOpen)}
+          // onClose={() => setIsDrawerOpen(false)}
+
           menuItems={enhancedMenuItems}
           profileImg={profileImg}
           portalLabel={portalLabel}
@@ -79,14 +81,14 @@ function AppLayout({
         {/* Main Content Area */}
         <div className="flex w-full flex-col lg:w-auto lg:flex-1">
           {/* Mobile Navbar */}
-          <MobileNavbar
+          {/* <MobileNavbar
             brand={brand}
             profileImg={profileImg}
             profileAlt={profileAlt}
             isDrawerOpen={isDrawerOpen}
             onHamburgerClick={() => setIsDrawerOpen(!isDrawerOpen)}
             onProfileClick={onProfileClick}
-          />
+          /> */}
 
           {/* Main Content */}
           <PageContent>{children}</PageContent>

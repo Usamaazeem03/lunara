@@ -1,31 +1,18 @@
 import { useState } from "react";
 
-import homeIcon from "../../Shared/assets/icons/home.svg";
 import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
 import bellIcon from "../../Shared/assets/icons/bell.svg";
 import AppHeader from "../../AppLayout/AppHeader.jsx";
-import Button from "../../Shared/Button.jsx";
-import { notify } from "../../Shared/lib/toast.jsx";
 
 import Currencies from "./Currencies.jsx";
+import SalonInformation from "./SalonInformation.jsx";
+import AccountSecurity from "./AccountSecurity.jsx";
 
 const SettingsPage = () => {
-  // Salon Info State
-  const [salonInfo, setSalonInfo] = useState({
-    name: "Lunara Salon",
-    address: "123 Main Street, New York, NY 10001",
-    phone: "(555) 123-4567",
-    email: "info@lunarasalon.com",
-  });
-
   // Notifications State
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsReminders, setSmsReminders] = useState(true);
   const [paymentNotifications, setPaymentNotifications] = useState(true);
-
-  const handleSave = () => {
-    notify.success("Settings saved!");
-  };
 
   return (
     <section className="flex flex-col gap-4">
@@ -36,76 +23,21 @@ const SettingsPage = () => {
       />
 
       <section className="grid gap-4 lg:grid-cols-2">
-        {/* Salon Information */}
-        <div className="border-ink/20 relative flex flex-col gap-4 border-2 bg-white/90 p-4 sm:p-5">
-          <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
-          <SectionTitle icon={homeIcon} title="Salon Information" />
-
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Salon Name
-              </label>
-              <input
-                type="text"
-                value={salonInfo.name}
-                onChange={(e) =>
-                  setSalonInfo((prev) => ({ ...prev, name: e.target.value }))
-                }
-                className="border-ink/20 text-ink focus:border-ink w-full rounded-none border-2 bg-white px-3 py-2 text-sm tracking-normal normal-case focus:outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Address
-              </label>
-              <input
-                type="text"
-                value={salonInfo.address}
-                onChange={(e) =>
-                  setSalonInfo((prev) => ({ ...prev, address: e.target.value }))
-                }
-                className="border-ink/20 text-ink focus:border-ink w-full rounded-none border-2 bg-white px-3 py-2 text-sm tracking-normal normal-case focus:outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Phone
-              </label>
-              <input
-                type="tel"
-                value={salonInfo.phone}
-                onChange={(e) =>
-                  setSalonInfo((prev) => ({ ...prev, phone: e.target.value }))
-                }
-                className="border-ink/20 text-ink focus:border-ink w-full rounded-none border-2 bg-white px-3 py-2 text-sm tracking-normal normal-case focus:outline-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Email
-              </label>
-              <input
-                type="email"
-                value={salonInfo.email}
-                onChange={(e) =>
-                  setSalonInfo((prev) => ({ ...prev, email: e.target.value }))
-                }
-                className="border-ink/20 text-ink focus:border-ink w-full rounded-none border-2 bg-white px-3 py-2 text-sm tracking-normal normal-case focus:outline-none"
-              />
-            </div>
-          </div>
-        </div>
+        <SalonInformation />
 
         {/* Currency & Payments */}
         <Currencies creditCardIcon={creditCardIcon} />
       </section>
 
-      {/* Notifications */}
-      <section className="grid gap-4 lg:grid-cols-2">
+      {/* Account preferences */}
+      <section className="grid items-start gap-4 lg:grid-cols-2">
+        <AccountSecurity />
         <div className="border-ink/20 relative flex flex-col gap-4 border-2 bg-white/90 p-4 sm:p-5">
           <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <SectionTitle icon={bellIcon} title="Notifications" />
+          <p className="text-ink-muted text-sm">
+            Notification preferences are coming soon.
+          </p>
 
           <div className="space-y-4">
             <ToggleRow
@@ -129,15 +61,6 @@ const SettingsPage = () => {
           </div>
         </div>
       </section>
-
-      <div className="flex justify-end gap-3">
-        <Button variant="secondary" onClick={() => window.location.reload()}>
-          Reset
-        </Button>
-        <Button variant="primary" onClick={handleSave}>
-          Save Changes
-        </Button>
-      </div>
     </section>
   );
 };
@@ -163,6 +86,8 @@ export const ToggleRow = ({ label, description, checked, onChange }) => {
       <button
         type="button"
         onClick={onChange}
+        disabled
+        title="Coming soon"
         aria-pressed={checked}
         className={`relative h-6 w-12 rounded-full border-2 transition ${
           checked ? "border-ink bg-ink" : "border-ink/30 bg-cream"

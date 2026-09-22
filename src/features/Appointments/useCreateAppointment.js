@@ -36,9 +36,14 @@ export default function useCreateAppointment(
     },
 
     onSuccess: (_data, payload) => {
+      queryClient.invalidateQueries({ queryKey: ["client-rewards"] });
+      queryClient.invalidateQueries({ queryKey: ["client-booking-passes"] });
       const ownerId = payload.owner_id ?? defaultOwnerId;
 
       if (ownerId) {
+        queryClient.invalidateQueries({ queryKey: ["payments", ownerId] });
+        queryClient.invalidateQueries({ queryKey: ["clients", ownerId] });
+        queryClient.invalidateQueries({ queryKey: ["staff", ownerId] });
         queryClient.invalidateQueries({
           queryKey: ["appointments", ownerId],
         });

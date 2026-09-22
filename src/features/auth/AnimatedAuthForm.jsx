@@ -1,24 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import AuthForm from "./AuthForm";
 
-function AnimatedAuthForm({ role, mode, onModeChange }) {
-  const [visible, setVisible] = useState(false);
-
+export default function AnimatedAuthForm({ role, mode, onModeChange }) {
+  const container = useRef(null);
   useEffect(() => {
-    setVisible(false);
-    const id = requestAnimationFrame(() => setVisible(true));
-    return () => cancelAnimationFrame(id);
-  }, [mode]);
-
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const animation = container.current?.animate(
+      [
+        { opacity: 0, transform: "translateY(8px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      { duration: 200, easing: "ease-out" },
+    );
+    return () => animation?.cancel();
+  }, [role, mode]);
   return (
-    <div
-      className={`transition-all duration-500 ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-      }`}
-    >
-      <AuthForm role={role} mode={mode} onModeChange={onModeChange} />
+    <div ref={container}>
+      <AuthForm
+        key={`${role}-${mode}`}
+        role={role}
+        mode={mode}
+        onModeChange={onModeChange}
+      />
     </div>
   );
 }
-
-export default AnimatedAuthForm;

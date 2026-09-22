@@ -1,1 +1,12 @@
 @import "./styles/theme.css";
+
+/* Keep browser-filled credentials consistent with the app's light forms. */
+input.autofill-input {
+  color-scheme: light;
+}
+
+input.autofill-input:is(:autofill, :-webkit-autofill) {
+  -webkit-text-fill-color: var(--color-ink);
+  caret-color: var(--color-ink);
+  box-shadow: 0 0 0 1000px #fff inset !important;
+}

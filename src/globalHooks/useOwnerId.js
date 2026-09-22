@@ -9,12 +9,12 @@ export function useOwnerId(ownerIdOverride = null) {
     staleTime: Infinity,
     gcTime: Infinity,
     queryFn: async () => getOwnerId(resolvedOwnerId),
-    enabled: true,
+    enabled: !resolvedOwnerId,
   });
 
   return {
     isLoading,
-    ownerId: data ?? null,
+    ownerId: resolvedOwnerId ?? data ?? null,
     error,
   };
 }

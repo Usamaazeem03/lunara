@@ -16,6 +16,7 @@ import PublicLayout from "../layouts/PublicLayout";
 import LandingPage from "../pages/LandingPage";
 import PublicSalonPage from "../pages/PublicSalonPage";
 import ClientBookingPage from "../pages/ClientBookingPage";
+import ResetPassword from "../pages/ResetPassword";
 import AppToaster from "../Shared/ui/AppToaster";
 import Spinner from "../ui/Spinner";
 
@@ -118,7 +119,7 @@ const router = createBrowserRouter([
       { path: "auth/callback", element: <AuthCallback /> },
       {
         path: "auth/reset-password",
-        element: <Navigate to="/auth/client/reset-password" replace />,
+        element: <ResetPassword />,
       },
     ],
   },

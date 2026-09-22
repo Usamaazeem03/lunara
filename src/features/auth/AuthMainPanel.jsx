@@ -1,10 +1,9 @@
 import AnimatedAuthForm from "./AnimatedAuthForm";
-import AuthBranding from "./AuthBranding";
 import AuthHeader from "./AuthHeader";
 import AuthRoleToggle from "./AuthRoleToggle";
 
 const MAIN_PANEL_CLASSES = [
-  "flex flex-col justify-start",
+  "auth-main flex flex-col justify-start",
   "md:justify-center",
   "p-4 sm:p-6",
   "md:p-12 md:bg-[#f7f5f0]",
@@ -21,7 +20,6 @@ function AuthMainPanel({
   return (
     <div className={MAIN_PANEL_CLASSES}>
       <div className="mx-auto w-full max-w-md">
-        {/* <AuthBranding /> */}
         <AuthHeader
           eyebrow={content.eyebrow}
           headline={content.headline[mode]}

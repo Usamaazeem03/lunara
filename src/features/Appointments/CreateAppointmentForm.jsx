@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { isValidPhoneNumber } from "react-phone-number-input";
+import { validateInternationalPhone } from "../../Shared/lib/phoneValidation";
 import Button from "../../Shared/Button.jsx";
 import Icon from "../../Shared/ui/Icon.jsx";
 import SearchableSelectBox from "../../Shared/ui/SearchableSelectBox.jsx";
@@ -48,6 +48,7 @@ function CreateAppointmentForm({
       clientEmail: formState.clientEmail,
       notes: formState.notes,
       clientName: formState.clientName,
+      rewardCode: "",
     },
   });
   function onSubmitAppointment(data) {
@@ -62,8 +63,6 @@ function CreateAppointmentForm({
       appointmentTime: formState.appointmentTime,
     };
 
-    console.log("Appointment Payload:", appointmentPayload);
-    console.log("Appointment date:", data);
     handleSubmitAppointment(appointmentPayload);
   }
   return (
@@ -171,16 +170,7 @@ function CreateAppointmentForm({
                 <input
                   name="clientPhone"
                   {...register("clientPhone", {
-                    validate: (value) => {
-                      if (!value) return true;
-                      if (!value.trim().startsWith("+")) {
-                        return "Use the full international format, e.g. +44 1234 567890";
-                      }
-                      return (
-                        isValidPhoneNumber(value) ||
-                        "Enter a valid international phone number"
-                      );
-                    },
+                    validate: validateInternationalPhone,
                     required: "Client Phone Number is required",
                   })}
                   type="tel"
@@ -417,6 +407,21 @@ function CreateAppointmentForm({
                 })}
               </div>
             </div>
+
+            <label className="text-ink-muted block text-xs tracking-widest uppercase">
+              Reward code (optional)
+              <input
+                {...register("rewardCode", {
+                  validate: (value) => !value?.trim() || Boolean(formState.clientId) || "Select an existing client before using a reward.",
+                })}
+                maxLength={64}
+                autoComplete="off"
+                placeholder="Paste this client's reward code"
+                className="border-ink/20 text-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm"
+              />
+              <span className="mt-2 block text-xs tracking-normal normal-case">Select the client who received this code. The reward is checked and deducted from the service total when you save.</span>
+              {errors.rewardCode && <span role="alert" className="mt-1 block text-danger">{errors.rewardCode.message}</span>}
+            </label>
 
             <label className="text-ink-muted block text-xs tracking-widest uppercase">
               Notes

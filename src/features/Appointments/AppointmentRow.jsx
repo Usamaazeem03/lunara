@@ -1,7 +1,8 @@
+import UserAvatar from "../../Shared/ui/UserAvatar";
 import clockIcon from "../../Shared/assets/icons/clock.svg";
 import { getServiceSummary } from "./appointmentFormatters.js";
 
-export const AppointmentRow = ({ appointment, onSelect }) => {
+export const AppointmentRow = ({ appointment, onSelect, avatarUrl }) => {
   const statusStyles = {
     Confirmed: "border-ink bg-ink text-cream",
     Pending: "border-ink/30 bg-cream text-ink",
@@ -31,8 +32,11 @@ export const AppointmentRow = ({ appointment, onSelect }) => {
         Client
       </p>
       <div className="flex items-center gap-3">
-        <span className="border-ink/20 bg-cream text-ink-muted flex h-9 w-9 items-center justify-center rounded-full border text-xs font-semibold uppercase">
-          {appointment.initials}
+        <span className="border-ink/20 bg-cream text-ink-muted flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border text-xs font-semibold uppercase">
+          <UserAvatar
+            src={avatarUrl}
+            alt={`${appointment.client || "Client"} profile`}
+          />
         </span>
         <span className="font-semibold">{appointment.client}</span>
       </div>

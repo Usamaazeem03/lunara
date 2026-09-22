@@ -1,3 +1,5 @@
+import { useUserAvatars } from "../../../globalHooks/useUserAvatars";
+import UserAvatar from "../../../Shared/ui/UserAvatar";
 const statusStyles = {
   Confirmed: "border-ink bg-ink text-cream",
   Pending: "border-ink/30 bg-cream text-ink",
@@ -13,7 +15,11 @@ function AppointmentDetailsModal({
   onDelete = null,
   showActions = true,
 }) {
+  const { avatars } = useUserAvatars(
+    appointment?.avatarUrl === undefined ? [appointment?.client_id] : [],
+  );
   if (!appointment) return null;
+  const avatarUrl = appointment.avatarUrl ?? avatars[appointment.client_id];
 
   const statusBadgeClass =
     statusStyles[appointment.status] ?? "border-ink/30 text-ink-muted";
@@ -30,8 +36,11 @@ function AppointmentDetailsModal({
 
         <div className="border-ink/10 flex items-start justify-between border-b-2 px-5 py-4">
           <div className="flex items-center gap-4">
-            <span className="border-ink/20 bg-cream text-ink-muted flex h-11 w-11 shrink-0 items-center justify-center border text-sm font-semibold tracking-widest uppercase">
-              {appointment.initials}
+            <span className="border-ink/20 bg-cream text-ink-muted flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden border text-sm font-semibold tracking-widest uppercase">
+              <UserAvatar
+                src={avatarUrl}
+                alt={`${appointment.client || "Client"} profile`}
+              />
             </span>
             <div>
               <p className="text-ink text-base leading-tight font-semibold">
@@ -58,7 +67,9 @@ function AppointmentDetailsModal({
             <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
               Service
             </p>
-            <p className="text-ink text-sm font-semibold">{appointment.service}</p>
+            <p className="text-ink text-sm font-semibold">
+              {appointment.service}
+            </p>
           </div>
 
           <div className="bg-white px-5 py-4">
@@ -76,35 +87,46 @@ function AppointmentDetailsModal({
             <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
               Date
             </p>
-            <p className="text-ink text-sm font-semibold">{appointment.dateLabel}</p>
+            <p className="text-ink text-sm font-semibold">
+              {appointment.dateLabel}
+            </p>
           </div>
 
           <div className="bg-cream/60 px-5 py-4">
             <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
               Time
             </p>
-            <p className="text-ink text-sm font-semibold">{appointment.timeLabel}</p>
+            <p className="text-ink text-sm font-semibold">
+              {appointment.timeLabel}
+            </p>
           </div>
 
           <div className="bg-white px-5 py-4">
             <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
               Staff
             </p>
-            <p className="text-ink text-sm font-semibold">{appointment.staff}</p>
+            <p className="text-ink text-sm font-semibold">
+              {appointment.staff}
+            </p>
           </div>
 
           <div className="bg-white px-5 py-4">
             <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
               Duration
             </p>
-            <p className="text-ink text-sm font-semibold">{appointment.duration}</p>
+            <p className="text-ink text-sm font-semibold">
+              {appointment.duration}
+            </p>
           </div>
 
           <div className="bg-cream col-span-2 px-5 py-4">
             <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
               Price
             </p>
-            <p className="text-ink text-base font-semibold">{appointment.price}</p>
+            <p className="text-ink text-base font-semibold">
+              {appointment.price}
+            </p>
+            {appointment.rewardDiscount && <p className="mt-1 text-sm text-ink-muted">Includes a reward discount of {appointment.rewardDiscount}.</p>}
           </div>
 
           {appointment.notes && (
@@ -112,7 +134,9 @@ function AppointmentDetailsModal({
               <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
                 Notes
               </p>
-              <p className="text-ink text-sm leading-relaxed">{appointment.notes}</p>
+              <p className="text-ink text-sm leading-relaxed">
+                {appointment.notes}
+              </p>
             </div>
           )}
         </div>

@@ -1,3 +1,5 @@
+import { useUserAvatars } from "../../globalHooks/useUserAvatars";
+import UserAvatar from "../../Shared/ui/UserAvatar";
 import { useOwnerId } from "../../globalHooks/useOwnerId.js";
 import { confirmToast } from "../../Shared/lib/toast.jsx";
 import { useCompleteAppointment } from "./useCompleteAppointment.js";
@@ -23,7 +25,11 @@ const AppointmentDetails = ({
   const { completeAppointment } = useCompleteAppointment(ownerId);
   const { deleteAppointment } = useDeleteAppointment(ownerId);
 
+  const { avatars } = useUserAvatars(
+    appointment?.avatarUrl === undefined ? [appointment?.client_id] : [],
+  );
   if (!appointment) return null;
+  const avatarUrl = appointment.avatarUrl ?? avatars[appointment.client_id];
 
   const handleConfirm = (appointmentId) => {
     confirmAppointment(appointmentId, {
@@ -77,8 +83,11 @@ const AppointmentDetails = ({
 
         <div className="border-ink/10 flex items-start justify-between border-b-2 px-5 py-4">
           <div className="flex items-center gap-4">
-            <span className="border-ink/20 bg-cream text-ink-muted flex h-11 w-11 shrink-0 items-center justify-center border text-sm font-semibold tracking-widest uppercase">
-              {appointment.initials}
+            <span className="border-ink/20 bg-cream text-ink-muted flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden border text-sm font-semibold tracking-widest uppercase">
+              <UserAvatar
+                src={avatarUrl}
+                alt={`${appointment.client || "Client"} profile`}
+              />
             </span>
             <div>
               <p className="text-ink text-base leading-tight font-semibold">

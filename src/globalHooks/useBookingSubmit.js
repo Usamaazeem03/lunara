@@ -45,7 +45,6 @@ export function useBookingSubmit(mode = "client") {
       staff,
       appointmentDate,
       appointmentTime,
-      paymentOption = null,
       paymentMethod = null,
       clientId = null,
       clientName = null,
@@ -53,6 +52,7 @@ export function useBookingSubmit(mode = "client") {
       clientEmail = null,
       status = "Pending",
       notes = null,
+      rewardCode = "",
       isAppointmentTableReady = true,
       onSuccess = null,
       onLocalDraft = null,
@@ -62,12 +62,17 @@ export function useBookingSubmit(mode = "client") {
 
     setSaveError("");
     setSaveSuccess("");
+    if (isOwner && rewardCode.trim() && (!clientId || !isAppointmentTableReady)) {
+      setSaveError("Select a saved client and connect to the booking database before applying a reward.");
+      return;
+    }
 
     // ── Step 1: Client side mein user + profile fetch karo ─────────────────
     let finalClientId = isOwner ? (clientId ?? null) : null;
     let finalClientName = clientName;
     let finalClientPhone = clientPhone;
     let finalClientEmail = clientEmail;
+    let rewardProfileId = null;
 
     if (!isOwner) {
       const {
@@ -161,6 +166,7 @@ export function useBookingSubmit(mode = "client") {
       });
 
       finalClientId = resolvedClient.auth_id ?? resolvedClient.id;
+      rewardProfileId = String(resolvedClient.id);
       finalClientName = resolvedClient.full_name ?? finalClientName;
       finalClientPhone = resolvedClient.phone ?? finalClientPhone;
       finalClientEmail = resolvedClient.email ?? finalClientEmail;
@@ -200,10 +206,15 @@ export function useBookingSubmit(mode = "client") {
 
       status,
       notes,
-      payment_option: paymentOption,
+      payment_option: "Pay at Salon",
       payment_method: paymentMethod,
 
       source: isOwner ? "owner" : "client",
+      ...(rewardCode.trim() ? {
+        reward_code: rewardCode.trim().toUpperCase(),
+        reward_service_ids: services.map((service) => String(service.id)),
+        ...(isOwner ? { reward_profile_id: rewardProfileId } : {}),
+      } : {}),
     };
 
     // ── Step 6: Owner side — table ready nahi toh local draft ──────────────
@@ -240,7 +251,7 @@ export function useBookingSubmit(mode = "client") {
         try {
           data = await createAppointmentAsync(savePayload);
         } catch (retryError) {
-          if (isOwner && isMissingTableError(retryError)) {
+          if (isOwner && !rewardCode.trim() && isMissingTableError(retryError)) {
             onMissingTable?.([savePayload]);
             onDone?.();
           } else {
@@ -253,7 +264,7 @@ export function useBookingSubmit(mode = "client") {
           return;
         }
       } else {
-        if (isOwner && isMissingTableError(error)) {
+        if (isOwner && !rewardCode.trim() && isMissingTableError(error)) {
           onMissingTable?.([savePayload]);
           onDone?.();
         } else {

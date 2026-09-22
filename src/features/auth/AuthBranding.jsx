@@ -1,9 +1,7 @@
 function AuthBranding() {
   return (
-    <div className="text-center md:text-left mb-4 md:mb-0">
-      <h1 className="text-lg md:hidden tracking-[0.4em] text-ink/60">
-        LUNARA
-      </h1>
+    <div className="mb-4 text-center md:mb-0 md:text-left">
+      <h1 className="text-ink/60 text-lg tracking-[0.4em] md:hidden">LUNARA</h1>
     </div>
   );
 }
