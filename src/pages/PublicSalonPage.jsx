@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { notify } from "../Shared/lib/toast.jsx";
 import Icon from "../Shared/ui/Icon";
+import { PUBLIC_SITE_URL } from "../Shared/lib/publicUrl.js";
 import { usePublicSalon } from "../features/publicSalon/usePublicSalon.js";
 import PublicSalonHero from "../features/publicSalon/PublicSalonHero.jsx";
 import PublicSalonServices from "../features/publicSalon/PublicSalonServices.jsx";
@@ -33,7 +34,7 @@ export default function PublicSalonPage() {
     if (!loading && !error && ownerProfile && externalWebsiteUrl)
       window.location.replace(externalWebsiteUrl);
   }, [loading, error, ownerProfile, externalWebsiteUrl]);
-  const salonUrl = `${window.location.origin}/salon/${encodeURIComponent(slug)}`;
+  const salonUrl = `${PUBLIC_SITE_URL}/salon/${encodeURIComponent(slug)}`;
   const handleBooking = () => {
     localStorage.setItem("owner_id", ownerProfile.id);
     navigate(

@@ -4,6 +4,7 @@ import Icon from "./ui/Icon";
 import { useState, useMemo, useId, useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useAuth } from "../hooks/useAuth";
+import { PUBLIC_SITE_URL } from "./lib/publicUrl.js";
 import "./profileMobile.css";
 
 // ─── Shared input style ───────────────────────────────────────────────────────
@@ -69,7 +70,7 @@ const ProfileModal = ({
   const resolvedSalonUrl = useMemo(() => {
     if (salonUrl) return salonUrl; // use prop if provided
     if (!user?.id) return null;
-    return `${window.location.origin}/book/${user.id}`;
+    return `${PUBLIC_SITE_URL}/book/${user.id}`;
   }, [salonUrl, user?.id, i18n.resolvedLanguage]);
 
   const isGoogleLogin = user?.app_metadata?.provider === "google";

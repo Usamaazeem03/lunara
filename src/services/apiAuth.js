@@ -2,6 +2,7 @@ import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase.js";
 import { initializeCurrencyCode } from "../features/settings/initialCurrencyCodeUplode.js";
 import { createAuthApi } from "./createAuthApi.js";
+import { PUBLIC_SITE_URL } from "../Shared/lib/publicUrl.js";
 
 export function subscribeToAuthChanges(callback) {
   const {
@@ -36,6 +37,6 @@ export const {
 } = createAuthApi({
   supabase,
   initializeCurrencyCode,
-  getOrigin: () => window.location.origin,
-  getPublicUrl: () => import.meta.env.VITE_PUBLIC_URL || window.location.origin,
+  getOrigin: () => PUBLIC_SITE_URL,
+  getPublicUrl: () => PUBLIC_SITE_URL,
 });
