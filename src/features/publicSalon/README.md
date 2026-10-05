@@ -113,7 +113,7 @@ separate from salon data requests.
 - The existing Book Now action: saves `owner_id` and navigates to
   `/auth/client/signin?owner_id=<salon-owner-id>`.
 - `/book/:ownerId`, protected routes, and appointment relationships.
-- QR and share URLs: `${window.location.origin}/salon/${slug}`.
+- QR and share URLs: `${PUBLIC_SITE_URL}/salon/${slug}`, using the configured public site URL (default: `https://www.lunara-booking.com`).
 - External website settings; no external redirect was added.
 
 ## Verification performed

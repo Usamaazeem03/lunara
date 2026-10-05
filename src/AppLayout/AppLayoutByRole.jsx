@@ -3,6 +3,7 @@ import ClientAppLayout from "./ClientAppLayout.jsx";
 import AppLayout from "./AppLayout";
 import ProfileModal from "../Shared/ProfileModal";
 import Spinner from "../ui/Spinner";
+import { PUBLIC_SITE_URL } from "../Shared/lib/publicUrl.js";
 import { useDashboardRouting } from "../features/Dashboard/hooks/useDashboardRoute";
 
 function AppLayoutByRole() {
@@ -33,7 +34,7 @@ function AppLayoutByRole() {
 
   const salonUrl =
     role === "owner" && profile?.salon_slug
-      ? `${window.location.origin}/salon/${profile.salon_slug}`
+      ? `${PUBLIC_SITE_URL}/salon/${profile.salon_slug}`
       : null;
 
   const Layout = role === "owner" ? AppLayout : ClientAppLayout;
