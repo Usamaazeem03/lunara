@@ -1,41 +1,74 @@
+import { useTranslation } from "react-i18next";
 // Root application router using createBrowserRouter layout groups.
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import {
   Navigate,
   RouterProvider,
   createBrowserRouter,
+  useRouteError,
 } from "react-router-dom";
 
 import ProtectedRoute from "../components/ProtectedRoute";
+import AuthProvider from "./AuthProvider";
 import AuthCallback from "../features/auth/AuthCallback";
 import AuthModal from "../features/auth/AuthModal";
 import AuthLayout from "../layouts/AuthLayout";
-import DashboardLayout from "../layouts/DashboardLayout";
+import AppLayoutByRole from "../AppLayout/AppLayoutByRole";
 import PublicLayout from "../layouts/PublicLayout";
 import LandingPage from "../pages/LandingPage";
 import PublicSalonPage from "../pages/PublicSalonPage";
 import ClientBookingPage from "../pages/ClientBookingPage";
+import ResetPassword from "../pages/ResetPassword";
 import AppToaster from "../Shared/ui/AppToaster";
+import Spinner from "../ui/Spinner";
 
-const Dashboard = lazy(() => import("../Shared/layouts/Dashboard"));
+function DashboardLoading() {
+  const { t } = useTranslation();
+  return <p className="text-ink/60 mt-4 font-medium">{t("common.loadingDashboard")}</p>;
+}
 
 const dashboardElement = (
   <Suspense
     fallback={
       <div className="flex h-screen items-center justify-center bg-[#f7f5f0]">
         <div className="text-center">
-          <div className="border-ink mx-auto h-12 w-12 animate-spin rounded-full border-b-2" />
-          <p className="text-ink/60 mt-4 font-medium">Loading dashboard...</p>
+          <Spinner />
+          <DashboardLoading />
         </div>
       </div>
     }
   >
-    <Dashboard />
+    <AppLayoutByRole />
   </Suspense>
 );
 
-const router = createBrowserRouter([
+function RouteErrorBoundary() {
+  const { t } = useTranslation();
+  const error = useRouteError();
+  const message =
+    error instanceof Error
+      ? error.message
+      : t("common.somethingWentWrongWhileLoadingThisPage");
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-[#f7f5f0] px-6 py-12">
+      <section className="border-ink/20 w-full max-w-lg border-2 bg-white p-8 text-center shadow-sm">
+        <p className="text-ink-muted text-xs tracking-[0.2em] uppercase"> {t("common.pageUnavailable")} </p>
+        <h1 className="text-ink mt-3 text-2xl font-semibold"> {t("common.weCouldnTLoadThisPage")} </h1>
+        <p className="text-ink-muted mt-3 text-sm leading-6">{message}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="bg-ink text-cream border-ink hover:text-ink mt-6 border-2 px-5 py-3 text-xs tracking-widest uppercase transition hover:bg-transparent"
+        > {t("common.tryAgain")} </button>
+      </section>
+    </main>
+  );
+}
+
+const routes = [
   {
+    errorElement: <RouteErrorBoundary />,
     element: <PublicLayout />,
     children: [
       { index: true, element: <LandingPage /> },
@@ -44,6 +77,7 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     element: <AuthLayout />,
     children: [
       { path: "auth/:role", element: <AuthModal /> },
@@ -51,9 +85,10 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     element: (
       <ProtectedRoute>
-        <DashboardLayout />
+        <AppLayoutByRole />
       </ProtectedRoute>
     ),
     children: [
@@ -61,7 +96,10 @@ const router = createBrowserRouter([
       { path: "dashboard", element: dashboardElement },
       { path: "dashboard/:page", element: dashboardElement },
       { path: "owner/salon/:slug", element: dashboardElement },
-      { path: "owner/salon/:slug/:page/:clientSlug", element: dashboardElement },
+      {
+        path: "owner/salon/:slug/:page/:clientSlug",
+        element: dashboardElement,
+      },
       { path: "owner/salon/:slug/:page", element: dashboardElement },
       { path: "dashboard/:role/salon/:slug", element: dashboardElement },
       {
@@ -75,21 +113,30 @@ const router = createBrowserRouter([
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "auth/callback", element: <AuthCallback /> },
       {
         path: "auth/reset-password",
-        element: <Navigate to="/auth/client/reset-password" replace />,
+        element: <ResetPassword />,
       },
     ],
   },
   {
+    errorElement: <RouteErrorBoundary />,
     path: "*",
     element: <Navigate to="/" replace />,
   },
+];
+
+// One persistent auth provider can now read route context without remounting
+// the session subscription when moving between public and protected pages.
+const router = createBrowserRouter([
+  { element: <AuthProvider />, children: routes },
 ]);
 
 function App() {
+  useTranslation();
   return (
     <>
       <RouterProvider router={router} />

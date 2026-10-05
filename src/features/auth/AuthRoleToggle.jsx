@@ -1,8 +1,9 @@
-const capitalize = (value) => value.charAt(0).toUpperCase() + value.slice(1);
+import { useTranslation } from "react-i18next";
 
 function AuthRoleToggle({ value, options, onChange }) {
+  const { t } = useTranslation();
   return (
-    <div className="border-ink/10 mt-4 flex rounded-full border bg-white/70 p-1 md:border-black/10 md:bg-black/5">
+    <div className="auth-role-toggle border-ink/10 mt-4 flex rounded-full border bg-white/70 p-1 md:border-black/10 md:bg-black/5">
       {options.map((role) => {
         const isActive = value === role;
         return (
@@ -16,7 +17,7 @@ function AuthRoleToggle({ value, options, onChange }) {
                 : "text-ink/60 hover:text-ink md:text-black/60 md:hover:text-black"
             }`}
           >
-            {capitalize(role)}
+            {role === "owner" ? t("auth.owner") : t("common.client")}
           </button>
         );
       })}

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useMemo, useState } from "react";
 
 import Icon from "./Icon";
@@ -8,18 +10,19 @@ function SearchableSelectBox({
   options,
   selectedValue,
   onOptionSelect,
-  placeholder = "Select an option",
+  placeholder = i18n.t("common.selectAnOption"),
   searchable = true,
   required = false,
-  noOptionsText = "No options found",
+  noOptionsText = i18n.t("common.noOptionsFound"),
   className = "",
 }) {
+  useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedOption = useMemo(
     () =>
       options.find((option) => String(option.value) === String(selectedValue)),
-    [options, selectedValue],
+    [options, selectedValue, i18n.resolvedLanguage],
   );
 
   const visibleOptions = useMemo(() => {
@@ -33,9 +36,11 @@ function SearchableSelectBox({
     }
 
     return options.filter((option) =>
-      option.label.toLowerCase().includes(normalizedQuery),
+      (option.searchText || option.label)
+        .toLowerCase()
+        .includes(normalizedQuery),
     );
-  }, [options, searchable, selectedOption, value]);
+  }, [options, searchable, selectedOption, value, i18n.resolvedLanguage]);
 
   const handleSelect = (option) => {
     onOptionSelect?.(option);
@@ -68,7 +73,7 @@ function SearchableSelectBox({
         aria-label={placeholder}
         readOnly={!searchable}
         required={required}
-        className="border-ink/20 text-ink focus:border-ink w-full border-2 bg-white px-3 py-2 pr-9 text-sm tracking-normal normal-case placeholder:text-[#5f544b]/70 focus:outline-none"
+        className="border-ink/20 text-ink focus:border-ink w-full rounded-none border-2 bg-white px-3 py-2 pr-9 text-sm tracking-normal normal-case placeholder:text-[#5f544b]/70 focus:outline-none"
       />
 
       <span
@@ -83,8 +88,7 @@ function SearchableSelectBox({
         <div className="border-ink/20 absolute z-20 mt-1 max-h-44 w-full overflow-y-auto border-2 bg-white">
           {visibleOptions.length > 0 ? (
             visibleOptions.map((option) => {
-              const isSelected =
-                String(option.value) === String(selectedValue);
+              const isSelected = String(option.value) === String(selectedValue);
 
               return (
                 <button
@@ -95,7 +99,7 @@ function SearchableSelectBox({
                   className={`w-full border-b border-[#2d2620]/10 px-3 py-2 text-left text-xs tracking-widest uppercase transition last:border-b-0 ${
                     isSelected
                       ? "bg-[#f3efe9] text-[#2d2620]"
-                      : "hover:bg-[#f7f2ec] text-[#5f544b]"
+                      : "text-[#5f544b] hover:bg-[#f7f2ec]"
                   }`}
                 >
                   {option.label}

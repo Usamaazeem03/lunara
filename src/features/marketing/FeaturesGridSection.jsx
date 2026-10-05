@@ -1,93 +1,31 @@
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import Icon from "../../Shared/ui/Icon";
 
-const defaultFeatures = [
-  {
-    title: "Smart Scheduling",
-    description:
-      "Prevent double bookings, balance staff time, and keep calendars clean.",
-    icon: <Icon name="calendar" />,
-  },
-  {
-    title: "Automated Reminders",
-    description: "Text and email nudges that reduce last-minute cancellations.",
-    icon: <Icon name="bell" />,
-  },
-  {
-    title: "Payments and Deposits",
-    description: "Collect deposits or full payment before the visit.",
-    icon: <Icon name="credit-card" />,
-  },
-  {
-    title: "Team Availability",
-    description: "Control shifts, breaks, and services per specialist.",
-    icon: <Icon name="clock" />,
-  },
-  {
-    title: "Client Profiles",
-    description: "Track preferences, visit history, and notes in one view.",
-    icon: <Icon name="home" />,
-  },
-  {
-    title: "Packages and Gifts",
-    description: "Offer bundles, memberships, and gift cards with ease.",
-    icon: <Icon name="gift-box-benefits" />,
-  },
+const features = [
+  { number: "01", icon: "calendar-week", titleKey: "marketing.aScheduleThatMakesSense", descriptionKey: "marketing.reviewAppointmentRequestsConfirmVisitsAndKeepTrackOfCompleted", detailKey: "marketing.appointmentsAllTogether", tone: "sage" },
+  { number: "02", icon: "razor-barber", titleKey: "marketing.yourTeamInSync", descriptionKey: "marketing.manageYourStaffAndServicesSetPricesAndDurationsAnd", detailKey: "marketing.staffServicesWorkingHours", tone: "cream" },
+  { number: "03", icon: "users", titleKey: "marketing.rememberTheLittleThings", descriptionKey: "marketing.keepClientProfilesAndAppointmentHistoryTogetherSoTheNext", detailKey: "marketing.aHomeForEveryClient", tone: "peach" },
+  { number: "04", icon: "sparkles", titleKey: "marketing.aReasonToComeBack", descriptionKey: "marketing.giveClientsRewardsTheyCanViewInTheirAccountAnd", detailKey: "clients.clientRewards", tone: "cream" },
+  { number: "05", icon: "tachometer-average", titleKey: "marketing.seeTheBiggerPicture", descriptionKey: "marketing.reviewRevenueRecordsPopularServicesAndStaffPerformanceExportReports", detailKey: "marketing.reportsPaymentRecords", tone: "cream" },
+  { number: "06", icon: "date-time", titleKey: "marketing.theirNextVisitSorted", descriptionKey: "marketing.clientsChooseASalonServiceSpecialistAndTimeAppointmentUpdates", detailKey: "marketing.aDedicatedClientSpace", tone: "sage" },
 ];
 
-function FeatureCard({ title, description, icon }) {
+export default function FeaturesGridSection() {
+  const { t } = useTranslation();
   return (
-    <div className="group border border-black/10 bg-white/70 p-6 transition hover:-translate-y-1 hover:shadow-lg">
-      <div className="flex items-center gap-4">
-        {icon && (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white">
-            {typeof icon === "string" ? (
-              <img src={icon} alt="" className="h-6 w-6" aria-hidden="true" />
-            ) : (
-              icon
-            )}
-          </div>
-        )}
-        {title && <h3 className="text-xl font-semibold tracking-wide">{title}</h3>}
+    <section id="features" className="marketing-section marketing-container">
+      <div className="marketing-section-heading">
+        <div><p className="marketing-eyebrow">{t("marketing.builtAroundYourEveryday")}</p><h2>{t("marketing.goodDaysStart")}<br />{t("marketing.withALittle")} <em>{t("marketing.order")}</em></h2></div>
+        <p>{t("marketing.usefulToolsForTheWorkBehindTheBeautyAllConnected")}</p>
       </div>
-      {description && <p className="mt-4 text-sm text-black/70">{description}</p>}
-    </div>
-  );
-}
-
-function FeaturesGridSection({ features = defaultFeatures }) {
-  return (
-    <section
-      id="features"
-      className="bg-[#f3efe9] px-6 py-16 md:px-12 lg:px-20"
-    >
-      <div className="text-center">
-        <h2 className="text-3xl font-semibold tracking-widest sm:text-4xl">
-          FEATURES BUILT FOR BOOKING
-        </h2>
-        <p className="mt-4 text-lg text-black/70">
-          Everything you need to run schedules, protect revenue, and grow your
-          client base.
-        </p>
-      </div>
-
-      <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, index) => {
-          const title = feature.title || feature.label || "";
-          const description = feature.description || feature.subtitle || "";
-          const key = feature.id || title || index;
-
-          return (
-            <FeatureCard
-              key={key}
-              title={title}
-              description={description}
-              icon={feature.icon}
-            />
-          );
-        })}
+      <div className="marketing-features">
+        {translateConfig(features).map(feature => <article key={feature.number} className={`marketing-feature marketing-tone-${feature.tone}`}>
+          <div className="marketing-feature-top"><Icon name={feature.icon} size={25} aria-hidden="true" /><span>{feature.number}</span></div>
+          <h3>{feature.title}</h3><p>{feature.description}</p>
+          <div className="marketing-feature-detail">{feature.detail}<span aria-hidden="true">↗</span></div>
+        </article>)}
       </div>
     </section>
   );
 }
-
-export default FeaturesGridSection;

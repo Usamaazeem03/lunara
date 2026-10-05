@@ -1,10 +1,13 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 function ServiceSearchInput({
   value,
   onChange,
-  placeholder = "Search by name (e.g. facial, haircut)",
+  placeholder = i18n.t("services.searchByNameEGFacialHaircut"),
   className = "",
   ...props
 }) {
+  useTranslation();
   return (
     <input
       type="text"

@@ -1,25 +1,5 @@
-/**
- * MobileDrawer Component
- *
- * Sliding drawer navigation for mobile screens.
- * Features:
- * - Slides in from the left
- * - 260px width
- * - Full height
- * - Smooth animation
- * - Contains sidebar content (profile, menu, footer)
- *
- * @component
- * @param {boolean} isOpen - Whether drawer is open
- * @param {function} onClose - Callback to close drawer
- * @param {array} menuItems - Menu items to display
- * @param {string} profileImg - Profile image URL
- * @param {string} portalLabel - Portal label text
- * @param {string} brand - Brand name
- * @param {ReactNode} footer - Footer content
- * @param {string} profileAlt - Alt text for profile image
- * @param {function} onProfileClick - Callback when profile is clicked
- */
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/i18n.js";
 import Icon from "./ui/Icon";
 
 function MobileDrawer({
@@ -27,22 +7,28 @@ function MobileDrawer({
   onClose = null,
   menuItems = [],
   profileImg = "",
-  portalLabel = "Client Portal",
-  brand = "LUNARA",
-  footer = null,
-  profileAlt = "User profile",
+  profileAlt = i18n.t("common.userProfile"),
   onProfileClick = null,
 }) {
+  const { t } = useTranslation();
+  const handleDrawerToggle = () => {
+    if (isOpen) {
+      onClose?.();
+    } else {
+      onClose?.();
+    }
+  };
+
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 w-60 transform border-r border-ink/15 bg-cream-soft transition-transform duration-300 ease-in-out ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      } lg:hidden`}
+      className={`border-ink/15 bg-cream-soft/90 fixed top-10 ${isOpen ? "right-5" : "right-0"} z-40 h-auto rounded-4xl border shadow-sm transition-all duration-300 ease-in-out lg:hidden ${
+        isOpen ? "translate-x-0.1 w-auto" : "translate-x-0.1 w-0"
+      }`}
       aria-hidden={!isOpen}
     >
-      <div className="flex h-full flex-col overflow-y-auto p-6">
-        {/* Brand Header */}
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col items-center overflow-y-auto p-3">
+        {/* Profile */}
+        <div className="flex flex-col items-center">
           {onProfileClick ? (
             <button
               type="button"
@@ -50,8 +36,8 @@ function MobileDrawer({
                 onProfileClick?.();
                 onClose?.();
               }}
-              aria-label="Open profile"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/20 bg-white/80 overflow-hidden transition hover:scale-[1.02] hover:border-ink/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/40"
+              aria-label={t("common.openProfile")}
+              className="border-ink/20 hover:border-ink/40 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border bg-white/80 transition hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <img
                 src={profileImg}
@@ -60,7 +46,7 @@ function MobileDrawer({
               />
             </button>
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-ink/20 bg-white/80 overflow-hidden">
+            <div className="border-ink/20 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border bg-white/80">
               <img
                 src={profileImg}
                 alt={profileAlt}
@@ -68,75 +54,90 @@ function MobileDrawer({
               />
             </div>
           )}
-          <div>
-            <p className="text-xs uppercase tracking-widest text-ink-muted">
-              {portalLabel}
-            </p>
-            <h3 className="text-2xl font-semibold tracking-widest">{brand}</h3>
-          </div>
         </div>
 
         {/* Menu */}
-        <div className="mt-8">
-          <p className="text-xs uppercase tracking-widest text-ink-muted">
-            Menu
-          </p>
-          <nav className="mt-3 space-y-1">
+        <div
+          className={`flex flex-col items-center ${isOpen ? "mt-8" : "mt-6"}`}
+        >
+          {isOpen && (
+            <p className="text-ink-muted text-xs tracking-widest uppercase"> {t("common.menu")} </p>
+          )}
+
+          <nav
+            className={`flex flex-col items-center ${
+              isOpen ? "mt-3 space-y-2" : "mt-4 space-y-2"
+            }`}
+          >
             {menuItems.map((item) => (
-              <DrawerMenuItem key={item.text} {...item} />
+              <DrawerMenuItem
+                key={item.segment}
+                {...item}
+                isOpen={isOpen}
+                onClick={() => {
+                  item.onClick?.();
+                  onClose?.();
+                }}
+              />
             ))}
           </nav>
         </div>
-
-        {/* Footer */}
-        {footer && <div className="mt-auto pt-6">{footer}</div>}
       </div>
+
+      {/* Open / Close button */}
+      <button
+        type="button"
+        onClick={handleDrawerToggle}
+        aria-label={isOpen ? t("dashboard.closeMenu") : t("common.openMenu")}
+        className={`border-ink/15 bg-cream-soft/90 absolute top-1/2 ${isOpen ? "opacity-0" : "-left-5 opacity-100"} flex h-40 w-5 -translate-y-1/2 items-center justify-center rounded-l-2xl border border-r-0`}
+      >
+        <span
+          className={`text-ink text-xl transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        >
+          ‹
+        </span>
+      </button>
     </aside>
   );
 }
 
-/**
- * DrawerMenuItem Component
- *
- * Menu item for drawer navigation.
- * Can be either active or inactive.
- *
- * @component
- * @param {string} iconName - Icon sprite name
- * @param {string} text - Menu item text
- * @param {boolean} active - Whether item is active
- * @param {function} onClick - Callback when clicked
- */
 const DrawerMenuItem = ({
   iconName = "",
-  text = "",
+  textKey,
   active = false,
   onClick = null,
+  isOpen = false,
 }) => {
+  const { t } = useTranslation();
   return (
     <button
       type="button"
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm uppercase tracking-widest transition ${
+      aria-label={t(textKey)}
+      title={!isOpen ? t(textKey) : undefined}
+      className={`flex items-center gap-3 rounded-xl px-2 py-2 text-left text-sm tracking-widest uppercase transition ${
         active ? "bg-ink text-cream" : "text-ink hover:bg-ink/10"
-      }`}
+      } ${isOpen ? "w-full" : "w-12 justify-center"}`}
     >
       {iconName && (
         <span
-          className={`flex h-8 w-8 items-center justify-center rounded-full border border-ink/20 ${
+          className={`border-ink/20 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${
             active ? "bg-ink" : "bg-white/70"
           }`}
         >
           <Icon
             name={iconName}
-            size={16}
+            size={20}
             className={active ? "text-cream" : "text-ink/70"}
             aria-hidden="true"
           />
         </span>
       )}
-      <span className="flex-1">{text}</span>
+
+      {/* {isOpen && <span className="flex-1">{text}</span>} */}
     </button>
   );
 };

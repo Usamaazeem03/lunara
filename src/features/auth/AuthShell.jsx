@@ -1,5 +1,11 @@
+import "./mobileAuth.css";
+
 function AuthShell({ children }) {
-  return <div className="relative w-full max-w-6xl mx-auto">{children}</div>;
+  return (
+    <div className="mobile-auth relative mx-auto w-full max-w-6xl">
+      {children}
+    </div>
+  );
 }
 
 export default AuthShell;

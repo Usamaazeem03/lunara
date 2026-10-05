@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import ButtonSpinner from "./ui/ButtonSpinner";
 
 function Button({
   children,
@@ -16,6 +18,7 @@ function Button({
   rel,
   ...rest
 }) {
+  const { t } = useTranslation();
   const baseStyles = unstyled
     ? ""
     : "px-4  py-2  text-[0.8rem] uppercase tracking-widest transition duration-300 ease-in-out";
@@ -51,6 +54,7 @@ function Button({
       {...accessibilityProps}
       {...(!isButton ? { target, rel } : {})}
       {...rest}
+      aria-busy={loading || undefined}
       className={`
         ${baseStyles}
         ${variantStyles}
@@ -59,7 +63,7 @@ function Button({
         ${className}
       `}
     >
-      {loading ? "Loading..." : children}
+      {loading ? <span className="inline-flex items-center justify-center gap-2"><ButtonSpinner />{t("dashboard.loading")}</span> : children}
     </Component>
   );
 }

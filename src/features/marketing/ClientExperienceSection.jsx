@@ -1,53 +1,10 @@
-import { NavLink } from "react-router-dom";
-import Button from "../../Shared/Button";
-const clientAuthLinks = [
-  {
-    label: "Client Signup",
-    to: "/auth/owner/signup",
-    className:
-      "border border-ink px-6 py-3 text-xs uppercase tracking-[0.35em] text-ink transition hover:bg-ink hover:text-cream",
-  },
-  {
-    label: "Client Login",
-    to: "/auth/client/signin",
-    variant: "secondary",
-    className:
-      "border border-ink/30 px-6 py-3 text-xs uppercase tracking-[0.35em] text-ink ",
-  },
-];
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
-function ClientExperienceSection() {
-  return (
-    <section className="bg-[#f3efe9] px-6 pb-4 pt-10 md:px-12 lg:px-20">
-      <div className="grid gap-10 lg:grid-cols-[0.9fr,1.1fr] lg:items-center">
-        <div>
-          <p className="text-xs uppercase tracking-[0.4em] text-black/50">
-            Client experience
-          </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-widest sm:text-4xl">
-            A booking flow that feels premium.
-          </h2>
-          <p className="mt-6 text-lg text-black/70">
-            Mobile-first screens, clear pricing, and auto confirmations give
-            clients confidence to return again.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            {clientAuthLinks.map((btn) => (
-              <Button
-                key={btn.label}
-                to={btn.to}
-                variant="custom"
-                className={btn.className}
-              >
-                {btn.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+export default function ClientExperienceSection() {
+  const { t } = useTranslation();
+  return <section className="marketing-container marketing-client-section">
+    <div className="marketing-client-art" aria-hidden="true"><span className="marketing-art-star">✳</span><span className="marketing-art-word">{t("marketing.yourTime")}<br /><em>{t("marketing.yourGlow")}</em></span><span className="marketing-art-foot">{t("marketing.aMomentThatSJustForYou")}</span></div>
+    <div className="marketing-client-copy"><p className="marketing-eyebrow">{t("marketing.forThePersonInTheChair")}</p><h2>{t("marketing.yourNextGood")}<br />{t("marketing.hairDay")} <em>{t("marketing.startsHere")}</em></h2><p>{t("marketing.findYourSalonChooseYourServiceAndMakeTimeFor")}</p><Link to="/auth/client/signup" className="marketing-button">{t("marketing.createAClientAccount")} <span aria-hidden="true">↗</span></Link><Link to="/auth/client/signin" className="marketing-text-link">{t("marketing.alreadyWithUsLogIn")} <span aria-hidden="true">→</span></Link></div>
+  </section>;
 }
-
-export default ClientExperienceSection;

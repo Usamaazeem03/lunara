@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import spriteUrl from "../assets/icons/sprite.svg?url";
 
 /**
@@ -16,6 +17,7 @@ export default function Icon({
   className = "",
   ...props
 }) {
+  useTranslation();
   if (!name) {
     console.warn('Icon component: "name" prop is required');
     return null;

@@ -1,13 +1,13 @@
 function AuthHeader({ eyebrow, headline, subhead }) {
   return (
     <>
-      <p className="text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] text-ink/50 md:text-black/50">
+      <p className="text-ink/50 text-xs tracking-[0.3em] uppercase md:tracking-[0.4em] md:text-black/50">
         {eyebrow}
       </p>
-      <h2 className="mt-1 text-lg sm:text-xl md:text-4xl font-semibold md:font-bold text-ink md:text-black tracking-[0.1em] md:tracking-[0.2em]">
+      <h2 className="text-ink mt-1 text-lg font-semibold tracking-[0.1em] sm:text-xl md:text-4xl md:font-bold md:tracking-[0.2em] md:text-black">
         {headline}
       </h2>
-      <p className="mt-1.5 text-xs sm:text-sm text-ink/60 md:text-black/60">
+      <p className="text-ink/60 mt-1.5 text-xs sm:text-sm md:text-black/60">
         {subhead}
       </p>
     </>
