@@ -1,5 +1,8 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { formatCurrency } from "../../utils/currency";
 export const ReportStatCard = ({ title, value, subtitle, delta, icon }) => {
+  useTranslation();
   return (
     <div className="border-ink/20 relative overflow-hidden border-2 bg-white/90 p-4">
       <div className="bg-ink/5 absolute -top-8 -right-8 h-20 w-20 rounded-full"></div>
@@ -21,6 +24,7 @@ export const ReportStatCard = ({ title, value, subtitle, delta, icon }) => {
 };
 
 export const PaymentMethodRow = ({ label, value, percent, color }) => {
+  useTranslation();
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
@@ -75,12 +79,13 @@ const chartTooltipStyle = {
 const controlClass =
   "border-ink/20 bg-cream/50 text-ink rounded-lg border px-3 py-2 text-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
 const compact = (value) =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat(i18n.resolvedLanguage, {
     notation: "compact",
     maximumFractionDigits: 1,
   }).format(value);
 
 export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
+  const { t } = useTranslation();
   const [grouping, setGrouping] = useState(
     dateRange === "This Year" ? "month" : "day",
   );
@@ -88,7 +93,7 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
   const gradientId = useId();
   const rows = useMemo(
     () => buildRevenueSeries(appointments, dateRange, grouping),
-    [appointments, dateRange, grouping],
+    [appointments, dateRange, grouping, i18n.resolvedLanguage],
   );
   const total = rows.reduce((sum, row) => sum + row.current, 0);
   const previous = rows.reduce((sum, row) => sum + row.previous, 0);
@@ -99,17 +104,15 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
   return (
     <div className="min-w-0">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <label className="text-ink-muted flex items-center gap-2 text-xs">
-          Group by
-          <select
-            aria-label="Revenue grouping"
+        <label className="text-ink-muted flex items-center gap-2 text-xs"> {t("reports.groupBy")} <select
+            aria-label={t("reports.revenueGrouping")}
             className={controlClass}
             value={grouping}
             onChange={(event) => setGrouping(event.target.value)}
           >
-            <option value="day">Day</option>
-            <option value="week">Week</option>
-            {dateRange === "This Year" && <option value="month">Month</option>}
+            <option value="day">{t("reports.day")}</option>
+            <option value="week">{t("reports.week")}</option>
+            {dateRange === "This Year" && <option value="month">{t("reports.month")}</option>}
           </select>
         </label>
         <button
@@ -118,19 +121,16 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
           className={controlClass}
           onClick={() => setCompare(!compare)}
         >
-          {compare ? "Hide" : "Show"} previous period
-        </button>
+          {compare ? t("reports.hide") : t("reports.show")} {t("reports.previousPeriod")} </button>
       </div>
       <div className="mb-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
         <span>
-          <span className="text-ink-muted block text-xs">Selected period</span>
+          <span className="text-ink-muted block text-xs">{t("reports.selectedPeriod")}</span>
           <strong>{formatCurrency(total, currencyCode)}</strong>
         </span>
         {compare && (
           <span>
-            <span className="text-ink-muted block text-xs">
-              Previous period
-            </span>
+            <span className="text-ink-muted block text-xs"> {t("reports.previousPeriod2")} </span>
             <strong>{formatCurrency(previous, currencyCode)}</strong>
           </span>
         )}
@@ -138,7 +138,7 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
       <div
         className="h-72 w-full min-w-0"
         role="group"
-        aria-label="Revenue chart. Use arrow keys to explore values."
+        aria-label={t("reports.revenueChartUseArrowKeysToExploreValues")}
       >
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -179,14 +179,14 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
                 name,
               ]}
               labelFormatter={(label) =>
-                `${grouping === "week" ? "Week starting " : ""}${label}`
+                `${grouping === "week" ? t("reports.weekStarting") : ""}${label}`
               }
             />
             {compare && (
               <Area
                 type="monotone"
                 dataKey="previous"
-                name="Previous period"
+                name={t("reports.previousPeriod2")}
                 stroke="#a8998a"
                 strokeDasharray="5 4"
                 fill="transparent"
@@ -197,7 +197,7 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
             <Area
               type="monotone"
               dataKey="current"
-              name="Selected period"
+              name={t("reports.selectedPeriod")}
               stroke="#644c3b"
               fill={`url(#${gradientId})`}
               strokeWidth={3}
@@ -209,27 +209,22 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
       </div>
       <p className="text-ink-muted mt-2 text-xs">
         {peak
-          ? `Peak ${grouping}: ${peak.label} (${formatCurrency(peak.current, currencyCode)}).`
-          : "No completed revenue in the selected period."}{" "}
-        Hover, tap, or use arrow keys for values.
-      </p>
+          ? t("reports.peak", { value1: grouping, value2: peak.label, value3: formatCurrency(peak.current, currencyCode) })
+          : t("reports.noCompletedRevenueInTheSelectedPeriod")}{" "} {t("reports.hoverTapOrUseArrowKeysForValues")} </p>
       {compare && (
-        <p className="text-ink-muted mt-1 text-xs">
-          Dashed line: previous period, aligned by{" "}
-          {grouping === "month" ? "calendar month" : "elapsed days"}.
+        <p className="text-ink-muted mt-1 text-xs"> {t("reports.dashedLinePreviousPeriodAlignedBy")}{" "}
+          {grouping === "month" ? t("reports.calendarMonth") : t("reports.elapsedDays")}.
         </p>
       )}
       <details className="mt-3 text-xs">
-        <summary className="cursor-pointer py-2 font-semibold">
-          View revenue data
-        </summary>
+        <summary className="cursor-pointer py-2 font-semibold"> {t("reports.viewRevenueData")} </summary>
         <div className="max-h-56 overflow-auto">
           <table className="w-full text-left">
             <thead>
               <tr>
-                <th className="p-2">Period start</th>
-                <th className="p-2">Revenue</th>
-                {compare && <th className="p-2">Previous</th>}
+                <th className="p-2">{t("reports.periodStart")}</th>
+                <th className="p-2">{t("common.revenue")}</th>
+                {compare && <th className="p-2">{t("common.previous")}</th>}
               </tr>
             </thead>
             <tbody>
@@ -255,15 +250,14 @@ export function RevenueTrendChart({ appointments, dateRange, currencyCode }) {
 }
 
 export function ServicePie({ data }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(null);
   const rows = data.filter((item) => item.count > 0);
   const total = rows.reduce((sum, item) => sum + item.count, 0);
   const active = rows.find((item) => item.label === selected);
   if (!total)
     return (
-      <div className="text-ink-muted flex h-64 items-center justify-center text-sm">
-        No service bookings in this period.
-      </div>
+      <div className="text-ink-muted flex h-64 items-center justify-center text-sm"> {t("reports.noServiceBookingsInThisPeriod")} </div>
     );
   const select = (label) =>
     setSelected((current) => (current === label ? null : label));
@@ -272,7 +266,7 @@ export function ServicePie({ data }) {
       <div
         className="relative h-60"
         role="group"
-        aria-label="Service booking shares"
+        aria-label={t("reports.serviceBookingShares")}
       >
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -299,7 +293,7 @@ export function ServicePie({ data }) {
             <Tooltip
               contentStyle={chartTooltipStyle}
               formatter={(value, name) => [
-                `${value} bookings (${((value / total) * 100).toFixed(1)}%)`,
+                t("reports.bookings", { value1: value, value2: ((value / total) * 100).toFixed(1) }),
                 name,
               ]}
             />
@@ -308,7 +302,7 @@ export function ServicePie({ data }) {
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
           <strong className="text-3xl">{active?.count ?? total}</strong>
           <span className="text-ink-muted max-w-28 truncate text-xs">
-            {active ? "selected bookings" : "service bookings"}
+            {active ? t("reports.selectedBookings") : t("reports.serviceBookings")}
           </span>
         </div>
       </div>
@@ -332,14 +326,13 @@ export function ServicePie({ data }) {
           </button>
         ))}
       </div>
-      <p className="text-ink-muted mt-3 text-xs">
-        Select a category to highlight it. Select again to reset.
-      </p>
+      <p className="text-ink-muted mt-3 text-xs"> {t("reports.selectACategoryToHighlightItSelectAgainToReset")} </p>
     </div>
   );
 }
 
 export function StaffPerformanceChart({ data, currencyCode }) {
+  const { t } = useTranslation();
   const [metric, setMetric] = useState("value");
   const [showAll, setShowAll] = useState(false);
   const ranked = data
@@ -348,28 +341,27 @@ export function StaffPerformanceChart({ data, currencyCode }) {
     .sort((a, b) => b[metric] - a[metric]);
   const rows = showAll ? ranked : ranked.slice(0, 5);
   const label = {
-    value: "Revenue",
-    count: "Completed visits",
-    average: "Average sale",
+    value: t("common.revenue"),
+    count: t("common.completedVisits"),
+    average: t("reports.averageSale"),
   }[metric];
   const format = (value) =>
     metric === "count"
-      ? `${value} visits`
+      ? t("reports.visits", { value1: value })
       : formatCurrency(value, currencyCode);
   return (
     <div className="min-w-0">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <label className="text-ink-muted flex items-center gap-2 text-xs">
-          Rank by{" "}
+        <label className="text-ink-muted flex items-center gap-2 text-xs"> {t("reports.rankBy")}{" "}
           <select
-            aria-label="Staff ranking metric"
+            aria-label={t("reports.staffRankingMetric")}
             className={controlClass}
             value={metric}
             onChange={(event) => setMetric(event.target.value)}
           >
-            <option value="value">Revenue</option>
-            <option value="count">Completed visits</option>
-            <option value="average">Average sale</option>
+            <option value="value">{t("common.revenue")}</option>
+            <option value="count">{t("common.completedVisits")}</option>
+            <option value="average">{t("reports.averageSale")}</option>
           </select>
         </label>
         {ranked.length > 5 && (
@@ -379,21 +371,19 @@ export function StaffPerformanceChart({ data, currencyCode }) {
             aria-pressed={showAll}
             onClick={() => setShowAll(!showAll)}
           >
-            {showAll ? "Show top 5" : `Show all ${ranked.length}`}
+            {showAll ? t("reports.showTop5") : t("reports.showAll", { value1: ranked.length })}
           </button>
         )}
       </div>
       {!rows.length ? (
-        <p className="text-ink-muted py-12 text-center text-sm">
-          No staff data for this period.
-        </p>
+        <p className="text-ink-muted py-12 text-center text-sm"> {t("reports.noStaffDataForThisPeriod")} </p>
       ) : (
         <>
           <div className="max-h-96 overflow-y-auto">
             <div
               style={{ height: Math.max(180, rows.length * 52 + 40) }}
               role="group"
-              aria-label={`Staff ranked by ${label}. Use arrow keys to explore values.`}
+              aria-label={t("reports.staffRankedByUseArrowKeysToExploreValues", { value1: label })}
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -444,9 +434,7 @@ export function StaffPerformanceChart({ data, currencyCode }) {
             </div>
           </div>
           <details className="mt-3 text-xs">
-            <summary className="cursor-pointer py-2 font-semibold">
-              View staff values
-            </summary>
+            <summary className="cursor-pointer py-2 font-semibold"> {t("reports.viewStaffValues")} </summary>
             <div className="max-h-56 overflow-auto">
               {rows.map((row) => (
                 <div
@@ -459,10 +447,7 @@ export function StaffPerformanceChart({ data, currencyCode }) {
               ))}
             </div>
           </details>
-          <p className="text-ink-muted mt-2 text-xs">
-            Completed appointments only. Hover, tap, or use arrow keys for exact
-            values.
-          </p>
+          <p className="text-ink-muted mt-2 text-xs"> {t("reports.completedAppointmentsOnlyHoverTapOrUseArrowKeysFor")} </p>
         </>
       )}
     </div>

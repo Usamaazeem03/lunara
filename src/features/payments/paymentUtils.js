@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 import { parseTimeToMinutes } from "../../utils/appointmentUtils.js";
 import {
   getAppointmentStats,
@@ -13,16 +14,16 @@ export const localDateKey = (date) =>
 export function getPaymentMethod(appointment) {
   const raw =
     appointment.payment_method?.trim() || appointment.payment_option?.trim();
-  if (!raw) return "Not specified";
+  if (!raw) return i18n.t("payments.notSpecified");
   const known = {
-    cash: "Cash",
-    card: "Card",
-    "credit card": "Credit Card",
-    "debit card": "Debit Card",
-    wallet: "Wallet",
+    cash: i18n.t("booking.cash"),
+    card: i18n.t("common.card"),
+    "credit card": i18n.t("payments.creditCard"),
+    "debit card": i18n.t("payments.debitCard"),
+    wallet: i18n.t("common.wallet"),
     upi: "UPI",
-    online: "Online",
-    "pay at salon": "Pay at Salon",
+    online: i18n.t("common.online"),
+    "pay at salon": i18n.t("common.payAtSalon"),
   };
   return known[raw.toLowerCase()] || raw;
 }
@@ -48,7 +49,7 @@ export function getPaymentCharts(
     date.setDate(start.getDate() + index);
     return {
       date: localDateKey(date),
-      day: date.toLocaleDateString(undefined, { weekday: "short" }),
+      day: date.toLocaleDateString(i18n.resolvedLanguage, { weekday: "short" }),
       revenue: 0,
     };
   });
@@ -139,16 +140,16 @@ export function buildPaymentsCsv(appointments, currencyCode) {
   };
   const rows = [
     [
-      "Appointment ID",
-      "Date",
-      "Client",
-      "Phone",
-      "Email",
-      "Service",
-      "Amount",
-      "Currency",
-      "Method",
-      "Booking Status",
+      i18n.t("payments.appointmentId"),
+      i18n.t("common.date"),
+      i18n.t("common.client"),
+      i18n.t("common.phone"),
+      i18n.t("common.email"),
+      i18n.t("common.service"),
+      i18n.t("common.amount"),
+      i18n.t("payments.currency"),
+      i18n.t("common.method"),
+      i18n.t("payments.bookingStatus2"),
     ],
     ...appointments.map((appointment) => [
       appointment.id,

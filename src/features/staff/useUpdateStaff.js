@@ -1,9 +1,12 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateStaff as updateStaffApi } from "../../services/apiStaff";
 import { notify } from "../../Shared/lib/toast";
 import { staffQueryKey } from "./useStaff";
 
 export function useUpdateStaff(ownerId) {
+  useTranslation();
   const queryClient = useQueryClient();
   const {
     mutate: updateStaff,
@@ -14,7 +17,7 @@ export function useUpdateStaff(ownerId) {
     mutationFn: ({ id, payload }) =>
       updateStaffApi(id, { ...payload, owner_id: ownerId }),
     onSuccess: () => {
-      notify.success("Staff member updated successfully.");
+      notify.success(translatedMessage("staff.staffMemberUpdatedSuccessfully"));
       return Promise.all([
         queryClient.invalidateQueries({ queryKey: staffQueryKey(ownerId) }),
         queryClient.invalidateQueries({ queryKey: ["booking-staff", ownerId] }),

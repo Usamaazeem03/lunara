@@ -1,3 +1,4 @@
+import i18n from "../../../i18n/i18n.js";
 export function localDateKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
@@ -30,8 +31,8 @@ export function summarizeClientVisits(appointments, now = new Date()) {
     const key = localDateKey(date).slice(0, 7);
     return {
       key,
-      label: date.toLocaleDateString(undefined, { month: "short" }),
-      fullLabel: date.toLocaleDateString(undefined, { month: "long", year: "numeric" }),
+      label: date.toLocaleDateString(i18n.resolvedLanguage, { month: "short" }),
+      fullLabel: date.toLocaleDateString(i18n.resolvedLanguage, { month: "long", year: "numeric" }),
       appointments: completed.filter((appointment) => appointment.appointment_date?.startsWith(key)),
     };
   });

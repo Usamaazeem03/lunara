@@ -1,5 +1,9 @@
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import { validateInternationalPhone } from "../../Shared/lib/phoneValidation";
-import { useForm, useWatch } from "react-hook-form";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
+import { useWatch } from "react-hook-form";
 import Button from "../../Shared/Button.jsx";
 import Icon from "../../Shared/ui/Icon.jsx";
 import { STAFF_ROLES } from "./staffUtils";
@@ -11,39 +15,40 @@ import StaffImageField from "./StaffImageField";
 const FIELDS = [
   {
     name: "name",
-    label: "Full Name *",
-    placeholder: "e.g. Jessica Martinez",
+    labelKey: "clients.fullName",
+    placeholderKey: "staff.eGJessicaMartinez",
     required: true,
   },
   {
     name: "role",
-    label: "Role *",
-    placeholder: "Or type a custom role",
+    labelKey: "staff.role",
+    placeholderKey: "staff.orTypeACustomRole",
     required: true,
   },
   {
     name: "phone",
-    label: "Phone *",
+    labelKey: "clients.phone",
     type: "tel",
     placeholder: "+44 1234 567890",
     required: true,
   },
   {
     name: "email",
-    label: "Email *",
+    labelKey: "clients.email",
     required: true,
     type: "email",
     placeholder: "name@salonpro.com",
   },
-  { name: "schedule", label: "Schedule (optional)", placeholder: "Mon - Fri" },
+  { name: "schedule", labelKey: "staff.scheduleOptional", placeholderKey: "common.monFri" },
   {
     name: "specialties",
-    label: "Specialties (optional, comma separated)",
-    placeholder: "Hair Coloring, Hair Styling, Hair Treatment",
+    labelKey: "staff.specialtiesOptionalCommaSeparated",
+    placeholderKey: "staff.hairColoringHairStylingHairTreatment",
   },
 ];
 
 export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
+  const { t } = useTranslation();
   const {
     createStaff,
     isCreating,
@@ -70,7 +75,7 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
       role: member?.role ?? "",
       phone: member?.phone ?? "",
       email: member?.email ?? "",
-      schedule: member?.schedule ?? "Mon - Fri",
+      schedule: member?.schedule ?? t("common.monFri"),
       specialties: member?.specialties?.join(", ") ?? "",
       isOnShift: member?.isOnShift ?? false,
     },
@@ -119,13 +124,13 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
       <div className="bg-ink h-1 w-full" />
       <div className="border-ink/10 flex items-start justify-between border-b-2 px-5 py-4">
         <h2 id="staff-form-title" className="text-ink text-base font-semibold">
-          {isEditing ? "Edit Staff Member" : "Add New Staff Member"}
+          {isEditing ? t("staff.editStaffMember") : t("staff.addNewStaffMember")}
         </h2>
         <button
           type="button"
           onClick={onCloseForm}
           disabled={isSaving}
-          aria-label="Close"
+          aria-label={t("common.close")}
           className="border-ink/20 text-ink-muted hover:border-ink h-8 w-8 border-2"
         >
           X
@@ -136,9 +141,7 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
         noValidate
         className="space-y-4 overflow-y-auto p-4 sm:p-5"
       >
-        <p className="text-ink-muted text-sm">
-          Name, role, phone, and email are required.
-        </p>
+        <p className="text-ink-muted text-sm"> {t("staff.nameRolePhoneAndEmailAreRequired")} </p>
         <fieldset disabled={isSaving} className="grid gap-3 sm:grid-cols-2">
           <StaffImageField
             register={register}
@@ -147,7 +150,7 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
             image={member?.image}
             name={member?.name}
           />
-          {FIELDS.map(
+          {translateConfig(FIELDS).map(
             ({ name, label, type = "text", placeholder, required }) => (
               <div
                 key={name}
@@ -163,7 +166,7 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
                   <div className="mt-2 grid gap-2 sm:grid-cols-3">
                     {STAFF_ROLES.map((option) => (
                       <button
-                        key={option.key}
+                        key={fixedLabel(option.key, "role")}
                         type="button"
                         onClick={() =>
                           setValue("role", option.key, {
@@ -199,13 +202,13 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
                       if (name === "phone")
                         return validateInternationalPhone(value);
                       if (required && !value.trim())
-                        return "This field is required.";
+                        return t("staff.thisFieldIsRequired");
                       if (
                         name === "email" &&
                         value.trim() &&
                         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
                       )
-                        return "Enter a valid email address.";
+                        return t("common.enterAValidEmailAddress");
                       return true;
                     },
                   })}
@@ -226,9 +229,7 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
               type="checkbox"
               {...register("isOnShift")}
               className="border-ink/40 h-4 w-4 border-2"
-            />
-            Currently On Shift
-          </label>
+            /> {t("staff.currentlyOnShift")} </label>
         </fieldset>
         {saveError && (
           <p
@@ -250,16 +251,14 @@ export default function CreateStaffForm({ ownerId, member, onCloseForm }) {
               isSaving
             }
           >
-            {isEditing ? "Update Staff" : "Save Staff"}
+            {isEditing ? t("staff.updateStaff") : t("staff.saveStaff")}
           </Button>
           <Button
             type="button"
             variant="secondary"
             onClick={onCloseForm}
             disabled={isSaving}
-          >
-            Cancel
-          </Button>
+          > {t("common.cancel")} </Button>
         </div>
       </form>
     </div>

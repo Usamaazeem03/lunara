@@ -1,15 +1,26 @@
+import { useTranslation } from "react-i18next";
 import Icon from "../../Shared/ui/Icon";
 
-export const MenuItem = ({ iconName, text, active, onClick }) => {
+export const MenuItem = ({ iconName, textKey, segment, active, onClick }) => {
+  const { t } = useTranslation();
+
   return (
     <button
       type="button"
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      className={`flex w-full items-center gap-4 rounded-xl px-3 py-2 text-left text-sm tracking-widest uppercase transition ${active ? "bg-ink text-cream" : "text-ink hover:bg-ink/10"}`}
+      className={`flex w-full items-center gap-4 rounded-xl px-3 py-2 text-left text-sm tracking-widest uppercase transition ${
+        active ? "bg-ink text-cream" : "text-ink hover:bg-ink/10"
+      } ${
+        segment === "website-integration"
+          ? `border ${active ? "border-transparent" : "border-ink/25"}`
+          : ""
+      }`}
     >
       <span
-        className={`border-ink/20 flex h-9 w-9 items-center justify-center rounded-full border ${active ? "bg-ink" : "bg-white/70"}`}
+        className={`border-ink/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border ${
+          active ? "bg-ink" : "bg-white/70"
+        }`}
       >
         {iconName && (
           <Icon
@@ -20,7 +31,8 @@ export const MenuItem = ({ iconName, text, active, onClick }) => {
           />
         )}
       </span>
-      {text}
+
+      <span className="min-w-0">{t(textKey)}</span>
     </button>
   );
 };

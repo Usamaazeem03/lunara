@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useRateStaff } from "./useRateStaff";
 
 export default function StaffRatingForm({ appointment }) {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0);
   const { mutate, isPending, isSuccess, error } = useRateStaff(
     appointment.owner_id,
@@ -16,11 +18,8 @@ export default function StaffRatingForm({ appointment }) {
   return (
     <div className="border-ink/10 mt-3 rounded-2xl border bg-white/70 p-4 sm:p-5">
       {savedRating ? (
-        <p role="status" className="text-ink text-sm">
-          You rated {appointment.staff_name || "your stylist"}{" "}
-          <span className="font-semibold">{savedRating}/5 stars</span>. Thank
-          you!
-        </p>
+        <p role="status" className="text-ink text-sm"> {t("staff.youRated")} {appointment.staff_name || t("staff.yourStylist")}{" "}
+          <span className="font-semibold">{savedRating}{t("staff.5Stars")}</span>{t("staff.thankYou")} </p>
       ) : (
         <form
           onSubmit={(event) => {
@@ -30,15 +29,10 @@ export default function StaffRatingForm({ appointment }) {
           }}
         >
           <fieldset disabled={isPending}>
-            <legend className="text-ink font-semibold">
-              Rate {appointment.staff_name || "your stylist"}{" "}
-              <span className="text-ink-muted text-sm font-normal">
-                (optional)
-              </span>
+            <legend className="text-ink font-semibold"> {t("staff.rate")} {appointment.staff_name || t("staff.yourStylist")}{" "}
+              <span className="text-ink-muted text-sm font-normal"> {t("staff.optional")} </span>
             </legend>
-            <p className="text-ink-muted mt-1 text-sm">
-              How was your completed visit?
-            </p>
+            <p className="text-ink-muted mt-1 text-sm"> {t("staff.howWasYourCompletedVisit")} </p>
             <div className="mt-3 flex gap-1">
               {[1, 2, 3, 4, 5].map((value) => (
                 <label key={value} className="cursor-pointer">
@@ -62,15 +56,14 @@ export default function StaffRatingForm({ appointment }) {
             </div>
             {rating > 0 && (
               <p className="text-ink-muted mt-1 text-xs">
-                {rating} out of 5 stars selected
-              </p>
+                {rating} {t("staff.outOf5StarsSelected")} </p>
             )}
             <button
               type="submit"
               disabled={!rating || isPending}
               className="bg-ink text-cream mt-3 min-h-11 rounded-xl px-4 text-sm font-semibold disabled:opacity-50"
             >
-              {isPending ? "Saving..." : "Submit rating"}
+              {isPending ? t("common.saving") : t("staff.submitRating")}
             </button>
           </fieldset>
           {error && (

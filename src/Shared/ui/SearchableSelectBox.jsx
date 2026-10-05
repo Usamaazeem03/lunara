@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useMemo, useState } from "react";
 
 import Icon from "./Icon";
@@ -8,18 +10,19 @@ function SearchableSelectBox({
   options,
   selectedValue,
   onOptionSelect,
-  placeholder = "Select an option",
+  placeholder = i18n.t("common.selectAnOption"),
   searchable = true,
   required = false,
-  noOptionsText = "No options found",
+  noOptionsText = i18n.t("common.noOptionsFound"),
   className = "",
 }) {
+  useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const selectedOption = useMemo(
     () =>
       options.find((option) => String(option.value) === String(selectedValue)),
-    [options, selectedValue],
+    [options, selectedValue, i18n.resolvedLanguage],
   );
 
   const visibleOptions = useMemo(() => {
@@ -37,7 +40,7 @@ function SearchableSelectBox({
         .toLowerCase()
         .includes(normalizedQuery),
     );
-  }, [options, searchable, selectedOption, value]);
+  }, [options, searchable, selectedOption, value, i18n.resolvedLanguage]);
 
   const handleSelect = (option) => {
     onOptionSelect?.(option);

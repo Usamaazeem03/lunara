@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useWatch } from "react-hook-form";
 import StaffAvatar from "../../Shared/ui/StaffAvatar";
@@ -14,6 +15,7 @@ export default function StaffImageField({
   image,
   name,
 }) {
+  const { t } = useTranslation();
   const files = useWatch({ control, name: "image" });
   const file = files?.[0];
   const [preview, setPreview] = useState(null);
@@ -31,9 +33,7 @@ export default function StaffImageField({
 
   return (
     <div className="sm:col-span-2">
-      <span className="text-ink-muted text-xs tracking-widest uppercase">
-        Staff Image (optional)
-      </span>
+      <span className="text-ink-muted text-xs tracking-widest uppercase"> {t("staff.staffImageOptional")} </span>
       <div className="mt-2 flex items-center gap-4">
         <StaffAvatar
           image={file && preview?.file === file ? preview.url : image}
@@ -47,7 +47,7 @@ export default function StaffImageField({
           >
             <Icon name="add-image" size={16} />
             <span className="truncate">
-              {file?.name || (image ? "Change Image" : "Upload Image")}
+              {file?.name || (image ? t("staff.changeImage") : t("services.uploadImage"))}
             </span>
             <input
               id="staff-image"
@@ -63,9 +63,7 @@ export default function StaffImageField({
               className="absolute inset-0 w-full cursor-pointer opacity-0"
             />
           </label>
-          <p id="staff-image-help" className="text-ink-muted mt-2 text-xs">
-            JPEG, PNG, WebP, or GIF. Maximum 5 MB.
-          </p>
+          <p id="staff-image-help" className="text-ink-muted mt-2 text-xs"> {t("staff.jpegPngWebpOrGifMaximum5Mb")} </p>
           {error && (
             <p
               id="staff-image-error"

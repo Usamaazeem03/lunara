@@ -1,7 +1,6 @@
 import {
   saveSession,
   removeSavedSession,
-  clearSavedSessions,
 } from "./savedAccountSessions.js";
 
 // Account labels are separate from sessions. Passwords are never stored.
@@ -62,11 +61,6 @@ export function saveAccount(email, role, session) {
     return false;
   }
 }
-export function getSavedAccount(email, role) {
-  return (
-    getSavedAccounts(role).find((account) => account.email === email) || null
-  );
-}
 export function removeSavedAccount(email, role) {
   removeSavedSession(email, role);
   try {
@@ -78,15 +72,6 @@ export function removeSavedAccount(email, role) {
         ),
       ),
     );
-    return true;
-  } catch {
-    return false;
-  }
-}
-export function clearAllSavedAccounts() {
-  clearSavedSessions();
-  try {
-    localStorage.removeItem(STORAGE_KEY);
     return true;
   } catch {
     return false;

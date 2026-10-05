@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 const getLocalIsoDate = (date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -50,7 +51,7 @@ export const getMonthlyRevenue = (
   year = new Date().getFullYear(),
 ) => {
   const revenue = Array.from({ length: 12 }, (_, month) => ({
-    month: new Date(year, month, 1).toLocaleString("en-US", {
+    month: new Date(year, month, 1).toLocaleString(i18n.resolvedLanguage, {
       month: "short",
     }),
     revenue: 0,

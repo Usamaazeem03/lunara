@@ -1,4 +1,8 @@
-import { useForm } from "react-hook-form";
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
+import ButtonSpinner from "../../Shared/ui/ButtonSpinner";
+import i18n from "../../i18n/i18n.js";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 import { useClientInformation } from "./useClientInformation";
 import { internationalPhoneRules } from "../../Shared/lib/phoneValidation";
 import { clientSettingsStyles as styles } from "./clientSettingsStyles";
@@ -6,31 +10,32 @@ import { clientSettingsStyles as styles } from "./clientSettingsStyles";
 const fields = [
   {
     name: "full_name",
-    label: "Full name",
+    labelKey: "common.fullName",
     type: "text",
     autoComplete: "name",
     maxLength: 120,
   },
   {
     name: "phone",
-    label: "Contact phone",
+    labelKey: "clients.contactPhone",
     type: "tel",
     autoComplete: "tel",
     placeholder: "+44 1234 567890",
   },
   {
     name: "email",
-    label: "Contact email",
+    labelKey: "clients.contactEmail",
     type: "email",
     autoComplete: "email",
     maxLength: 254,
     validate: (value) =>
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ||
-      "Enter a valid email address.",
+      i18n.t("common.enterAValidEmailAddress"),
   },
 ];
 
 function ClientInformationForm({ client, save }) {
+  const { t } = useTranslation();
   const {
     register,
     setValue,
@@ -40,7 +45,7 @@ function ClientInformationForm({ client, save }) {
   } = useForm({
     mode: "onChange",
     defaultValues: Object.fromEntries(
-      fields.map(({ name }) => [name, client[name] || ""]),
+      translateConfig(fields).map(({ name }) => [name, client[name] || ""]),
     ),
   });
   return (
@@ -50,7 +55,7 @@ function ClientInformationForm({ client, save }) {
           onSuccess: (data) =>
             reset(
               Object.fromEntries(
-                fields.map(({ name }) => [name, data[name] || ""]),
+                translateConfig(fields).map(({ name }) => [name, data[name] || ""]),
               ),
             ),
         }),
@@ -58,7 +63,7 @@ function ClientInformationForm({ client, save }) {
       noValidate
     >
       <fieldset disabled={save.isPending} className="grid gap-5 sm:grid-cols-2">
-        {fields.map(({ name, label, validate, ...input }) => (
+        {translateConfig(fields).map(({ name, label, validate, ...input }) => (
           <label
             key={name}
             className={name === "full_name" ? "sm:col-span-2" : ""}
@@ -73,11 +78,11 @@ function ClientInformationForm({ client, save }) {
                 name === "phone"
                   ? internationalPhoneRules(setValue)
                   : {
-                      required: `${label} is required.`,
+                      required: t("common.isRequired", { value1: label }),
                       validate:
                         validate ||
                         ((value) =>
-                          Boolean(value.trim()) || `${label} is required.`),
+                          Boolean(value.trim()) || t("common.isRequired", { value1: label })),
                     },
               )}
               aria-required="true"
@@ -99,12 +104,10 @@ function ClientInformationForm({ client, save }) {
           </label>
         ))}
       </fieldset>
-      <p className="text-ink-muted mt-4 text-xs leading-5">
-        This is your contact email. Your sign-in email stays the same.
-      </p>
+      <p className="text-ink-muted mt-4 text-xs leading-5"> {t("clients.thisIsYourContactEmailYourSignInEmailStays")} </p>
       <div className="border-ink/10 mt-6 flex flex-col gap-4 border-t pt-5 sm:flex-row sm:items-center sm:justify-between">
         <span className="text-ink-muted text-xs" aria-live="polite">
-          {isDirty ? "Unsaved changes" : "All changes saved"}
+          {isDirty ? t("clients.unsavedChanges") : t("clients.allChangesSaved")}
         </span>
         <div className="grid grid-cols-[auto_1fr] gap-2 sm:flex">
           <button
@@ -112,15 +115,14 @@ function ClientInformationForm({ client, save }) {
             disabled={!isDirty || save.isPending}
             onClick={() => reset()}
             className={styles.secondary}
-          >
-            Reset
-          </button>
+          > {t("clients.reset")} </button>
           <button
             type="submit"
             disabled={!isDirty || !isValid || save.isPending}
+            aria-busy={save.isPending}
             className={styles.primary}
           >
-            {save.isPending ? "Saving..." : "Save information"}
+            {save.isPending ? <span className="inline-flex items-center gap-2"><ButtonSpinner />{t("common.saving")}</span> : t("clients.saveInformation")}
           </button>
         </div>
       </div>
@@ -129,25 +131,22 @@ function ClientInformationForm({ client, save }) {
 }
 
 export default function ClientInformation() {
+  const { t } = useTranslation();
   const { data, isPending, error, refetch, save } = useClientInformation();
   return (
     <section className={styles.card}>
-      <h2 className="text-lg font-semibold">Personal information</h2>
-      <p className="text-ink-muted mt-1 mb-6 text-sm leading-6">
-        Keep your name and contact details up to date.
-      </p>
+      <h2 className="text-lg font-semibold">{t("clients.personalInformation")}</h2>
+      <p className="text-ink-muted mt-1 mb-6 text-sm leading-6"> {t("clients.keepYourNameAndContactDetailsUpToDate")} </p>
       {isPending ? (
-        <p role="status">Loading your information...</p>
+        <p role="status">{t("clients.loadingYourInformation")}</p>
       ) : error ? (
         <div role="alert">
-          <p>Your information could not be loaded.</p>
+          <p>{t("clients.yourInformationCouldNotBeLoaded")}</p>
           <button
             type="button"
             onClick={() => refetch()}
             className={`${styles.secondary} mt-3`}
-          >
-            Try again
-          </button>
+          > {t("common.tryAgain")} </button>
         </div>
       ) : (
         <ClientInformationForm key={data.id} client={data} save={save} />

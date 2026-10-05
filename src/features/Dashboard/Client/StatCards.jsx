@@ -1,3 +1,5 @@
+import { translateConfig } from "../../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import calendarIcon from "../../../Shared/assets/icons/calendar.svg";
 import clockIcon from "../../../Shared/assets/icons/clock.svg";
 import creditCardIcon from "../../../Shared/assets/icons/credit-card.svg";
@@ -6,27 +8,27 @@ import { isValidElement } from "react";
 
 const defaultStats = [
   {
-    title: "Total Spend",
+    titleKey: "dashboard.totalSpend",
     value: "GBP 1,050",
-    subtitle: "Last 6 months",
+    subtitleKey: "dashboard.last6Months",
     icon: creditCardIcon,
   },
   {
-    title: "Loyalty Points",
+    titleKey: "dashboard.loyaltyPoints",
     value: "120",
-    subtitle: "Reward ready",
+    subtitleKey: "dashboard.rewardReady",
     icon: giftIcon,
   },
   {
-    title: "Visits This Year",
+    titleKey: "dashboard.visitsThisYear2",
     value: "6",
-    subtitle: "2 upcoming",
+    subtitleKey: "dashboard.2Upcoming",
     icon: calendarIcon,
   },
   {
-    title: "Avg Service Time",
+    titleKey: "dashboard.avgServiceTime",
     value: "45 min",
-    subtitle: "Based on history",
+    subtitleKey: "dashboard.basedOnHistory",
     icon: clockIcon,
   },
 ];
@@ -46,6 +48,7 @@ function DashboardStatCard({
   iconAlt = "",
   showAccent = true,
 }) {
+  useTranslation();
   return (
     <div className="relative overflow-hidden border border-[#2d2620]/20 bg-white/70 p-3 transition-all duration-300 hover:bg-white/90 hover:shadow-sm sm:p-4">
       {showAccent && (
@@ -79,7 +82,8 @@ function DashboardStatCard({
   );
 }
 
-function StatCards({ stats = defaultStats, lgGridCols = 4, className = "" }) {
+function StatCards({ stats = translateConfig(defaultStats), lgGridCols = 4, className = "" }) {
+  useTranslation();
   const lgCols = LG_GRID_COLS[lgGridCols] || LG_GRID_COLS[4];
   const gridClasses = [
     "mt-3 grid grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3 md:grid-cols-3 lg:mt-6 lg:gap-4",

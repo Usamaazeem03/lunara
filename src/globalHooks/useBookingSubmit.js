@@ -1,9 +1,14 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { supabase } from "../services/supabase.js";
 import { toTime24 } from "../utils/appointmentUtils.js";
 import { notify } from "../Shared/lib/toast.jsx";
 import useCreateAppointment from "../features/Appointments/useCreateAppointment.js";
 import useResolveClient from "../features/Appointments/useResolveClient.js";
+import {
+  createOwnerAppointment,
+  createPublicAppointment,
+} from "../services/apiAppointment.js";
 // ─── Helper: Supabase table missing error check ───────────────────────────────
 const isMissingTableError = (error) => {
   if (!error) return false;
@@ -28,11 +33,16 @@ const isClientForeignKeyError = (error) => {
 // ─── Main Hook ────────────────────────────────────────────────────────────────
 
 export function useBookingSubmit(mode = "client") {
+  const { t } = useTranslation();
   const isOwner = mode === "owner";
   const { resolveOwnerClientProfile, resolveClientSalonProfile } =
     useResolveClient();
   const { createAppointmentAsync, isCreatingAppointment } =
-    useCreateAppointment(null, { notifyErrors: false });
+    useCreateAppointment(
+      isOwner ? createOwnerAppointment : createPublicAppointment,
+      null,
+      { notifyErrors: false },
+    );
 
   const isSaving = isCreatingAppointment;
   const [saveError, setSaveError] = useState("");
@@ -50,6 +60,7 @@ export function useBookingSubmit(mode = "client") {
       clientName = null,
       clientPhone = null,
       clientEmail = null,
+      verification = undefined,
       status = "Pending",
       notes = null,
       rewardCode = "",
@@ -63,7 +74,7 @@ export function useBookingSubmit(mode = "client") {
     setSaveError("");
     setSaveSuccess("");
     if (isOwner && rewardCode.trim() && (!clientId || !isAppointmentTableReady)) {
-      setSaveError("Select a saved client and connect to the booking database before applying a reward.");
+      setSaveError(t("booking.selectASavedClientAndConnectToTheBookingDatabase"));
       return;
     }
 
@@ -75,21 +86,22 @@ export function useBookingSubmit(mode = "client") {
     let rewardProfileId = null;
 
     if (!isOwner) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("full_name, phone, email")
-        .eq("id", user.id)
-        .single();
+      const { data: authData } = await supabase.auth.getUser();
+      const user = authData?.user ?? null;
+      const { data: profile } = user?.id
+        ? await supabase
+            .from("profiles")
+            .select("full_name, phone, email")
+            .eq("id", user.id)
+            .single()
+        : { data: null };
 
-      finalClientId = user.id;
-      finalClientName = profile?.full_name ?? user.email;
-      finalClientPhone = profile?.phone ?? null;
-      finalClientEmail = profile?.email ?? user.email;
+      finalClientId = user?.id ?? null;
+      finalClientName = clientName ?? profile?.full_name ?? user?.email ?? null;
+      finalClientPhone = clientPhone ?? profile?.phone ?? null;
+      finalClientEmail = clientEmail ?? profile?.email ?? user?.email ?? null;
 
-      if (ownerId) {
+      if (user?.id && ownerId) {
         try {
           await resolveClientSalonProfile({
             ownerId,
@@ -109,7 +121,7 @@ export function useBookingSubmit(mode = "client") {
 
     // ── Step 2: Date + Time validate karo ──────────────────────────────────
     if (!appointmentDate) {
-      const msg = "Please select a date first";
+      const msg = t("booking.pleaseSelectADateFirst");
       if (isOwner) setSaveError(msg);
       else notify.error(msg);
       return;
@@ -117,7 +129,7 @@ export function useBookingSubmit(mode = "client") {
 
     const time24 = toTime24(appointmentTime);
     if (!time24) {
-      const msg = "Please select a time slot";
+      const msg = t("booking.pleaseSelectATimeSlot");
       if (isOwner) setSaveError(msg);
       else notify.error(msg);
       return;
@@ -148,7 +160,7 @@ export function useBookingSubmit(mode = "client") {
       }
 
       if (conflicts?.length > 0) {
-        const msg = `⚠️ ${staffName} is already booked at this time.\nPlease choose a different time or staff member.`;
+        const msg = t("booking.isAlreadyBookedAtThisTimePleaseChooseADifferent", { value1: staffName });
         if (isOwner) setSaveError(msg);
         else notify.error(msg);
         return;
@@ -220,7 +232,7 @@ export function useBookingSubmit(mode = "client") {
     // ── Step 6: Owner side — table ready nahi toh local draft ──────────────
     if (isOwner && !isAppointmentTableReady) {
       onLocalDraft?.([payload]);
-      setSaveSuccess(`Saved locally (${services.length} service/s).`);
+      setSaveSuccess(t("booking.savedLocallyServiceS", { value1: services.length }));
       onDone?.();
       return;
     }
@@ -231,7 +243,10 @@ export function useBookingSubmit(mode = "client") {
     let data;
 
     try {
-      data = await createAppointmentAsync(savePayload);
+      data = await createAppointmentAsync({
+        ...savePayload,
+        ...(verification ? { verification } : {}),
+      });
     } catch (error) {
       if (
         isOwner &&
@@ -249,7 +264,10 @@ export function useBookingSubmit(mode = "client") {
         };
 
         try {
-          data = await createAppointmentAsync(savePayload);
+          data = await createAppointmentAsync({
+            ...savePayload,
+            ...(verification ? { verification } : {}),
+          });
         } catch (retryError) {
           if (isOwner && !rewardCode.trim() && isMissingTableError(retryError)) {
             onMissingTable?.([savePayload]);
@@ -281,11 +299,12 @@ export function useBookingSubmit(mode = "client") {
     // ── Step 8: Success ─────────────────────────────────────────────────────
     onSuccess?.(data);
     const successMsg = isOwner
-      ? "Appointment saved successfully."
-      : "Appointment booked successfully. Status: Pending.";
+      ? t("booking.appointmentSavedSuccessfully")
+      : t("booking.appointmentBookedSuccessfullyStatusPending");
     if (isOwner) setSaveSuccess(successMsg);
     else notify.success(successMsg);
     onDone?.();
+    return data;
   };
 
   return {

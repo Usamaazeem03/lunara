@@ -1,3 +1,5 @@
+import { localizedError } from "../../../i18n/localizedError.js";
+import i18n from "../../../i18n/i18n.js";
 const PASS_PREFIX = "LUNARA:1";
 const ID_PATTERN = /^[a-zA-Z0-9_-]{1,128}$/;
 
@@ -5,9 +7,7 @@ export function createBookingReference(appointment) {
   const ownerId = String(appointment.owner_id ?? "");
   const appointmentId = String(appointment.id ?? "");
   if (!ID_PATTERN.test(ownerId) || !ID_PATTERN.test(appointmentId)) {
-    throw new Error(
-      "This appointment does not have a saved booking reference.",
-    );
+    throw localizedError("bookingPass.thisAppointmentDoesNotHaveASavedBookingReference");
   }
   return `${PASS_PREFIX}:${ownerId}:${appointmentId}`;
 }
@@ -16,7 +16,7 @@ export function createBookingReference(appointment) {
 // Always obtain the status and appointment details from the database.
 export function parseBookingReference(value) {
   if (typeof value !== "string" || value.length > 300) {
-    throw new Error("This is not a Lunara booking pass.");
+    throw localizedError("bookingPass.thisIsNotALunaraBookingPass");
   }
   const parts = value.trim().split(":");
   if (
@@ -25,9 +25,7 @@ export function parseBookingReference(value) {
     !ID_PATTERN.test(parts[2]) ||
     !ID_PATTERN.test(parts[3])
   ) {
-    throw new Error(
-      "This is not a Lunara booking pass. Scan the QR on the client's appointment pass.",
-    );
+    throw localizedError("bookingPass.thisIsNotALunaraBookingPassScanTheQr");
   }
   return { ownerId: parts[2], appointmentId: parts[3] };
 }
@@ -36,46 +34,46 @@ export function getBookingStatus(status) {
   switch (status?.toLowerCase()) {
     case "confirmed":
       return {
-        label: "Confirmed",
-        description: "Your visit is confirmed. Show this pass at the salon.",
+        label: i18n.t("common.confirmed"),
+        description: i18n.t("bookingPass.yourVisitIsConfirmedShowThisPassAtTheSalon"),
         tone: "bg-[#e8eee4] text-[#405738]",
       };
     case "cancelled":
       return {
-        label: "Cancelled",
+        label: i18n.t("common.cancelled"),
         description:
-          "This appointment has been cancelled. This pass is not valid for a visit.",
+          i18n.t("bookingPass.thisAppointmentHasBeenCancelledThisPassIsNotValid"),
         tone: "bg-red-50 text-red-800",
       };
     case "completed":
       return {
-        label: "Completed",
-        description: "This visit has already been completed.",
+        label: i18n.t("common.completed"),
+        description: i18n.t("bookingPass.thisVisitHasAlreadyBeenCompleted"),
         tone: "bg-ink/5 text-ink-muted",
       };
     case "pending":
       return {
-        label: "Awaiting confirmation",
+        label: i18n.t("bookingPass.awaitingConfirmation"),
         description:
-          "Your request is saved. The salon still needs to confirm your visit.",
+          i18n.t("bookingPass.yourRequestIsSavedTheSalonStillNeedsToConfirm"),
         tone: "bg-amber-50 text-amber-900",
       };
     default:
       return {
-        label: "Status unavailable",
+        label: i18n.t("bookingPass.statusUnavailable"),
         description:
-          "Ask the salon to check this appointment before your visit.",
+          i18n.t("bookingPass.askTheSalonToCheckThisAppointmentBeforeYourVisit"),
         tone: "bg-ink/5 text-ink-muted",
       };
   }
 }
 
 export function formatPassDate(value) {
-  if (!value) return "Date unavailable";
+  if (!value) return i18n.t("common.dateUnavailable");
   const date = new Date(`${value}T12:00:00`);
   return Number.isNaN(date.getTime())
-    ? "Date unavailable"
-    : date.toLocaleDateString(undefined, {
+    ? i18n.t("common.dateUnavailable")
+    : date.toLocaleDateString(i18n.resolvedLanguage, {
         weekday: "short",
         day: "numeric",
         month: "short",
@@ -84,8 +82,8 @@ export function formatPassDate(value) {
 }
 
 export function formatPassTime(value) {
-  if (!value) return "Time unavailable";
+  if (!value) return i18n.t("bookingPass.timeUnavailable");
   const [hour, minute] = value.split(":").map(Number);
   if (!Number.isFinite(hour) || !Number.isFinite(minute)) return value;
-  return `${hour % 12 || 12}:${String(minute).padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`;
+  return `${hour % 12 || 12}:${String(minute).padStart(2, "0")} ${hour >= 12 ? i18n.t("common.pm") : i18n.t("common.am")}`;
 }

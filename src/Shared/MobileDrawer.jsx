@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/i18n.js";
 import Icon from "./ui/Icon";
 
 function MobileDrawer({
@@ -5,9 +7,10 @@ function MobileDrawer({
   onClose = null,
   menuItems = [],
   profileImg = "",
-  profileAlt = "User profile",
+  profileAlt = i18n.t("common.userProfile"),
   onProfileClick = null,
 }) {
+  const { t } = useTranslation();
   const handleDrawerToggle = () => {
     if (isOpen) {
       onClose?.();
@@ -33,7 +36,7 @@ function MobileDrawer({
                 onProfileClick?.();
                 onClose?.();
               }}
-              aria-label="Open profile"
+              aria-label={t("common.openProfile")}
               className="border-ink/20 hover:border-ink/40 flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border bg-white/80 transition hover:scale-[1.02] focus-visible:outline-2 focus-visible:outline-offset-2"
             >
               <img
@@ -58,9 +61,7 @@ function MobileDrawer({
           className={`flex flex-col items-center ${isOpen ? "mt-8" : "mt-6"}`}
         >
           {isOpen && (
-            <p className="text-ink-muted text-xs tracking-widest uppercase">
-              Menu
-            </p>
+            <p className="text-ink-muted text-xs tracking-widest uppercase"> {t("common.menu")} </p>
           )}
 
           <nav
@@ -70,7 +71,7 @@ function MobileDrawer({
           >
             {menuItems.map((item) => (
               <DrawerMenuItem
-                key={item.text}
+                key={item.segment}
                 {...item}
                 isOpen={isOpen}
                 onClick={() => {
@@ -87,7 +88,7 @@ function MobileDrawer({
       <button
         type="button"
         onClick={handleDrawerToggle}
-        aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-label={isOpen ? t("dashboard.closeMenu") : t("common.openMenu")}
         className={`border-ink/15 bg-cream-soft/90 absolute top-1/2 ${isOpen ? "opacity-0" : "-left-5 opacity-100"} flex h-40 w-5 -translate-y-1/2 items-center justify-center rounded-l-2xl border border-r-0`}
       >
         <span
@@ -104,18 +105,19 @@ function MobileDrawer({
 
 const DrawerMenuItem = ({
   iconName = "",
-  text = "",
+  textKey,
   active = false,
   onClick = null,
   isOpen = false,
 }) => {
+  const { t } = useTranslation();
   return (
     <button
       type="button"
       onClick={onClick}
       aria-current={active ? "page" : undefined}
-      aria-label={text}
-      title={!isOpen ? text : undefined}
+      aria-label={t(textKey)}
+      title={!isOpen ? t(textKey) : undefined}
       className={`flex items-center gap-3 rounded-xl px-2 py-2 text-left text-sm tracking-widest uppercase transition ${
         active ? "bg-ink text-cream" : "text-ink hover:bg-ink/10"
       } ${isOpen ? "w-full" : "w-12 justify-center"}`}

@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 function AuthHeroPanel({ role, imageSrc, content }) {
+  const { t } = useTranslation();
   return (
     <div className="auth-hero relative hidden min-h-[240px] md:block md:min-h-full">
       <img
         src={imageSrc}
-        alt={role === "owner" ? "Owner login" : "Client login"}
+        alt={role === "owner" ? t("common.ownerLogin") : t("auth.clientLogin")}
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/50 to-black/10" />
@@ -28,7 +30,7 @@ function AuthHeroPanel({ role, imageSrc, content }) {
                 key={`${step}-${index}`}
                 className="rounded-xl bg-white/30 px-4 py-3"
               >
-                <p className="text-[10px] text-white/60">Step {index + 1}</p>
+                <p className="text-[10px] text-white/60">{t("booking.step")} {index + 1}</p>
                 <p className="mt-2 text-sm font-semibold normal-case">{step}</p>
               </div>
             ))}

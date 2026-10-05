@@ -1,3 +1,6 @@
+import { fixedLabel } from "../../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
+import i18n from "../../../i18n/i18n.js";
 import { useUserAvatars } from "../../../globalHooks/useUserAvatars";
 import UserAvatar from "../../../Shared/ui/UserAvatar";
 import { useMemo, useState } from "react";
@@ -35,6 +38,7 @@ import {
 import Icon from "../../../Shared/ui/Icon.jsx";
 
 const AdminDashboard = () => {
+  const { t } = useTranslation();
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -52,7 +56,7 @@ const AdminDashboard = () => {
   } = useClients(ownerId);
   const totalClients = useMemo(
     () => mergeClients(clients, clientAppointments).length,
-    [clients, clientAppointments],
+    [clients, clientAppointments, i18n.resolvedLanguage, t],
   );
   const clientsLoading = isOwnerLoading || isClientsLoading;
   const clientsUnavailable = Boolean(
@@ -65,42 +69,42 @@ const AdminDashboard = () => {
     weekRevenue,
     monthRevenue,
     pendingAmount,
-  } = useMemo(() => getAppointmentStats(appointments), [appointments]);
+  } = useMemo(() => getAppointmentStats(appointments), [appointments, i18n.resolvedLanguage, t]);
 
   const stats = [
     {
-      title: "Today's Appointments",
+      title: t("common.todaySAppointments"),
       value: todayAppointments.length.toString(),
-      subtitle: "On schedule",
+      subtitle: t("dashboard.onSchedule"),
 
       icon: <Icon name="calendar" size={20} className="text-ink-muted/70" />,
     },
     {
-      title: "Total Clients",
+      title: t("common.totalClients"),
       value: clientsLoading
         ? "..."
         : clientsUnavailable
-          ? "Unavailable"
+          ? t("common.unavailable")
           : totalClients.toString(),
       subtitle: clientsLoading
-        ? "Loading clients"
+        ? t("dashboard.loadingClients")
         : clientsUnavailable
-          ? "Could not load clients"
-          : "All clients",
+          ? t("dashboard.couldNotLoadClients")
+          : t("dashboard.allClients"),
       icon: <Icon name="users" size={20} className="text-ink-muted/70" />,
     },
     {
-      title: "This Month Revenue",
+      title: t("dashboard.thisMonthRevenue"),
       value: formatCurrency(monthRevenue, currencyCode),
-      subtitle: "Completed appointments this month",
+      subtitle: t("dashboard.completedAppointmentsThisMonth"),
       icon: (
         <Icon name="credit-card-alt" size={20} className="text-ink-muted/70" />
       ),
     },
     {
-      title: "Pending Amount",
+      title: t("dashboard.pendingAmount"),
       value: formatCurrency(pendingAmount, currencyCode),
-      subtitle: "Pending and confirmed bookings",
+      subtitle: t("dashboard.pendingAndConfirmedBookings"),
       icon: <Icon name="pending" size={20} className="text-ink-muted/70" />,
     },
   ];
@@ -114,7 +118,7 @@ const AdminDashboard = () => {
           appointment.service_name ??
           appointment.service_title ??
           appointment.service ??
-          "Service",
+          t("common.service"),
         dateLabel: formatPassDate(
           appointment.appointment_date ?? appointment.date,
         ),
@@ -125,8 +129,8 @@ const AdminDashboard = () => {
         ),
         duration:
           appointment.duration_minutes != null
-            ? `${appointment.duration_minutes} min`
-            : "N/A",
+            ? t("common.min", { value1: appointment.duration_minutes })
+            : t("common.nA"),
         price: formatCurrency(
           appointment.price ?? appointment.amount,
           currencyCode,
@@ -136,20 +140,20 @@ const AdminDashboard = () => {
           appointment.client_name ??
           appointment.customer_name ??
           appointment.client ??
-          "Walk-in",
+          t("common.walkIn"),
         service: getServiceSummary(
           appointment.service_name ??
             appointment.service_title ??
             appointment.service ??
-            "Service",
+            t("common.service"),
         ),
-        staff: appointment.staff_name ?? "Unassigned",
+        staff: appointment.staff_name ?? i18n.t("common.unassigned"),
         time:
           appointment.appointment_time ??
           appointment.time ??
           appointment.start_time ??
-          "N/A",
-        amount: appointment.price ?? appointment.amount ?? "N/A",
+          t("common.nA"),
+        amount: appointment.price ?? appointment.amount ?? t("common.nA"),
         status: appointment.status ?? "Pending",
         initials: (appointment.client_name ?? "Walk-in")
           .split(" ")
@@ -158,7 +162,7 @@ const AdminDashboard = () => {
           .slice(0, 2)
           .toUpperCase(),
       })),
-    [todayAppointments, currencyCode],
+    [todayAppointments, currencyCode, i18n.resolvedLanguage, t],
   );
 
   const { avatars } = useUserAvatars(
@@ -178,26 +182,26 @@ const AdminDashboard = () => {
 
   const revenueHighlights = [
     {
-      label: "Today Revenue",
+      label: t("dashboard.todayRevenue"),
       value: formatCurrency(todayRevenue, currencyCode),
     },
     {
-      label: "This Week Revenue",
+      label: t("dashboard.thisWeekRevenue"),
       value: formatCurrency(weekRevenue, currencyCode),
     },
   ];
 
   const monthlyRevenue = useMemo(
     () => getMonthlyRevenue(appointments),
-    [appointments],
+    [appointments, i18n.resolvedLanguage, t],
   );
 
   return (
     <section className="flex h-full flex-col">
       <AppHeader
-        eyebrow="Dashboard"
-        title="Welcome back!"
-        description="Here's what's happening today."
+        eyebrow={t("nav.dashboard")}
+        title={t("dashboard.welcomeBack")}
+        description={t("dashboard.hereSWhatSHappeningToday")}
       />
 
       <StatCards stats={stats} lgGridCols={4} />
@@ -208,14 +212,11 @@ const AdminDashboard = () => {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold">Recent Appointments</h2>
+                <h2 className="text-lg font-semibold">{t("dashboard.recentAppointments")}</h2>
                 <span className="border-ink/20 bg-cream text-ink-muted rounded-full border px-2 py-0.5 text-[0.6rem] tracking-widest uppercase">
-                  {todayAppointments.length} today
-                </span>
+                  {todayAppointments.length} {t("dashboard.today")} </span>
               </div>
-              <p className="text-ink-muted text-sm">
-                Latest bookings and status updates.
-              </p>
+              <p className="text-ink-muted text-sm"> {t("dashboard.latestBookingsAndStatusUpdates")} </p>
             </div>
             <button
               type="button"
@@ -223,14 +224,12 @@ const AdminDashboard = () => {
                 if (slug) navigate(`/owner/salon/${slug}/appointments`);
               }}
               className="border-ink hover:bg-ink hover:text-cream border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase transition"
-            >
-              View all
-            </button>
+            > {t("dashboard.viewAll")} </button>
           </div>
 
           <div
             className="scrollbar-hidden mt-4 flex max-h-64 min-h-0 flex-1 snap-y snap-mandatory flex-col gap-3 overflow-y-auto overscroll-contain pr-2"
-            aria-label={`${todayAppointments.length} appointments today`}
+            aria-label={t("dashboard.appointmentsToday", { value1: todayAppointments.length })}
           >
             {recentAppointments.map((appointment, index) => (
               <div
@@ -266,14 +265,10 @@ const AdminDashboard = () => {
           <div className="bg-ink/5 absolute -top-8 -right-8 h-20 w-20 rounded-full"></div>
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold">Monthly Revenue</h2>
-              <p className="text-ink-muted text-sm">
-                Completed appointment revenue this year.
-              </p>
+              <h2 className="text-lg font-semibold">{t("dashboard.monthlyRevenue")}</h2>
+              <p className="text-ink-muted text-sm"> {t("dashboard.completedAppointmentRevenueThisYear")} </p>
             </div>
-            <span className="border-ink/30 bg-cream text-ink rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase">
-              Updated today
-            </span>
+            <span className="border-ink/30 bg-cream text-ink rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase"> {t("dashboard.updatedToday")} </span>
           </div>
 
           <div className="mt-4 flex-1">
@@ -292,6 +287,7 @@ const AdminDashboard = () => {
 };
 
 const AppointmentRow = ({ appointment, onSelect, avatarUrl }) => {
+  const { t } = useTranslation();
   const statusStyles = {
     Completed: "border-ink bg-ink text-cream",
     Pending: "border-ink/30 bg-cream text-ink",
@@ -302,14 +298,14 @@ const AppointmentRow = ({ appointment, onSelect, avatarUrl }) => {
     <button
       type="button"
       onClick={onSelect}
-      aria-label={`View appointment details for ${appointment.client}`}
+      aria-label={t("dashboard.viewAppointmentDetailsFor", { value1: appointment.client })}
       className="border-ink/20 hover:border-ink focus-visible:outline-ink flex w-full cursor-pointer flex-wrap items-center justify-between gap-3 border-2 bg-white px-3 py-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2"
     >
       <span className="flex items-center gap-3">
         <span className="border-ink/20 bg-cream text-ink-muted flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 text-xs font-semibold uppercase">
           <UserAvatar
             src={avatarUrl}
-            alt={`${appointment.client || "Client"} profile`}
+            alt={t("common.profile", { value1: appointment.client || t("common.client") })}
           />
         </span>
         <span>
@@ -335,7 +331,7 @@ const AppointmentRow = ({ appointment, onSelect, avatarUrl }) => {
             statusStyles[appointment.status] ?? "border-ink/30 text-ink-muted"
           }`}
         >
-          {appointment.status}
+          {fixedLabel(appointment.status, "status")}
         </span>
       </span>
     </button>
@@ -343,6 +339,7 @@ const AppointmentRow = ({ appointment, onSelect, avatarUrl }) => {
 };
 
 const RevenueChart = ({ data, currencyCode }) => {
+  const { t } = useTranslation();
   return (
     <div className="flex h-full flex-col">
       <div className="relative h-40 w-full">
@@ -363,7 +360,7 @@ const RevenueChart = ({ data, currencyCode }) => {
             <Tooltip
               formatter={(value) => [
                 formatCurrency(value, currencyCode),
-                "Revenue",
+                t("common.revenue"),
               ]}
               contentStyle={{
                 border: "1px solid rgba(45, 38, 32, 0.2)",

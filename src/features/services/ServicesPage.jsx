@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import AppHeader from "../../AppLayout/AppHeader.jsx";
 import Button from "../../Shared/Button.jsx";
@@ -5,7 +6,7 @@ import { ServiceCard } from "./ServiceCard.jsx";
 import ServiceFilter from "./ServiceFilter.jsx";
 import CreateServiceForm from "./CreateServiceForm.jsx";
 import BottomActionBar from "./BottomActionBar.jsx";
-import { ServicesStats } from "./servicesStats.jsx";
+import { ServicesStats } from "./ServicesStats.jsx";
 import { useServicesPage } from "./useServicesPage.js";
 
 const SERVICES_PER_PAGE = 6;
@@ -17,6 +18,7 @@ const getSavedServicesPage = () => {
 };
 
 const ServicesPage = () => {
+  const { t } = useTranslation();
   const {
     categories,
     selectedCategory,
@@ -58,15 +60,15 @@ const ServicesPage = () => {
   return (
     <section className="flex h-full flex-col">
       <AppHeader
-        eyebrow="Services"
-        title="Services"
-        description="Manage your salon services and pricing."
+        eyebrow={t("nav.services")}
+        title={t("nav.services")}
+        description={t("services.manageYourSalonServicesAndPricing")}
       >
         <Button
           variant="primary"
           onClick={showForm ? closeForm : openCreateForm}
         >
-          {showForm ? "Close" : "Add Service"}
+          {showForm ? t("common.close") : t("services.addService")}
         </Button>
       </AppHeader>
 
@@ -115,13 +117,15 @@ const ServicesPage = () => {
 
         {isLoading && (
           <div className="border-ink/20 text-ink-muted border-2 bg-white/90 p-4 text-sm">
-            Loading services...
+            {" "}
+            {t("booking.loadingServices")}{" "}
           </div>
         )}
 
         {!isLoading && filteredServices.length === 0 && (
           <div className="border-ink/30 bg-cream text-ink-muted border-2 border-dashed p-4 text-center text-sm">
-            No services available yet. Add your first service above.
+            {" "}
+            {t("services.noServicesAvailableYetAddYourFirstServiceAbove")}{" "}
           </div>
         )}
 

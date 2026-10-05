@@ -48,11 +48,3 @@ export function clearSavedSessionsForUser(userId) {
     /* Storage can be disabled by the browser. */
   }
 }
-
-export function clearSavedSessions() {
-  try {
-    localStorage.removeItem(KEY);
-  } catch {
-    /* Storage is optional. */
-  }
-}

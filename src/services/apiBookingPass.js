@@ -1,3 +1,4 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase.js";
 import { parseBookingReference } from "../features/Appointments/bookingPass/bookingPassUtils.js";
 
@@ -10,7 +11,7 @@ export async function getClientBookingPasses() {
     error: authError,
   } = await supabase.auth.getUser();
   if (authError) throw authError;
-  if (!user) throw new Error("Please sign in to view your appointments.");
+  if (!user) throw localizedError("booking.pleaseSignInToViewYourAppointments");
   const { data, error } = await supabase
     .from("appointments")
     .select(PASS_FIELDS)
@@ -18,13 +19,13 @@ export async function getClientBookingPasses() {
     .order("appointment_date", { ascending: false })
     .order("appointment_time", { ascending: false });
   if (error)
-    throw new Error("Your appointments could not be loaded. Please try again.");
+    throw localizedError("booking.yourAppointmentsCouldNotBeLoadedPleaseTryAgain");
   const { data: ratings, error: ratingError } = await supabase
     .from("staff_ratings")
     .select("appointment_id, rating")
     .eq("client_id", user.id);
   if (ratingError)
-    throw new Error("Your ratings could not be loaded. Please try again.");
+    throw localizedError("booking.yourRatingsCouldNotBeLoadedPleaseTryAgain");
   const ratingsByAppointment = new Map(
     (ratings ?? []).map((row) => [String(row.appointment_id), row.rating]),
   );
@@ -42,10 +43,10 @@ export async function verifyBookingPass(reference, ownerId) {
   } = await supabase.auth.getUser();
   if (authError) throw authError;
   if (!user || !ownerId || user.id !== ownerId) {
-    throw new Error("Sign in to the salon owner account to verify a booking.");
+    throw localizedError("booking.signInToTheSalonOwnerAccountToVerifyA");
   }
   if (parsed.ownerId !== ownerId) {
-    throw new Error("This booking belongs to a different salon.");
+    throw localizedError("booking.thisBookingBelongsToADifferentSalon");
   }
   const { data, error } = await supabase
     .from("appointments")
@@ -54,10 +55,8 @@ export async function verifyBookingPass(reference, ownerId) {
     .eq("owner_id", ownerId)
     .maybeSingle();
   if (error)
-    throw new Error(
-      "Could not verify this booking. Check your connection and try again.",
-    );
+    throw localizedError("booking.couldNotVerifyThisBookingCheckYourConnectionAndTry");
   if (!data)
-    throw new Error("No matching appointment was found in your salon.");
+    throw localizedError("booking.noMatchingAppointmentWasFoundInYourSalon");
   return data;
 }

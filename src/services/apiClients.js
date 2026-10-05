@@ -1,7 +1,9 @@
+import { localizedError } from "../i18n/localizedError.js";
+import i18n from "../i18n/i18n.js";
 import { supabase } from "./supabase";
 
 export async function getClients(ownerId) {
-  if (!ownerId) throw new Error("An owner is required to load clients.");
+  if (!ownerId) throw localizedError("clients.anOwnerIsRequiredToLoadClients");
   const [clients, appointments] = await Promise.all([
     supabase
       .from("profiles")
@@ -17,17 +19,17 @@ export async function getClients(ownerId) {
       .eq("owner_id", ownerId),
   ]);
   if (clients.error)
-    throw new Error(clients.error.message || "Clients could not be loaded.");
+    throw new Error(clients.error.message || i18n.t("clients.clientsCouldNotBeLoaded"));
   if (appointments.error)
     throw new Error(
-      appointments.error.message || "Client appointments could not be loaded.",
+      appointments.error.message || i18n.t("clients.clientAppointmentsCouldNotBeLoaded"),
     );
   return { clients: clients.data ?? [], appointments: appointments.data ?? [] };
 }
 
 export async function createClient({ owner_id, full_name, phone, email }) {
-  if (!owner_id) throw new Error("An owner is required to add a client.");
-  if (!full_name?.trim()) throw new Error("Full name is required.");
+  if (!owner_id) throw localizedError("clients.anOwnerIsRequiredToAddAClient");
+  if (!full_name?.trim()) throw localizedError("common.fullNameIsRequired");
   const { error } = await supabase.from("profiles").insert([
     {
       owner_id,
@@ -37,6 +39,6 @@ export async function createClient({ owner_id, full_name, phone, email }) {
       role: "client",
     },
   ]);
-  if (error) throw new Error(error.message || "Unable to save the client.");
-  return { success: true, message: "Client added." };
+  if (error) throw new Error(error.message || i18n.t("clients.unableToSaveTheClient"));
+  return { success: true, message: i18n.t("clients.clientAdded") };
 }

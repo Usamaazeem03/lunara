@@ -1,16 +1,18 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import { useToaster, toast } from "react-hot-toast";
 
 // ─── Individual Toast Card ───────────────────────────────────────────────────
-const ToastCard = ({ t, handlers }) => {
+const ToastCard = ({ t: toastItem, handlers }) => {
+  const { t } = useTranslation();
   const { startPause, endPause } = handlers;
   const progressRef = useRef(null);
 
-  const isSuccess = t.type === "success";
-  const isError = t.type === "error";
-  const isLoading = t.type === "loading";
-  const isCustom = t.type === "custom";
-  const isWarning = t.icon === "warning";
+  const isSuccess = toastItem.type === "success";
+  const isError = toastItem.type === "error";
+  const isLoading = toastItem.type === "loading";
+  const isCustom = toastItem.type === "custom";
+  const isWarning = toastItem.icon === "warning";
 
   // Accent color per type
   const accentColor = isError
@@ -21,17 +23,18 @@ const ToastCard = ({ t, handlers }) => {
 
   // Label per type
   const typeLabel = isError
-    ? "Error"
+    ? t("common.error")
     : isSuccess
-      ? "Success"
+      ? t("common.success")
       : isWarning
-        ? "Warning"
+        ? t("common.warning")
       : isLoading
-        ? "Loading"
-        : "Notice";
+        ? t("common.loading")
+        : t("common.notice");
 
   // Icon per type
   const Icon = () => {
+  useTranslation();
     if (isLoading) {
       return (
         <svg
@@ -136,30 +139,30 @@ const ToastCard = ({ t, handlers }) => {
 
   // Animate progress bar
   useEffect(() => {
-    if (!progressRef.current || isLoading || t.duration === Infinity) return;
+    if (!progressRef.current || isLoading || toastItem.duration === Infinity) return;
     const el = progressRef.current;
     el.style.transition = "none";
     el.style.width = "100%";
     // Force reflow
     void el.offsetWidth;
-    el.style.transition = `width ${t.duration}ms linear`;
+    el.style.transition = `width ${toastItem.duration}ms linear`;
     el.style.width = "0%";
-  }, [t.id, t.duration, isLoading]);
+  }, [toastItem.id, toastItem.duration, isLoading]);
 
   // If it's a fully custom toast (like confirmToast), render it directly
   if (isCustom) {
     return (
       <div
         style={{
-          opacity: t.visible ? 1 : 0,
-          transform: t.visible
+          opacity: toastItem.visible ? 1 : 0,
+          transform: toastItem.visible
             ? "translateX(0) scale(1)"
             : "translateX(100%) scale(0.95)",
           transition:
             "opacity 220ms ease, transform 220ms cubic-bezier(0.34,1.56,0.64,1)",
         }}
       >
-        {typeof t.message === "function" ? t.message(t) : t.message}
+        {typeof toastItem.message === "function" ? toastItem.message(toastItem) : toastItem.message}
       </div>
     );
   }
@@ -168,7 +171,7 @@ const ToastCard = ({ t, handlers }) => {
     <div
       onMouseEnter={startPause}
       onMouseLeave={endPause}
-      onClick={() => toast.dismiss(t.id)}
+      onClick={() => toast.dismiss(toastItem.id)}
       style={{
         width: "min(380px, calc(100vw - 2rem))",
         background: isError
@@ -184,8 +187,8 @@ const ToastCard = ({ t, handlers }) => {
         WebkitBackdropFilter: "blur(20px)",
         cursor: "pointer",
         overflow: "hidden",
-        opacity: t.visible ? 1 : 0,
-        transform: t.visible
+        opacity: toastItem.visible ? 1 : 0,
+        transform: toastItem.visible
           ? "translateX(0) scale(1)"
           : "translateX(100%) scale(0.96)",
         transition:
@@ -243,7 +246,7 @@ const ToastCard = ({ t, handlers }) => {
               wordBreak: "break-word",
             }}
           >
-            {typeof t.message === "function" ? t.message(t) : t.message}
+            {typeof toastItem.message === "function" ? toastItem.message(toastItem) : toastItem.message}
           </p>
         </div>
 
@@ -251,7 +254,7 @@ const ToastCard = ({ t, handlers }) => {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            toast.dismiss(t.id);
+            toast.dismiss(toastItem.id);
           }}
           style={{
             flexShrink: 0,
@@ -277,14 +280,14 @@ const ToastCard = ({ t, handlers }) => {
             e.currentTarget.style.borderColor = "rgba(45,38,32,0.15)";
             e.currentTarget.style.color = "rgba(45,38,32,0.45)";
           }}
-          aria-label="Dismiss"
+          aria-label={t("common.dismiss")}
         >
           ✕
         </button>
       </div>
 
       {/* Progress bar */}
-      {!isLoading && t.duration !== Infinity && (
+      {!isLoading && toastItem.duration !== Infinity && (
         <div
           style={{
             height: "2px",
@@ -313,6 +316,7 @@ const ToastCard = ({ t, handlers }) => {
 
 // ─── Toaster Container ───────────────────────────────────────────────────────
 function AppToaster() {
+  useTranslation();
   const { toasts, handlers } = useToaster();
 
   return (

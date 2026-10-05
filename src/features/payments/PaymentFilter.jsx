@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 function openPicker(event) {
   const input = event.currentTarget;
   try {
@@ -22,25 +23,22 @@ export default function PaymentFilter({
   onFilterChange,
   onClear,
 }) {
+  const { t } = useTranslation();
   return (
     <div className="border-ink/20 mt-4 border-2 bg-white/90 p-3">
       <label className="block">
-        <span className="text-ink-muted mb-2 block text-xs tracking-widest uppercase">
-          Find a client invoice
-        </span>
+        <span className="text-ink-muted mb-2 block text-xs tracking-widest uppercase"> {t("payments.findAClientInvoice")} </span>
         <input
           type="search"
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Search by client name, phone, email or booking ID..."
+          placeholder={t("payments.searchByClientNamePhoneEmailOrBookingId")}
           className="border-ink/20 focus:border-ink min-h-11 w-full border-2 bg-white px-3 text-sm outline-none"
         />
       </label>
       <div className="mt-3 grid items-end gap-3 sm:grid-cols-[1fr_1fr_auto]">
         <label className="min-w-0">
-          <span className="text-ink-muted mb-2 block text-xs tracking-widest uppercase">
-            Appointment day
-          </span>
+          <span className="text-ink-muted mb-2 block text-xs tracking-widest uppercase"> {t("payments.appointmentDay")} </span>
           <input
             type="date"
             value={filters.date}
@@ -51,9 +49,7 @@ export default function PaymentFilter({
           />
         </label>
         <label className="min-w-0">
-          <span className="text-ink-muted mb-2 block text-xs tracking-widest uppercase">
-            Appointment time
-          </span>
+          <span className="text-ink-muted mb-2 block text-xs tracking-widest uppercase"> {t("payments.appointmentTime")} </span>
           <input
             type="time"
             value={filters.time}
@@ -68,9 +64,7 @@ export default function PaymentFilter({
           onClick={onClear}
           disabled={!search && !filters.date && !filters.time}
           className="border-ink/20 hover:border-ink min-h-11 border-2 px-4 text-xs tracking-widest uppercase disabled:opacity-40"
-        >
-          Clear filters
-        </button>
+        > {t("clients.clearFilters")} </button>
       </div>
     </div>
   );

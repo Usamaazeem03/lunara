@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { internationalPhoneRules } from "../../Shared/lib/phoneValidation";
-import { useForm } from "react-hook-form";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 import Button from "../../Shared/Button";
 import useCreateClient from "./useCreateClient";
 
 export default function CreateClientForm({ ownerId, onCloseForm }) {
+  const { t } = useTranslation();
   const { createClient, isCreating, error } = useCreateClient(ownerId);
   const {
     register,
@@ -29,14 +31,12 @@ export default function CreateClientForm({ ownerId, onCloseForm }) {
     >
       <div className="bg-ink h-1 w-full" />
       <div className="border-ink/10 flex items-start justify-between border-b-2 px-5 py-4">
-        <h2 id="client-form-title" className="text-ink text-base font-semibold">
-          Add New Client
-        </h2>
+        <h2 id="client-form-title" className="text-ink text-base font-semibold"> {t("clients.addNewClient")} </h2>
         <button
           type="button"
           onClick={onCloseForm}
           disabled={isCreating}
-          aria-label="Close"
+          aria-label={t("common.close")}
           className="border-ink/20 h-8 w-8 border-2"
         >
           X
@@ -51,32 +51,32 @@ export default function CreateClientForm({ ownerId, onCloseForm }) {
           {[
             {
               name: "full_name",
-              label: "Full Name *",
+              label: t("clients.fullName"),
               type: "text",
-              placeholder: "e.g. Emily Parker",
+              placeholder: t("clients.eGEmilyParker"),
               rules: {
                 validate: (value) =>
-                  Boolean(value.trim()) || "Full name is required.",
+                  Boolean(value.trim()) || t("common.fullNameIsRequired"),
               },
             },
             {
               name: "phone",
-              label: "Phone *",
+              label: t("clients.phone"),
               type: "tel",
               placeholder: "+44 1234 567890",
               rules: internationalPhoneRules(setValue),
             },
             {
               name: "email",
-              label: "Email *",
+              label: t("clients.email"),
               type: "email",
               placeholder: "client@email.com",
               rules: {
                 validate: (value) =>
                   !value.trim()
-                    ? "Email is required."
+                    ? t("auth.emailIsRequired")
                     : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ||
-                      "Enter a valid email address.",
+                      t("common.enterAValidEmailAddress"),
               },
             },
           ].map(({ name, label, type, placeholder, rules }) => (
@@ -113,16 +113,14 @@ export default function CreateClientForm({ ownerId, onCloseForm }) {
             variant="primary"
             disabled={!ownerId || !isValid || isCreating}
           >
-            {isCreating ? "Saving Client..." : "Save Client"}
+            {isCreating ? t("clients.savingClient") : t("clients.saveClient")}
           </Button>
           <Button
             type="button"
             variant="secondary"
             disabled={isCreating}
             onClick={onCloseForm}
-          >
-            Cancel
-          </Button>
+          > {t("common.cancel")} </Button>
         </div>
       </form>
     </div>

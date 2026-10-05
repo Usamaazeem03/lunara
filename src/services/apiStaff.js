@@ -1,12 +1,15 @@
+import { localizedError } from "../i18n/localizedError.js";
+import i18n from "../i18n/i18n.js";
 import { getStaffRatingSummaries } from "./apiStaffRatings";
 import { supabase } from "./supabase";
+import { invalidatePublicCache } from "./apiCache";
 import { validateStaffImage } from "../Shared/lib/staffImage";
 
 const STAFF_COLUMNS =
   "id, name, image, phone, email, role, schedule, is_on_shift, created_at, specialties, rating, appointments_count, owner_id";
 
 function requireOwner(ownerId) {
-  if (!ownerId) throw new Error("Please sign in to manage staff.");
+  if (!ownerId) throw localizedError("services.pleaseSignInToManageStaff");
 }
 
 export async function getStaff(ownerId) {
@@ -16,7 +19,7 @@ export async function getStaff(ownerId) {
     .select(STAFF_COLUMNS)
     .eq("owner_id", ownerId)
     .order("name", { ascending: true });
-  if (error) throw new Error(error.message || "Unable to load staff members.");
+  if (error) throw new Error(error.message || i18n.t("services.unableToLoadStaffMembers"));
   const ratings = await getStaffRatingSummaries(ownerId);
   return Promise.all(
     (data ?? []).map(async (member) => {
@@ -27,7 +30,7 @@ export async function getStaff(ownerId) {
         .eq("staff_id", member.id);
       if (countError) {
         throw new Error(
-          countError.message || "Unable to load staff appointment counts.",
+          countError.message || i18n.t("services.unableToLoadStaffAppointmentCounts"),
         );
       }
       return {
@@ -60,7 +63,7 @@ async function saveStaff(payload, id = null) {
       .from(STAFF_IMAGE_BUCKET)
       .upload(uploadedPath, image);
     if (error)
-      throw new Error(error.message || "Unable to upload staff image.");
+      throw new Error(error.message || i18n.t("services.unableToUploadStaffImage"));
     const { data } = supabase.storage
       .from(STAFF_IMAGE_BUCKET)
       .getPublicUrl(uploadedPath);
@@ -77,7 +80,8 @@ async function saveStaff(payload, id = null) {
           .eq("owner_id", payload.owner_id)
       : supabase.from("staff").insert([staffPayload]);
     const { data, error } = await query.select(STAFF_COLUMNS).single();
-    if (error) throw new Error(error.message || "Unable to save staff member.");
+    if (error) throw new Error(error.message || i18n.t("services.unableToSaveStaffMember"));
+    await invalidatePublicCache("staff");
     return data;
   } catch (error) {
     if (uploadedPath) {
@@ -109,6 +113,7 @@ export async function deleteStaff(id, ownerId) {
     .eq("owner_id", ownerId)
     .select("id")
     .single();
-  if (error) throw new Error(error.message || "Unable to delete staff member.");
+  if (error) throw new Error(error.message || i18n.t("services.unableToDeleteStaffMember"));
+  await invalidatePublicCache("staff");
   return data;
 }

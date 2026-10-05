@@ -1,3 +1,5 @@
+import { localizedError } from "../i18n/localizedError.js";
+import i18n from "../i18n/i18n.js";
 import { supabase } from "./supabase";
 import {
   normalizeSchedule,
@@ -8,18 +10,18 @@ const COLUMNS =
   "id, owner_id, day_of_week, day_name, is_open, open_time, close_time";
 
 export async function getSchedule(ownerId) {
-  if (!ownerId) throw new Error("Please sign in to load your schedule.");
+  if (!ownerId) throw localizedError("schedule.pleaseSignInToLoadYourSchedule");
   const { data, error } = await supabase
     .from("working_hours")
     .select(COLUMNS)
     .eq("owner_id", ownerId)
     .order("day_of_week", { ascending: true });
-  if (error) throw new Error(error.message || "Unable to load working hours.");
+  if (error) throw new Error(error.message || i18n.t("schedule.unableToLoadWorkingHours"));
   return normalizeSchedule(data ?? []);
 }
 
 export async function saveSchedule(ownerId, days) {
-  if (!ownerId) throw new Error("Please sign in to save your schedule.");
+  if (!ownerId) throw localizedError("schedule.pleaseSignInToSaveYourSchedule");
   if (
     days.length !== 7 ||
     new Set(days.map((day) => day.day_of_week)).size !== 7 ||
@@ -30,7 +32,7 @@ export async function saveSchedule(ownerId, days) {
         day.day_of_week > 6,
     )
   ) {
-    throw new Error("The schedule must contain each day of the week once.");
+    throw localizedError("schedule.theScheduleMustContainEachDayOfTheWeekOnce");
   }
   for (const day of days) {
     const validation = validateScheduleDay(day);
@@ -56,6 +58,6 @@ export async function saveSchedule(ownerId, days) {
     .from("working_hours")
     .upsert(payload, { onConflict: "id", defaultToNull: false })
     .select(COLUMNS);
-  if (error) throw new Error(error.message || "Unable to save working hours.");
+  if (error) throw new Error(error.message || i18n.t("schedule.unableToSaveWorkingHours"));
   return normalizeSchedule(data);
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { formatCurrency } from "../../utils/currency";
 const COLORS = [
@@ -9,18 +10,17 @@ const COLORS = [
   "#c6b9a6",
 ];
 export default function PaymentMethodsChart({ methods, currencyCode }) {
+  const { t } = useTranslation();
   const chartData = methods.filter((method) => method.value > 0);
   return (
     <section className="border-ink/20 min-w-0 border-2 bg-white/90 p-4 sm:p-5">
-      <h2 className="text-lg font-semibold">Payment Methods</h2>
-      <p className="text-ink-muted mt-1 text-sm">
-        Completed revenue for the selected week.
-      </p>
+      <h2 className="text-lg font-semibold">{t("common.paymentMethods")}</h2>
+      <p className="text-ink-muted mt-1 text-sm"> {t("payments.completedRevenueForTheSelectedWeek")} </p>
       {chartData.length ? (
         <>
           <div
             className="h-52 w-full"
-            aria-label="Revenue by recorded payment method"
+            aria-label={t("payments.revenueByRecordedPaymentMethod")}
           >
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -75,9 +75,7 @@ export default function PaymentMethodsChart({ methods, currencyCode }) {
           </ul>
         </>
       ) : (
-        <div className="border-ink/20 bg-cream text-ink-muted mt-5 border-2 border-dashed p-8 text-center text-sm">
-          No payment method breakdown for this week.
-        </div>
+        <div className="border-ink/20 bg-cream text-ink-muted mt-5 border-2 border-dashed p-8 text-center text-sm"> {t("payments.noPaymentMethodBreakdownForThisWeek")} </div>
       )}
     </section>
   );

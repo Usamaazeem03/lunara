@@ -1,21 +1,21 @@
 export const CLIENT_MENU_ITEMS = [
-  { iconName: "home", text: "Home", segment: "home" },
+  { iconName: "home", textKey: "clients.home", segment: "home" },
   {
     iconName: "calendar",
-    text: "Book Appointment",
+    textKey: "common.bookAppointment",
     segment: "book-appointment",
   },
-  { iconName: "clock", text: "My visits", segment: "my-appointment" },
+  { iconName: "clock", textKey: "common.myVisits", segment: "my-appointment" },
   {
     iconName: "credit-card",
-    text: "Booking costs",
+    textKey: "dashboard.bookingCosts",
     segment: "payment-history",
   },
   {
     iconName: "gift-box-benefits",
-    text: "Offers & rewards",
+    textKey: "dashboard.offersRewards",
     segment: "offers-loyalty",
   },
-  { iconName: "bell", text: "Visit updates", segment: "notifications" },
-  { iconName: "settings", text: "Settings", segment: "settings" },
+  { iconName: "bell", textKey: "dashboard.visitUpdates", segment: "notifications" },
+  { iconName: "settings", textKey: "nav.settings", segment: "settings" },
 ];

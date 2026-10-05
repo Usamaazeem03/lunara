@@ -1,3 +1,5 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { appointmentsQueryKey } from "../../globalHooks/useAppointments";
@@ -5,13 +7,14 @@ import { confirmAppointment as confirmAppointmentApi } from "../../services/apiA
 import { notify } from "../../Shared/lib/toast";
 
 export const useConfirmAppointment = (ownerId) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { mutate: confirmAppointment, isPending: isConfirming } = useMutation({
     mutationFn: async (appointmentId) => {
       const { data, error } = await confirmAppointmentApi(appointmentId);
       if (error) {
-        throw new Error(error.message || "Unable to confirm appointment.");
+        throw new Error(error.message || t("appointments.unableToConfirmAppointment"));
       }
       return data;
     },
@@ -21,7 +24,7 @@ export const useConfirmAppointment = (ownerId) => {
         queryClient.invalidateQueries({
           queryKey: appointmentsQueryKey(ownerId, true),
         });
-        notify.success("Appointment confirmed successfully.");
+        notify.success(translatedMessage("appointments.appointmentConfirmedSuccessfully"));
       }
     },
     onError: (error) => notify.error(error.message),

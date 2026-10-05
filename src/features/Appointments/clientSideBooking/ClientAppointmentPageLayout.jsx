@@ -1,5 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import ClientSalonPicker from "./ClientSalonPicker.jsx";
 import BookingPass from "../bookingPass/BookingPass.jsx";
 
@@ -15,15 +16,19 @@ import { useClientBooking } from "./useClientBooking.js";
 import { PAYMENT_METHODS } from "./bookingConfig.js";
 
 function ClientAppointmentPageLayout({ onBack }) {
+  useTranslation();
   const [searchParams] = useSearchParams();
+  const { ownerId: routeOwnerId } = useParams();
   let storedOwnerId = null;
   try { storedOwnerId = localStorage.getItem("owner_id"); } catch { /* URL selection works without storage. */ }
-  const ownerId = searchParams.get("owner_id") || storedOwnerId;
+  const ownerId = routeOwnerId || searchParams.get("owner_id") || storedOwnerId;
   if (searchParams.has("choose_salon") || !ownerId) return <ClientSalonPicker />;
   return <ClientBookingContent key={ownerId} onBack={onBack} />;
 }
 
 function ClientBookingContent({ onBack }) {
+  const { t } = useTranslation();
+  const { ownerId: routeOwnerId } = useParams();
   const successHeadingRef = useRef(null);
   const {
     rewardCode,
@@ -67,6 +72,12 @@ function ClientBookingContent({ onBack }) {
     setSelectedMethod,
     activePayment,
     activeMethod,
+    customerDetails,
+    handleCustomerDetailsChange,
+    verificationState,
+    requestVerification,
+    handleVerifyCode,
+    retryBooking,
     handleBack,
     handleNext,
   } = useClientBooking({ onBack });
@@ -81,27 +92,19 @@ function ClientBookingContent({ onBack }) {
     return (
       <section className="mx-auto max-w-lg pb-8">
         <header role="status" className="mb-6 text-center">
-          <p className="text-ink-muted text-xs tracking-[0.2em] uppercase">
-            Booking saved
-          </p>
+          <p className="text-ink-muted text-xs tracking-[0.2em] uppercase"> {t("booking.bookingSaved")} </p>
           <h1
             ref={successHeadingRef}
             tabIndex={-1}
             className="mt-2 scroll-mt-4 text-3xl font-semibold outline-none"
-          >
-            Your next visit starts here
-          </h1>
-          <p className="text-ink-muted mt-3 text-sm leading-6">
-            Keep your pass handy. You can find it again in My Appointments.
-          </p>
+          > {t("booking.yourNextVisitStartsHere")} </h1>
+          <p className="text-ink-muted mt-3 text-sm leading-6"> {t("booking.keepYourPassHandyYouCanFindItAgainIn")} </p>
         </header>
         <BookingPass appointment={bookedAppointment} />
         <Link
           to="/dashboard/my-appointment"
           className="border-ink/20 mt-5 flex min-h-12 items-center justify-center rounded-xl border text-sm font-semibold"
-        >
-          View my appointments
-        </Link>
+        > {t("booking.viewMyAppointments")} </Link>
       </section>
     );
   }
@@ -110,19 +113,13 @@ function ClientBookingContent({ onBack }) {
     <section className="mx-auto flex w-full max-w-6xl flex-col pb-36 lg:pb-2">
       <header className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-ink-muted mb-2 text-[10px] font-semibold tracking-[0.22em] uppercase">
-            A little time for you
-          </p>
-          <h1 className="text-ink text-3xl font-semibold tracking-tight sm:text-4xl">
-            Book your next visit
-          </h1>
-          <p className="text-ink-muted mt-2 text-sm leading-6">
-            Your services, your stylist, your perfect time.
-          </p>
+          <p className="text-ink-muted mb-2 text-[10px] font-semibold tracking-[0.22em] uppercase"> {t("common.aLittleTimeForYou")} </p>
+          <h1 className="text-ink text-3xl font-semibold tracking-tight sm:text-4xl"> {t("booking.bookYourNextVisit")} </h1>
+          <p className="text-ink-muted mt-2 text-sm leading-6"> {t("booking.yourServicesYourStylistYourPerfectTime")} </p>
         </div>
       </header>
 
-      <Link to="?choose_salon=1" className="mt-3 inline-flex min-h-11 w-fit items-center text-xs text-ink-muted underline underline-offset-4">Choose a different salon</Link>
+      <Link to={routeOwnerId ? "/dashboard/book-appointment?choose_salon=1" : "?choose_salon=1"} className="mt-3 inline-flex min-h-11 w-fit items-center text-xs text-ink-muted underline underline-offset-4">{t("booking.chooseADifferentSalon")}</Link>
 
       <BookingStepNavigation step={step} goToStep={goToStep} />
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px]">
@@ -164,6 +161,12 @@ function ClientBookingContent({ onBack }) {
           setSelectedMethod={setSelectedMethod}
           activePayment={activePayment}
           activeMethod={activeMethod}
+          customerDetails={customerDetails}
+          onCustomerDetailsChange={handleCustomerDetailsChange}
+          verificationState={verificationState}
+          onRequestVerification={requestVerification}
+          onVerifyCode={handleVerifyCode}
+          onRetryBooking={retryBooking}
           handleBack={handleBack}
         />
 
@@ -183,15 +186,17 @@ function ClientBookingContent({ onBack }) {
           />
         </aside>
       </div>
-      <BookingActionBar
-        totalPriceLabel={totalPriceLabel}
-        selectedCount={selectedServiceList.length}
-        totalDurationLabel={totalDurationLabel}
-        step={step}
-        canContinue={canContinue}
-        isSubmitting={isSubmitting}
-        onContinue={handleNext}
-      />
+      {step < 5 && (
+        <BookingActionBar
+          totalPriceLabel={totalPriceLabel}
+          selectedCount={selectedServiceList.length}
+          totalDurationLabel={totalDurationLabel}
+          step={step}
+          canContinue={canContinue}
+          isSubmitting={isSubmitting}
+          onContinue={handleNext}
+        />
+      )}
     </section>
   );
 }

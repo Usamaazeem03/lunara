@@ -1,4 +1,6 @@
-import { useForm } from "react-hook-form";
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 import { useAuth } from "../../hooks/useAuth";
 import AuthField from "./AuthField";
 import AuthSubmitButton from "./AuthSubmitButton";
@@ -6,6 +8,7 @@ import { emailRules, newPasswordRules } from "./authValidation";
 import { usePasswordRecovery } from "./usePasswordRecovery";
 
 export function RequestResetForm({ request }) {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -22,10 +25,7 @@ export function RequestResetForm({ request }) {
         <p
           role="status"
           className="mt-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700"
-        >
-          If this email has an account, a reset link has been sent. Check your
-          inbox.
-        </p>
+        > {t("auth.ifThisEmailHasAnAccountAResetLinkHas")} </p>
       )}
       {request.error && (
         <p role="alert" className="mt-4 text-sm text-red-600">
@@ -33,23 +33,22 @@ export function RequestResetForm({ request }) {
         </p>
       )}
       <AuthField
-        label="Email"
+        label={t("common.email")}
         type="email"
         placeholder="you@lunara.com"
         iconName="email-envelope"
         autoComplete="email"
-        registration={register("email", emailRules)}
+        registration={register("email", translateConfig(emailRules))}
         error={errors.email}
         disabled={request.isPending}
       />
-      <AuthSubmitButton pending={request.isPending}>
-        Send reset link
-      </AuthSubmitButton>
+      <AuthSubmitButton pending={request.isPending}> {t("auth.sendResetLink")} </AuthSubmitButton>
     </form>
   );
 }
 
 function NewPasswordForm({ update }) {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -69,38 +68,37 @@ function NewPasswordForm({ update }) {
         </p>
       )}
       <AuthField
-        label="New password"
+        label={t("auth.newPassword")}
         type="password"
         iconName="access-control-password"
         autoComplete="new-password"
         registration={register("password", {
-          ...newPasswordRules,
+          ...translateConfig(newPasswordRules),
           deps: ["confirmPassword"],
         })}
         error={errors.password}
         disabled={update.isPending}
       />
       <AuthField
-        label="Confirm password"
+        label={t("auth.confirmPassword")}
         type="password"
         iconName="access-control-password"
         autoComplete="new-password"
         registration={register("confirmPassword", {
-          required: "Confirm your password.",
+          required: t("auth.confirmYourPassword"),
           validate: (value) =>
-            value === getValues("password") || "Passwords do not match.",
+            value === getValues("password") || t("auth.passwordsDoNotMatch"),
         })}
         error={errors.confirmPassword}
         disabled={update.isPending}
       />
-      <AuthSubmitButton pending={update.isPending}>
-        Reset password
-      </AuthSubmitButton>
+      <AuthSubmitButton pending={update.isPending}> {t("auth.resetPassword2")} </AuthSubmitButton>
     </form>
   );
 }
 
 export default function PasswordRecoveryForm({ role, onBackToLogin }) {
+  const { t } = useTranslation();
   const { loading, isRecoverySession, user } = useAuth();
   const { request, update } = usePasswordRecovery(role);
   return (
@@ -109,11 +107,9 @@ export default function PasswordRecoveryForm({ role, onBackToLogin }) {
         <p
           role="status"
           className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700"
-        >
-          Password updated. Sign in with your new password.
-        </p>
+        > {t("auth.passwordUpdatedSignInWithYourNewPassword")} </p>
       ) : loading ? (
-        <p role="status">Preparing password recovery...</p>
+        <p role="status">{t("auth.preparingPasswordRecovery")}</p>
       ) : isRecoverySession && user ? (
         <NewPasswordForm update={update} />
       ) : (
@@ -124,9 +120,7 @@ export default function PasswordRecoveryForm({ role, onBackToLogin }) {
         disabled={request.isPending || update.isPending}
         onClick={onBackToLogin}
         className="border-ink/30 text-ink hover:bg-ink/5 mt-3 w-full border bg-white/90 py-3 text-sm tracking-[0.3em] uppercase disabled:opacity-50"
-      >
-        Back to login
-      </button>
+      > {t("auth.backToLogin")} </button>
     </div>
   );
 }

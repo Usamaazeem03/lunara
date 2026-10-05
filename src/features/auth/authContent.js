@@ -12,31 +12,31 @@ const ROLE_OPTIONS = ["client", "owner"];
 
 const ROLE_CONTENT = {
   client: {
-    eyebrow: "Client Access",
-    heroTitle: "Beauty Meets Simplicity",
-    heroBody: "Book, manage, and glow - all in one place.",
-    steps: ["Create Account", "Choose Service", "Book Appointment"],
+    eyebrowKey: "auth.clientAccess",
+    heroTitleKey: "auth.beautyMeetsSimplicity",
+    heroBodyKey: "auth.bookManageAndGlowAllInOnePlace",
+    steps: [{ translationKey: "auth.createAccount" }, { translationKey: "auth.chooseService" }, { translationKey: "common.bookAppointment" }],
     headline: {
-      signup: "Create Your Client Account",
-      login: "Welcome Back, Client",
+      signupKey: "auth.createYourClientAccount",
+      loginKey: "auth.welcomeBackClient",
     },
     subhead: {
-      signup: "Start booking in seconds.",
-      login: "Sign in to manage your appointments.",
+      signupKey: "auth.startBookingInSeconds",
+      loginKey: "auth.signInToManageYourAppointments",
     },
   },
   owner: {
-    eyebrow: "Owner Access",
-    heroTitle: "Grow Your Business",
-    heroBody: "Manage bookings, staff, and clients effortlessly.",
-    steps: ["Create Business", "Add Services", "Accept Bookings"],
+    eyebrowKey: "auth.ownerAccess",
+    heroTitleKey: "auth.growYourBusiness",
+    heroBodyKey: "auth.manageBookingsStaffAndClientsEffortlessly",
+    steps: [{ translationKey: "auth.createBusiness" }, { translationKey: "auth.addServices" }, { translationKey: "auth.acceptBookings" }],
     headline: {
-      signup: "Create Owner Account",
-      login: "Owner Portal",
+      signupKey: "auth.createOwnerAccount",
+      loginKey: "common.ownerPortal",
     },
     subhead: {
-      signup: "Launch your salon in minutes.",
-      login: "Sign in to manage your business.",
+      signupKey: "auth.launchYourSalonInMinutes",
+      loginKey: "auth.signInToManageYourBusiness",
     },
   },
 };

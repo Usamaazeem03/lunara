@@ -23,12 +23,21 @@ i18n
     fallbackLng: "en",
 
     detection: {
-      order: ["navigator"],
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
     },
 
     interpolation: {
       escapeValue: false,
     },
   });
+
+const updateDocumentLanguage = (language) => {
+  if (typeof document !== "undefined") {
+    document.documentElement.lang = language;
+  }
+};
+i18n.on("languageChanged", updateDocumentLanguage);
+updateDocumentLanguage(i18n.resolvedLanguage || "en");
 
 export default i18n;

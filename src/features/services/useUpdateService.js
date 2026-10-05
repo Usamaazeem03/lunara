@@ -1,9 +1,12 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateService as updateServiceApi } from "../../services/apiServices";
 import { servicesQueryKey } from "./useServices";
 import { notify } from "../../Shared/lib/toast";
 
 export const useUpdateService = (ownerId) => {
+  useTranslation();
   const queryClient = useQueryClient();
   const { isPending: isUpdating, mutate: updateService } = useMutation({
     mutationFn: async ({ id, newServiceData }) => {
@@ -16,12 +19,12 @@ export const useUpdateService = (ownerId) => {
       return result;
     },
     onSuccess: () => {
-      notify.success("Service updated successfully.");
+      notify.success(translatedMessage("services.serviceUpdatedSuccessfully"));
       queryClient.invalidateQueries({ queryKey: servicesQueryKey(ownerId) });
     },
     onError: (error) => {
       notify.error(
-        error?.message || "An error occurred while updating the service.",
+        error?.message || translatedMessage("services.anErrorOccurredWhileUpdatingTheService"),
       );
     },
   });

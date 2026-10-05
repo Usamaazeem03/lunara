@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import StaffAvatar from "../../../Shared/ui/StaffAvatar";
 import { useBookingStaff } from "./useBookingStaff.js";
 
 function StepStaff({ selectedStaff, setSelectedStaff, ownerId }) {
+  const { t } = useTranslation();
   const { staffMembers, loading, error } = useBookingStaff(ownerId);
 
   if (loading) {
@@ -25,9 +27,7 @@ function StepStaff({ selectedStaff, setSelectedStaff, ownerId }) {
 
   if (error && staffMembers.length === 0) {
     return (
-      <div className="border-2 border-[#b0412e]/30 bg-[#b0412e]/10 p-4 text-center text-sm text-[#b0412e]">
-        Unable to load staff members. Please try again.
-      </div>
+      <div className="border-2 border-[#b0412e]/30 bg-[#b0412e]/10 p-4 text-center text-sm text-[#b0412e]"> {t("booking.unableToLoadStaffMembersPleaseTryAgain")} </div>
     );
   }
 
@@ -61,14 +61,10 @@ function StepStaff({ selectedStaff, setSelectedStaff, ownerId }) {
             </div>
             <div className="flex shrink-0 flex-col items-end gap-1">
               {member.isOnShift && (
-                <span className="rounded-full border border-green-200 bg-green-100 px-2 py-0.5 text-[0.6rem] font-medium text-green-700 uppercase">
-                  On Shift
-                </span>
+                <span className="rounded-full border border-green-200 bg-green-100 px-2 py-0.5 text-[0.6rem] font-medium text-green-700 uppercase"> {t("common.onShift")} </span>
               )}
               {isSelected && (
-                <span className="text-[0.65rem] tracking-widest text-[#2d2620] uppercase">
-                  Selected
-                </span>
+                <span className="text-[0.65rem] tracking-widest text-[#2d2620] uppercase"> {t("booking.selected2")} </span>
               )}
             </div>
           </button>

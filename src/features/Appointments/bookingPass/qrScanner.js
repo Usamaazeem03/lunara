@@ -1,3 +1,4 @@
+import { localizedError } from "../../../i18n/localizedError.js";
 let decoderPromise;
 function getDecoder() {
   decoderPromise ??= import("jsqr").then((module) => module.default);
@@ -19,9 +20,9 @@ export async function readQrFrame(source, width, height) {
 
 export async function readQrImage(file) {
   if (!file || !file.type.startsWith("image/"))
-    throw new Error("Choose a photo or screenshot of the booking pass.");
+    throw localizedError("bookingPass.chooseAPhotoOrScreenshotOfTheBookingPass");
   if (file.size > 15 * 1024 * 1024)
-    throw new Error("Choose an image smaller than 15 MB.");
+    throw localizedError("bookingPass.chooseAnImageSmallerThan15Mb");
   const url = URL.createObjectURL(file);
   try {
     const image = new Image();
@@ -29,9 +30,7 @@ export async function readQrImage(file) {
       image.onload = resolve;
       image.onerror = () =>
         reject(
-          new Error(
-            "This image could not be opened. Try a PNG or JPG screenshot.",
-          ),
+          localizedError("bookingPass.thisImageCouldNotBeOpenedTryAPngOr"),
         );
       image.src = url;
     });
@@ -41,9 +40,7 @@ export async function readQrImage(file) {
       image.naturalHeight,
     );
     if (!reference)
-      throw new Error(
-        "No QR code found. Try a clear, close-up photo of the code.",
-      );
+      throw localizedError("bookingPass.noQrCodeFoundTryAClearCloseUpPhoto");
     return reference;
   } finally {
     URL.revokeObjectURL(url);

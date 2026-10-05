@@ -1,8 +1,11 @@
+import { localizedError } from "../../i18n/localizedError.js";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrency } from "../../services/apiSettings.js";
 import { useOwnerId } from "../../globalHooks/useOwnerId.js";
 
 export function useCurrencyCode(ownerId) {
+  useTranslation();
   const { ownerId: resolvedOwnerId, isLoading: isOwnerLoading } =
     useOwnerId(ownerId);
 
@@ -11,7 +14,7 @@ export function useCurrencyCode(ownerId) {
     staleTime: 0,
     queryFn: async () => {
       if (!resolvedOwnerId) {
-        throw new Error("Authenticated owner could not be found");
+        throw localizedError("settings.authenticatedOwnerCouldNotBeFound");
       }
 
       return getCurrency(resolvedOwnerId);

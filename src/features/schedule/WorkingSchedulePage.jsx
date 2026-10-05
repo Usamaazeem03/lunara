@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { useOwnerId } from "../../globalHooks/useOwnerId";
 import { useSchedule } from "./useSchedule";
 import ScheduleForm from "./ScheduleForm";
 
 export default function WorkingSchedulePage() {
+  const { t } = useTranslation();
   const {
     ownerId,
     isLoading: isOwnerLoading,
@@ -11,9 +13,7 @@ export default function WorkingSchedulePage() {
   const { data, isLoading, error, refetch, isFetching } = useSchedule(ownerId);
   if (isOwnerLoading || isLoading)
     return (
-      <p role="status" className="p-8 text-center">
-        Loading working hours...
-      </p>
+      <p role="status" className="p-8 text-center"> {t("schedule.loadingWorkingHours")} </p>
     );
   if (ownerError || error || !ownerId)
     return (
@@ -21,7 +21,7 @@ export default function WorkingSchedulePage() {
         <p>
           {ownerError?.message ||
             error?.message ||
-            "Please sign in to load your schedule."}
+            t("schedule.pleaseSignInToLoadYourSchedule")}
         </p>
         {ownerId && (
           <button
@@ -29,9 +29,7 @@ export default function WorkingSchedulePage() {
             disabled={isFetching}
             onClick={() => refetch()}
             className="mt-3 underline"
-          >
-            Try again
-          </button>
+          > {t("common.tryAgain")} </button>
         )}
       </div>
     );

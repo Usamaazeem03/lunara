@@ -1,3 +1,4 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { generateSlugFromName } from "../utils/slugGenerator.js";
 import { validateInternationalPhone } from "../Shared/lib/phoneValidation.js";
 
@@ -11,7 +12,7 @@ export function createAuthApi({
   const profileRequests = new Map();
   function getAuthProfile(userId) {
     if (!userId)
-      return Promise.reject(new Error("Sign in to load your profile."));
+      return Promise.reject(localizedError("auth.signInToLoadYourProfile"));
     if (!profileRequests.has(userId)) {
       const request = fetchProfile(userId).finally(() => {
         if (profileRequests.get(userId) === request)
@@ -33,7 +34,7 @@ export function createAuthApi({
   }
 
   async function updateAuthProfile(userId, updates) {
-    if (!userId) throw new Error("Sign in to update your profile.");
+    if (!userId) throw localizedError("auth.signInToUpdateYourProfile");
     const { data, error } = await supabase
       .from("profiles")
       .update(updates)
@@ -54,14 +55,10 @@ export function createAuthApi({
     let profile = await getAuthProfile(user.id);
     const role = profile.role || user.user_metadata?.role || intendedRole;
     if (!["client", "owner"].includes(role))
-      throw new Error(
-        "Your account has no portal role. Please contact support.",
-      );
+      throw localizedError("auth.yourAccountHasNoPortalRolePleaseContactSupport");
     if (intendedRole && role !== intendedRole) {
       await signOut();
-      throw new Error(
-        `This account is registered as a ${role}. Please use the ${role} portal.`,
-      );
+      throw localizedError("auth.thisAccountIsRegisteredAsAPleaseUseThePortal", { value1: role, value2: role });
     }
     const updates = {};
     if (!profile.role) updates.role = role;
@@ -102,24 +99,18 @@ export function createAuthApi({
     const refreshToken =
       activeSession?.refresh_token || savedSession?.refresh_token;
     if (!refreshToken)
-      throw new Error(
-        "Sign in once with your password and select Remember account to enable quick access.",
-      );
+      throw localizedError("auth.signInOnceWithYourPasswordAndSelectRememberAccount");
     const { data, error } = await supabase.auth.refreshSession({
       refresh_token: refreshToken,
     });
     if (error)
-      throw new Error(
-        "This saved session has expired. Sign in again to remember this account.",
-      );
+      throw localizedError("auth.thisSavedSessionHasExpiredSignInAgainToRemember");
     if (
       !matchesEmail(data.user) ||
       (savedSession?.userId && data.user?.id !== savedSession.userId)
     ) {
       await signOut();
-      throw new Error(
-        "This saved session does not match the selected account. Please sign in again.",
-      );
+      throw localizedError("auth.thisSavedSessionDoesNotMatchTheSelectedAccountPlease");
     }
     const profile = await prepareProfile(data.user, expectedRole);
     return { ...data, profile };
@@ -134,9 +125,9 @@ export function createAuthApi({
     currencyCode = "USD",
   }) {
     if (!["client", "owner"].includes(role))
-      throw new Error("Choose a valid account type.");
+      throw localizedError("auth.chooseAValidAccountType");
     const name = String(fullName ?? "").trim();
-    if (!name) throw new Error("Full name is required.");
+    if (!name) throw localizedError("common.fullNameIsRequired");
     const phoneNumber = String(phone ?? "").trim();
     const phoneValidation = validateInternationalPhone(phoneNumber);
     if (phoneValidation !== true) throw new Error(phoneValidation);
@@ -204,9 +195,7 @@ export function createAuthApi({
     } = await supabase.auth.getSession();
     if (error) throw error;
     if (!session)
-      throw new Error(
-        "This link has expired. Please sign in or request a new link.",
-      );
+      throw localizedError("auth.thisLinkHasExpiredPleaseSignInOrRequestA");
     const profile = await prepareProfile(
       session.user,
       ["client", "owner"].includes(role) ? role : undefined,

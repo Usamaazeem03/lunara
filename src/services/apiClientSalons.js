@@ -1,3 +1,4 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase.js";
 
 export async function findClientSalons(search = "") {
@@ -10,6 +11,6 @@ export async function findClientSalons(search = "") {
   const term = search.trim().replace(/[%_]/g, "");
   if (term) query = query.ilike("full_name", `%${term}%`);
   const { data, error } = await query;
-  if (error) throw new Error("Salons could not be loaded. Try again or open your salon's booking link.");
+  if (error) throw localizedError("clients.salonsCouldNotBeLoadedTryAgainOrOpenYour");
   return data ?? [];
 }

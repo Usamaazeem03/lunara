@@ -1,3 +1,5 @@
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import Icon from "../../Shared/ui/Icon";
 import BottomActionBar from "../services/BottomActionBar";
@@ -12,6 +14,7 @@ const statusStyles = {
 };
 
 export default function ClientAppointmentHistory({ rows, onSelect }) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
   const [page, setPage] = useState(1);
@@ -31,14 +34,11 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
     <section className="border-ink/20 min-w-0 self-start border-2 bg-white/90">
       <div className="border-ink/10 flex flex-wrap items-start justify-between gap-3 border-b-2 p-5">
         <div>
-          <h2 className="text-lg font-semibold">Appointment history</h2>
-          <p className="text-ink-muted mt-1 text-xs">
-            Bookings at this salon, newest first. Select a visit for details.
-          </p>
+          <h2 className="text-lg font-semibold">{t("clients.appointmentHistory")}</h2>
+          <p className="text-ink-muted mt-1 text-xs"> {t("clients.bookingsAtThisSalonNewestFirstSelectAVisitFor")} </p>
         </div>
         <span className="border-ink/15 bg-cream rounded-full border px-3 py-1 text-xs">
-          {rows.length} total
-        </span>
+          {rows.length} {t("clients.total")} </span>
       </div>
       <div className="border-ink/10 grid gap-3 border-b p-4 sm:grid-cols-[1fr_auto]">
         <label className="border-ink/20 focus-within:border-ink flex min-w-0 items-center gap-2 border bg-white px-3">
@@ -50,13 +50,13 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
               setSearch(event.target.value);
               setPage(1);
             }}
-            aria-label="Search appointment history"
-            placeholder="Search service, staff or date..."
+            aria-label={t("clients.searchAppointmentHistory")}
+            placeholder={t("clients.searchServiceStaffOrDate")}
             className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none"
           />
         </label>
         <select
-          aria-label="Filter appointments by status"
+          aria-label={t("appointments.filterAppointmentsByStatus")}
           value={status}
           onChange={(event) => {
             setStatus(event.target.value);
@@ -64,13 +64,13 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
           }}
           className="border-ink/20 focus-visible:outline-ink bg-cream/50 border px-3 py-3 text-sm"
         >
-          <option value="All">All statuses</option>
+          <option value="All">{t("clients.allStatuses")}</option>
           {[
             ...new Set([
-              "Completed",
-              "Confirmed",
-              "Pending",
-              "Cancelled",
+              t("common.completed"),
+              t("common.confirmed"),
+              t("common.pending"),
+              t("common.cancelled"),
               ...rows.map((row) => row.status),
             ]),
           ].map((label) => (
@@ -79,10 +79,10 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
         </select>
       </div>
       <div className="text-ink-muted border-ink/10 bg-cream/60 hidden grid-cols-[1.1fr_1.4fr_0.9fr_0.9fr] gap-4 border-b px-5 py-3 text-[0.65rem] tracking-widest uppercase md:grid">
-        <span>Date &amp; time</span>
-        <span>Service &amp; staff</span>
-        <span>Amount</span>
-        <span>Status</span>
+        <span>{t("booking.dateTime")}</span>
+        <span>{t("clients.serviceStaff")}</span>
+        <span>{t("common.amount")}</span>
+        <span>{t("common.status")}</span>
       </div>
       {visible.length ? (
         <div>
@@ -91,7 +91,7 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
               key={appointment.id}
               type="button"
               onClick={() => onSelect(appointment)}
-              aria-label={`View ${appointment.service} appointment on ${appointment.dateLabel} at ${appointment.timeLabel}`}
+              aria-label={t("clients.viewAppointmentOnAt", { value1: appointment.service, value2: appointment.dateLabel, value3: appointment.timeLabel })}
               className="border-ink/10 hover:bg-cream/50 focus-visible:outline-ink grid w-full grid-cols-2 items-center gap-4 border-b px-5 py-4 text-left text-sm transition focus-visible:outline-2 focus-visible:-outline-offset-2 md:grid-cols-[1.1fr_1.4fr_0.9fr_0.9fr]"
             >
               <span>
@@ -117,7 +117,7 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
               <span
                 className={`w-fit rounded-full border px-2.5 py-1 text-[0.6rem] tracking-wide uppercase ${statusStyles[appointment.status] || "border-ink/20 text-ink-muted"}`}
               >
-                {appointment.status}
+                {fixedLabel(appointment.status, "status")}
               </span>
             </button>
           ))}
@@ -131,32 +131,30 @@ export default function ClientAppointmentHistory({ rows, onSelect }) {
           />
           <p className="text-sm font-medium">
             {rows.length
-              ? "No appointments match your filters."
-              : "No appointments yet."}
+              ? t("clients.noAppointmentsMatchYourFilters")
+              : t("clients.noAppointmentsYet")}
           </p>
           <p className="text-ink-muted mt-2 text-xs">
             {rows.length
-              ? "Try a different service, date or status."
-              : "This client's bookings will appear here."}
+              ? t("clients.tryADifferentServiceDateOrStatus")
+              : t("clients.thisClientSBookingsWillAppearHere")}
           </p>
           {rows.length > 0 && (
             <button
               type="button"
               onClick={reset}
               className="mt-4 text-xs underline underline-offset-4"
-            >
-              Clear filters
-            </button>
+            > {t("clients.clearFilters")} </button>
           )}
         </div>
       )}
       <div className="text-ink-muted flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-xs">
         <p role="status">
           {filtered.length
-            ? `${(currentPage - 1) * PAGE_SIZE + 1}-${Math.min(currentPage * PAGE_SIZE, filtered.length)} of ${filtered.length} bookings`
-            : "0 bookings"}
+            ? t("clients.ofBookings", { value1: (currentPage - 1) * PAGE_SIZE + 1, value2: Math.min(currentPage * PAGE_SIZE, filtered.length), value3: filtered.length })
+            : t("clients.0Bookings")}
         </p>
-        <p>Amounts use your salon currency.</p>
+        <p>{t("clients.amountsUseYourSalonCurrency")}</p>
       </div>
       <BottomActionBar
         currentPage={currentPage}

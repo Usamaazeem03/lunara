@@ -1,9 +1,13 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { localizedError } from "../../i18n/localizedError.js";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateCurrency } from "../../services/apiSettings.js";
 import { supabase } from "../../services/supabase.js";
 import { notify } from "../../Shared/lib/toast.jsx";
 
 export function useUpdateCurrency(ownerId) {
+  useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -17,7 +21,7 @@ export function useUpdateCurrency(ownerId) {
       const currentOwnerId = explicitOwnerId ?? ownerId;
 
       if (!currencyCode) {
-        throw new Error("currency_code is required to update currency");
+        throw localizedError("settings.currencyCodeIsRequiredToUpdateCurrency");
       }
 
       let resolvedOwnerId = currentOwnerId;
@@ -33,7 +37,7 @@ export function useUpdateCurrency(ownerId) {
       }
 
       if (!resolvedOwnerId) {
-        throw new Error("Authenticated owner could not be found");
+        throw localizedError("settings.authenticatedOwnerCouldNotBeFound");
       }
 
       return updateCurrency(resolvedOwnerId, currencyCode);
@@ -47,7 +51,7 @@ export function useUpdateCurrency(ownerId) {
 
       await queryClient.cancelQueries({ queryKey });
       queryClient.setQueryData(queryKey, updatedCurrencyCode);
-      notify.success(`Currency updated to ${updatedCurrencyCode}.`);
+      notify.success(translatedMessage("settings.currencyUpdatedTo", { value1: updatedCurrencyCode }));
     },
   });
 }

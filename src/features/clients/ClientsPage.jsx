@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import AppHeader from "../../AppLayout/AppHeader";
 import Button from "../../Shared/Button";
 import ClientFilter from "./ClientFilter";
@@ -7,6 +8,7 @@ import CreateClientForm from "./CreateClientForm";
 import { useClientsPage } from "./useClientsPage";
 
 export default function ClientsPage() {
+  const { t } = useTranslation();
   const {
     ownerId,
     currencyCode,
@@ -27,17 +29,15 @@ export default function ClientsPage() {
     <>
       <section className="flex h-full flex-col">
         <AppHeader
-          eyebrow="Clients"
-          title="Clients"
-          description="Manage your client database."
+          eyebrow={t("nav.clients")}
+          title={t("nav.clients")}
+          description={t("clients.manageYourClientDatabase")}
         >
           <Button
             variant="primary"
             onClick={openCreateForm}
             disabled={!ownerId}
-          >
-            Add New Client
-          </Button>
+          > {t("clients.addNewClient")} </Button>
         </AppHeader>
         <ClientsStats
           clients={clients}

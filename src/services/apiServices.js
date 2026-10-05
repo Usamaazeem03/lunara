@@ -1,4 +1,7 @@
+import { localizedError } from "../i18n/localizedError.js";
+import i18n from "../i18n/i18n.js";
 import { supabase } from "./supabase";
+import { invalidatePublicCache } from "./apiCache";
 
 const getServiceMutationError = (error, fallbackMessage) => {
   const errorText =
@@ -8,17 +11,20 @@ const getServiceMutationError = (error, fallbackMessage) => {
     error?.code === "23503" &&
     errorText.includes("appointments_service_id_fkey")
   ) {
-    const bookingConflict = new Error(
-      "This service has existing bookings, so it cannot be deleted. Mark it inactive instead.",
-    );
+    const bookingConflict = localizedError("services.thisServiceHasExistingBookingsSoItCannotBeDeleted");
+
     bookingConflict.isServiceBookingConflict = true;
+
     return bookingConflict;
   }
 
   return new Error(error?.message || fallbackMessage);
 };
 
-// get services
+// ─────────────────────────────────────────────
+// Get services
+// ─────────────────────────────────────────────
+
 export async function getServices(ownerId) {
   const { data, error } = await supabase
     .from("services")
@@ -30,36 +36,24 @@ export async function getServices(ownerId) {
 
   if (error) {
     console.error(error);
-    throw new Error("Services could not be loaded!");
+
+    throw localizedError("services.servicesCouldNotBeLoaded");
   }
 
   return data;
 }
 
-// Create new service
-// export async function createService(payload) {
-//   const { data, error } = await supabase
-//     .from("services")
-//     .insert([payload])
-//     .select(
-//       "id, name, description, category, price, duration_minutes, is_active, owner_id",
-//     )
-//     .single();
+// ─────────────────────────────────────────────
+// Create service
+// ─────────────────────────────────────────────
 
-//   if (error) {
-//     throw new Error(error.message || "Unable to save the service.");
-//   }
-
-//   return { data, success: true, message: "Service added." };
-// }
 export async function createService(payload) {
   let imagePath = null;
+  let imageName = null;
 
+  // Upload image first
   if (payload.image) {
-    const imageName = `${Math.random()}-${payload.image.name}`.replaceAll(
-      "/",
-      "",
-    );
+    imageName = `${Math.random()}-${payload.image.name}`.replaceAll("/", "");
 
     const { error: storageError } = await supabase.storage
       .from("Service_images")
@@ -67,6 +61,7 @@ export async function createService(payload) {
 
     if (storageError) {
       console.error("IMAGE UPLOAD ERROR:", storageError);
+
       throw new Error(storageError.message);
     }
 
@@ -77,62 +72,76 @@ export async function createService(payload) {
     imagePath = publicUrlData.publicUrl;
   }
 
+  // Save service
   const { data, error } = await supabase
     .from("services")
-    .insert([{ ...payload, image: imagePath }])
+    .insert([
+      {
+        ...payload,
+        image: imagePath,
+      },
+    ])
     .select(
       "id, name, description, category, price, duration_minutes, image, is_active, owner_id",
     )
     .single();
 
   if (error) {
-    if (imagePath) {
+    // Database failed after image was uploaded.
+    // Remove unused image.
+    if (imageName) {
       await supabase.storage.from("Service_images").remove([imageName]);
     }
-    throw new Error(error.message || "Unable to save the service.");
+
+    throw new Error(error.message || i18n.t("services.unableToSaveTheService"));
   }
 
-  return { data, success: true, message: "Service added." };
+  // Database changed successfully.
+  // Old public Redis cache is now outdated.
+  await invalidatePublicCache("services");
+
+  return {
+    data,
+    success: true,
+    message: i18n.t("services.serviceAdded"),
+  };
 }
-// Update existing service
-// export async function updateService(serviceId, payload) {
-//   const { data, error } = await supabase
-//     .from("services")
-//     .update(payload)
-//     .eq("id", serviceId)
-//     .select(
-//       "id, name, description, category, price, duration_minutes, image, is_active, owner_id",
-//     )
-//     .single();
 
-//   if (error) {
-//     throw getServiceMutationError(error, "Unable to update the service.");
-//   }
+// ─────────────────────────────────────────────
+// Update service
+// ─────────────────────────────────────────────
 
-//   return { data, success: true, message: "Service updated." };
-// }
 export async function updateService(serviceId, payload) {
-  let updatePayload = { ...payload };
+  const updatePayload = {
+    ...payload,
+  };
 
+  let uploadedImageName = null;
+
+  // User selected a new image
   if (payload.image instanceof File) {
-    const imageName = `${Math.random()}-${payload.image.name}`.replaceAll(
+    uploadedImageName = `${Math.random()}-${payload.image.name}`.replaceAll(
       "/",
       "",
     );
 
     const { error: storageError } = await supabase.storage
       .from("Service_images")
-      .upload(imageName, payload.image);
+      .upload(uploadedImageName, payload.image);
 
-    if (storageError) throw new Error(storageError.message);
+    if (storageError) {
+      throw new Error(storageError.message);
+    }
 
     const { data: publicUrlData } = supabase.storage
       .from("Service_images")
-      .getPublicUrl(imageName);
+      .getPublicUrl(uploadedImageName);
 
     updatePayload.image = publicUrlData.publicUrl;
   } else {
-    delete updatePayload.image; // no new file picked, don't overwrite existing image
+    // No new image selected.
+    // Keep existing database image.
+    delete updatePayload.image;
   }
 
   const { data, error } = await supabase
@@ -145,13 +154,29 @@ export async function updateService(serviceId, payload) {
     .single();
 
   if (error) {
-    throw getServiceMutationError(error, "Unable to update the service.");
+    // If we uploaded a new image but DB update failed,
+    // remove that newly uploaded unused image.
+    if (uploadedImageName) {
+      await supabase.storage.from("Service_images").remove([uploadedImageName]);
+    }
+
+    throw getServiceMutationError(error, i18n.t("services.unableToUpdateTheService"));
   }
 
-  return { data, success: true, message: "Service updated." };
+  // Service changed → remove stale public cache
+  await invalidatePublicCache("services");
+
+  return {
+    data,
+    success: true,
+    message: i18n.t("services.serviceUpdated"),
+  };
 }
 
+// ─────────────────────────────────────────────
 // Delete service
+// ─────────────────────────────────────────────
+
 export async function deleteService(serviceId) {
   const { error } = await supabase
     .from("services")
@@ -159,8 +184,14 @@ export async function deleteService(serviceId) {
     .eq("id", serviceId);
 
   if (error) {
-    throw getServiceMutationError(error, "Unable to delete the service.");
+    throw getServiceMutationError(error, i18n.t("services.unableToDeleteTheService"));
   }
 
-  return { success: true, message: "Service deleted." };
+  // Service deleted → remove stale public cache
+  await invalidatePublicCache("services");
+
+  return {
+    success: true,
+    message: i18n.t("services.serviceDeleted"),
+  };
 }

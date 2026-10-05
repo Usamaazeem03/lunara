@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
 import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
@@ -7,8 +8,12 @@ import AppHeader from "../../AppLayout/AppHeader.jsx";
 import Currencies from "./Currencies.jsx";
 import SalonInformation from "./SalonInformation.jsx";
 import AccountSecurity from "./AccountSecurity.jsx";
+import LanguageSelector from "../../Shared/ui/LanguageSelector.jsx";
+import AddWebsite from "./AddWebsite.jsx";
+import SocialLinks from "./SocialLinks.jsx";
 
 const SettingsPage = () => {
+  const { t } = useTranslation();
   // Notifications State
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsReminders, setSmsReminders] = useState(true);
@@ -17,47 +22,49 @@ const SettingsPage = () => {
   return (
     <section className="flex flex-col gap-4">
       <AppHeader
-        eyebrow="Settings"
-        title="Settings"
-        description="Manage your salon settings and preferences."
+        eyebrow={t("nav.settings")}
+        title={t("nav.settings")}
+        description={t("settings.manageYourSalonSettingsAndPreferences")}
       />
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <SalonInformation />
+      <section className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-5">
+          <SalonInformation />
+          <AccountSecurity />
+        </div>
+        <div className="min-w-0 space-y-5">
+          <LanguageSelector />
+          {/* Currency & Payments */}
+          <Currencies creditCardIcon={creditCardIcon} />
+          <AddWebsite />
+          <SocialLinks />
+          <div className="border-ink/20 relative flex flex-col gap-4 rounded-none border-2 bg-white/90 p-4 sm:p-5">
+            <SectionTitle icon={bellIcon} title={t("settings.notifications")} />
+            <p className="text-ink-muted text-sm">
+              {" "}
+              {t("settings.notificationPreferencesAreComingSoon")}{" "}
+            </p>
 
-        {/* Currency & Payments */}
-        <Currencies creditCardIcon={creditCardIcon} />
-      </section>
-
-      {/* Account preferences */}
-      <section className="grid items-start gap-4 lg:grid-cols-2">
-        <AccountSecurity />
-        <div className="border-ink/20 relative flex flex-col gap-4 border-2 bg-white/90 p-4 sm:p-5">
-          <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
-          <SectionTitle icon={bellIcon} title="Notifications" />
-          <p className="text-ink-muted text-sm">
-            Notification preferences are coming soon.
-          </p>
-
-          <div className="space-y-4">
-            <ToggleRow
-              label="Email Notifications"
-              description="Receive email updates about appointments."
-              checked={emailNotifications}
-              onChange={() => setEmailNotifications((prev) => !prev)}
-            />
-            <ToggleRow
-              label="SMS Reminders"
-              description="Send SMS reminders to clients."
-              checked={smsReminders}
-              onChange={() => setSmsReminders((prev) => !prev)}
-            />
-            <ToggleRow
-              label="Payment Notifications"
-              description="Get notified about new payments."
-              checked={paymentNotifications}
-              onChange={() => setPaymentNotifications((prev) => !prev)}
-            />
+            <div className="space-y-4">
+              <ToggleRow
+                label={t("dashboard.emailNotifications")}
+                description={t("settings.receiveEmailUpdatesAboutAppointments")}
+                checked={emailNotifications}
+                onChange={() => setEmailNotifications((prev) => !prev)}
+              />
+              <ToggleRow
+                label={t("settings.smsReminders")}
+                description={t("settings.sendSmsRemindersToClients")}
+                checked={smsReminders}
+                onChange={() => setSmsReminders((prev) => !prev)}
+              />
+              <ToggleRow
+                label={t("dashboard.paymentNotifications")}
+                description={t("settings.getNotifiedAboutNewPayments")}
+                checked={paymentNotifications}
+                onChange={() => setPaymentNotifications((prev) => !prev)}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -66,9 +73,10 @@ const SettingsPage = () => {
 };
 
 export const SectionTitle = ({ icon, title }) => {
+  useTranslation();
   return (
     <div className="flex items-center gap-3">
-      <div className="border-ink/20 bg-cream flex h-11 w-11 items-center justify-center rounded-2xl border-2">
+      <div className="border-ink/20 bg-cream flex h-11 w-11 items-center justify-center rounded-none border-2">
         <img src={icon} alt="" className="h-5 w-5 opacity-70" />
       </div>
       <h2 className="text-lg font-semibold">{title}</h2>
@@ -77,6 +85,7 @@ export const SectionTitle = ({ icon, title }) => {
 };
 
 export const ToggleRow = ({ label, description, checked, onChange }) => {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between gap-4">
       <div>
@@ -87,7 +96,7 @@ export const ToggleRow = ({ label, description, checked, onChange }) => {
         type="button"
         onClick={onChange}
         disabled
-        title="Coming soon"
+        title={t("common.comingSoon")}
         aria-pressed={checked}
         className={`relative h-6 w-12 rounded-full border-2 transition ${
           checked ? "border-ink bg-ink" : "border-ink/30 bg-cream"

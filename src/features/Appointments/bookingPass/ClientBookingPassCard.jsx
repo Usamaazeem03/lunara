@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import BookingPass from "./BookingPass.jsx";
 import {
@@ -7,6 +8,7 @@ import {
 } from "./bookingPassUtils.js";
 
 export default function ClientBookingPassCard({ appointment, initialOpen = false }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(initialOpen);
   const cardRef = useRef(null);
   useEffect(() => {
@@ -33,21 +35,20 @@ export default function ClientBookingPassCard({ appointment, initialOpen = false
             {status.label}
           </span>
           <span className="text-ink-muted text-xs">
-            {appointment.duration_minutes} min
-          </span>
+            {appointment.duration_minutes} {t("bookingPass.min")} </span>
         </div>
         <h2 className="mt-4 text-lg font-semibold">
-          {appointment.service_name || "Appointment"}
+          {appointment.service_name || t("common.appointment")}
         </h2>
         <p className="text-ink-muted mt-2 text-sm">
-          {formatPassDate(appointment.appointment_date)} at{" "}
+          {formatPassDate(appointment.appointment_date)} {t("bookingPass.at")}{" "}
           {formatPassTime(appointment.appointment_time)}
         </p>
         <p className="text-ink-muted mt-1 text-sm">
-          {appointment.staff_name || "Any available stylist"}
+          {appointment.staff_name || t("common.anyAvailableStylist")}
         </p>
         <span className="border-ink/15 mt-4 flex min-h-11 items-center justify-center rounded-xl border text-sm font-semibold">
-          {expanded ? "Hide booking pass" : "Show booking pass & QR"}
+          {expanded ? t("bookingPass.hideBookingPass") : t("bookingPass.showBookingPassQr")}
         </span>
       </summary>
       {expanded && (

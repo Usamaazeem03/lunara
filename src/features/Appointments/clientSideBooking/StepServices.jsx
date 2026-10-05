@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../../i18n/i18n.js";
 import checkIcon from "../../../Shared/assets/icons/checkmark-tick.svg";
 import Icon from "../../../Shared/ui/Icon";
 import { getServiceIcon } from "../../../Shared/lib/serviceCategories";
@@ -6,8 +8,9 @@ function StepServices({
   filteredServices = [],
   selectedServices = [],
   toggleService,
-  statusMessage = "No services found.",
+  statusMessage = i18n.t("booking.noServicesFound"),
 }) {
+  const { t } = useTranslation();
   const selectedCount = selectedServices.length;
   const shownCount = filteredServices.length;
 
@@ -17,13 +20,12 @@ function StepServices({
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs tracking-widest text-[#5f544b] uppercase">
             {selectedCount
-              ? `${selectedCount} selected`
-              : "No service selected"}
+              ? t("booking.selected", { value1: selectedCount })
+              : t("booking.noServiceSelected")}
           </p>
 
           <p className="text-[0.65rem] tracking-widest text-[#5f544b] uppercase sm:text-xs">
-            {shownCount} shown
-          </p>
+            {shownCount} {t("booking.shown")} </p>
         </div>
       )}
 

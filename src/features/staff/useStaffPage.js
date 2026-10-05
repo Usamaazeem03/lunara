@@ -1,3 +1,5 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useOwnerId } from "../../globalHooks/useOwnerId";
 import { confirmToast } from "../../Shared/lib/toast";
@@ -5,6 +7,7 @@ import { useStaff } from "./useStaff";
 import { useDeleteStaff } from "./useDeleteStaff";
 
 export function useStaffPage() {
+  const { t } = useTranslation();
   const {
     ownerId,
     isLoading: isOwnerLoading,
@@ -34,10 +37,10 @@ export function useStaffPage() {
   async function handleDeleteStaff(member) {
     if (isDeleting) return;
     const confirmed = await confirmToast({
-      title: `Delete "${member.name}"?`,
-      description: "This cannot be undone.",
-      confirmLabel: "Delete staff",
-      cancelLabel: "Keep staff",
+      title: translatedMessage("services.delete", { value1: member.name }),
+      description: translatedMessage("common.thisCannotBeUndone"),
+      confirmLabel: translatedMessage("staff.deleteStaff"),
+      cancelLabel: translatedMessage("staff.keepStaff"),
       confirmTone: "danger",
     });
     if (!confirmed) return;
@@ -60,7 +63,7 @@ export function useStaffPage() {
     loadError:
       ownerError?.message ||
       error?.message ||
-      (!isLoading && !ownerId ? "Please sign in to load staff." : ""),
+      (!isLoading && !ownerId ? t("staff.pleaseSignInToLoadStaff") : ""),
     actionError: deleteError?.message,
     showForm: Boolean(form),
     editingMember: form?.member,

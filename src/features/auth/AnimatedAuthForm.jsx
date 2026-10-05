@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import AuthForm from "./AuthForm";
 
 export default function AnimatedAuthForm({ role, mode, onModeChange }) {
+  useTranslation();
   const container = useRef(null);
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

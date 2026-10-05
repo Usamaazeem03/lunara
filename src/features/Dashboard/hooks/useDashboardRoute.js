@@ -50,7 +50,11 @@ export function useDashboardRouting() {
   const pathFor = useCallback(
     (segment) => {
       if (isOwner) {
-        if (!ownerSlug) return "/dashboard";
+        if (!ownerSlug) {
+          return segment === "website-integration"
+            ? "/dashboard/website-integration"
+            : "/dashboard";
+        }
         return segment === defaultSegment
           ? `/owner/salon/${ownerSlug}/dashboard`
           : `/owner/salon/${ownerSlug}/${segment}`;

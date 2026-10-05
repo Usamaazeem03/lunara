@@ -1,11 +1,10 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useMemo } from "react";
 import StatCards from "../Dashboard/Client/StatCards.jsx";
-import calendarIcon from "../../Shared/assets/icons/calendar.svg";
-import clockIcon from "../../Shared/assets/icons/clock.svg";
-import giftIcon from "../../Shared/assets/icons/gift-box-benefits.svg";
-import hairCareIcon from "../../Shared/assets/icons/hair-care.svg";
 import Icon from "../../Shared/ui/Icon";
 export default function StaffStats({ staffMembers }) {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const total = staffMembers.length;
     const activeToday = staffMembers.filter((s) => s.isOnShift).length;
@@ -27,26 +26,26 @@ export default function StaffStats({ staffMembers }) {
 
     return [
       {
-        title: "Total Staff",
+        title: t("staff.totalStaff"),
         value: total.toString(),
-        subtitle: "Team members",
+        subtitle: t("staff.teamMembers"),
 
         icon: (
           <Icon name="user-profile" size={20} className="text-ink-muted/70" />
         ),
       },
       {
-        title: "Active Today",
+        title: t("staff.activeToday"),
         value: activeToday.toString(),
-        subtitle: "On shift",
+        subtitle: t("staff.onShift"),
         icon: (
           <Icon name="calendar" size={20} className="text-ink-muted/70 bold" />
         ),
       },
       {
-        title: "Avg. Rating",
-        value: totalRatings > 0 ? avgRating.toFixed(1) : "No ratings yet",
-        subtitle: "Client feedback",
+        title: t("staff.avgRating"),
+        value: totalRatings > 0 ? avgRating.toFixed(1) : t("common.noRatingsYet"),
+        subtitle: t("staff.clientFeedback"),
         icon: (
           <Icon
             name="tachometer-average"
@@ -56,9 +55,9 @@ export default function StaffStats({ staffMembers }) {
         ),
       },
       {
-        title: "Total Appointments",
+        title: t("reports.totalAppointments"),
         value: totalAppointments.toString(),
-        subtitle: "All time",
+        subtitle: t("common.allTime"),
         icon: (
           <Icon
             name="reminder-appointment"
@@ -68,7 +67,7 @@ export default function StaffStats({ staffMembers }) {
         ),
       },
     ];
-  }, [staffMembers]);
+  }, [staffMembers, i18n.resolvedLanguage, t]);
 
   return <StatCards stats={stats} lgGridCols={4} />;
 }

@@ -1,12 +1,16 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { createAppointment as createAppointmentApi } from "../../services/apiAppointment";
 import { notify } from "../../Shared/lib/toast";
 
+// Share mutation lifecycle behavior; the booking flow supplies its service entry.
 export default function useCreateAppointment(
+  createAppointmentApi,
   defaultOwnerId = null,
   { notifyErrors = true } = {},
 ) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const {
@@ -15,16 +19,17 @@ export default function useCreateAppointment(
     mutateAsync: createAppointmentAsync,
   } = useMutation({
     mutationFn: async (payload) => {
-      const ownerId = payload.owner_id ?? defaultOwnerId;
+      const { verification, ...appointmentPayload } = payload;
+      const ownerId = appointmentPayload.owner_id ?? defaultOwnerId;
 
       const { data, error } = await createAppointmentApi({
-        ...payload,
+        ...appointmentPayload,
         owner_id: ownerId,
-      });
+      }, verification);
 
       if (error) {
         const appointmentError = new Error(
-          error.message || "Unable to save the appointment.",
+          error.message || t("appointments.unableToSaveTheAppointment"),
         );
 
         Object.assign(appointmentError, error);
@@ -53,7 +58,7 @@ export default function useCreateAppointment(
     onError: (error) => {
       if (notifyErrors) {
         notify.error(
-          error?.message || "An error occurred while creating the appointment.",
+          error?.message || translatedMessage("appointments.anErrorOccurredWhileCreatingTheAppointment"),
         );
       }
     },

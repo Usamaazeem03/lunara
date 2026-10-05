@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 function BottomActionBar({ currentPage, totalPages, onPageChange }) {
+  const { t } = useTranslation();
   if (totalPages <= 1) return null;
 
   const firstVisiblePage = Math.floor((currentPage - 1) / 10) * 10 + 1;
@@ -11,9 +13,7 @@ function BottomActionBar({ currentPage, totalPages, onPageChange }) {
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="border-ink/20 hover:border-ink rounded-full border-2 bg-white px-4 py-2 text-xs tracking-widest uppercase transition disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Previous
-      </button>
+      > {t("common.previous")} </button>
 
       {Array.from(
         { length: lastVisiblePage - firstVisiblePage + 1 },
@@ -41,7 +41,7 @@ function BottomActionBar({ currentPage, totalPages, onPageChange }) {
       )}
 
       <span
-        aria-label={`Page ${currentPage} of ${totalPages}`}
+        aria-label={t("services.pageOf", { value1: currentPage, value2: totalPages })}
         className="text-ink-muted px-2 text-xs tracking-widest"
       >
         {currentPage} / {totalPages}
@@ -52,9 +52,7 @@ function BottomActionBar({ currentPage, totalPages, onPageChange }) {
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="border-ink/20 hover:border-ink rounded-full border-2 bg-white px-4 py-2 text-xs tracking-widest uppercase transition disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Next
-      </button>
+      > {t("payments.next")} </button>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../hooks/useAuth";
 import {
@@ -7,6 +9,7 @@ import {
 import { notify } from "../../Shared/lib/toast";
 
 export function useSalonInformation() {
+  useTranslation();
   const { user, syncProfile } = useAuth();
   const client = useQueryClient();
   const queryKey = ["salon-information", user?.id];
@@ -21,7 +24,7 @@ export function useSalonInformation() {
       client.setQueryData(queryKey, data);
       syncProfile(data);
       client.invalidateQueries({ queryKey: ["client-salons"] });
-      notify.success("Salon information updated.");
+      notify.success(translatedMessage("settings.salonInformationUpdated"));
     },
     onError: (error) => notify.error(error.message),
   });

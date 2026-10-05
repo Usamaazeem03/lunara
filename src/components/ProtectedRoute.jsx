@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 // Guards protected routes by auth state and keeps role-scoped dashboard URLs consistent.
 import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 function ProtectedRoute({ children }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const { role: routeRole } = useParams();
   const {
@@ -19,7 +21,7 @@ function ProtectedRoute({ children }) {
       <div className="flex h-screen items-center justify-center bg-[#f7f5f0]">
         <div className="text-center">
           <div className="border-ink mx-auto h-12 w-12 animate-spin rounded-full border-b-2" />
-          <p className="text-ink/60 mt-4 font-medium">Checking access...</p>
+          <p className="text-ink/60 mt-4 font-medium">{t("common.checkingAccess")}</p>
         </div>
       </div>
     );
@@ -36,16 +38,12 @@ function ProtectedRoute({ children }) {
     return (
       <div className="bg-cream flex min-h-screen items-center justify-center p-6">
         <section className="text-center">
-          <p role="alert">
-            Your account could not be loaded. Please try again.
-          </p>
+          <p role="alert"> {t("common.yourAccountCouldNotBeLoadedPleaseTryAgain")} </p>
           <button
             type="button"
             onClick={() => refetchProfile()}
             className="bg-ink text-cream mt-4 px-5 py-3"
-          >
-            Try again
-          </button>
+          > {t("common.tryAgain")} </button>
         </section>
       </div>
     );

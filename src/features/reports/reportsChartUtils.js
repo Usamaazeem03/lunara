@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 import {
   getAppointmentDate,
   getAppointmentAmount,
@@ -27,7 +28,7 @@ export function buildRevenueSeries(appointments, dateRange, grouping = "day") {
     const key = keyFor(date, range.start);
     if (!buckets.has(key))
       buckets.set(key, {
-        label: date.toLocaleDateString(undefined, {
+        label: date.toLocaleDateString(i18n.resolvedLanguage, {
           month: "short",
           ...(grouping !== "month" && { day: "numeric" }),
         }),

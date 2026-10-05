@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate } from "react-router-dom";
@@ -5,6 +6,7 @@ import { completeAuthCallback } from "../../services/apiAuth";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function AuthCallback() {
+  const { t } = useTranslation();
   const { syncProfile } = useAuth();
   const [role] = useState(() =>
     new URLSearchParams(window.location.search).get("role"),
@@ -33,16 +35,12 @@ export default function AuthCallback() {
             <Link
               to={`/auth/${role === "owner" ? "owner" : "client"}/signin`}
               className="mt-4 inline-block underline"
-            >
-              Back to login
-            </Link>
+            > {t("auth.backToLogin")} </Link>
           </>
         ) : (
           <>
             <div className="border-ink/20 border-t-ink mx-auto h-10 w-10 animate-spin rounded-full border-4" />
-            <p role="status" className="mt-4 text-sm">
-              Verifying your account...
-            </p>
+            <p role="status" className="mt-4 text-sm"> {t("auth.verifyingYourAccount")} </p>
           </>
         )}
       </div>

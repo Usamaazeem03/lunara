@@ -57,29 +57,3 @@ export const toTime24 = (value) => {
   const mins = (minutes % 60).toString().padStart(2, "0");
   return `${hours}:${mins}`;
 };
-
-// const CURRENCY_CODE = "GBP";
-// const formatPrice = (value) => {
-//   const numeric = Number(value);
-//   if (!Number.isFinite(numeric)) return "N/A";
-//   return `${CURRENCY_CODE} ${formatNumber(numeric)}`;
-// };
-
-// export const mapServiceRow = (service) => {
-//   const priceValue = Number(service.price);
-//   const durationValue = Number(service.duration_minutes ?? service.duration);
-
-//   return {
-//     id: String(service.id),
-//     title: service.name ?? "Untitled Service",
-//     description: service.description ?? "",
-//     category: service.category ?? "General",
-//     priceValue: Number.isFinite(priceValue) ? priceValue : 0,
-//     durationValue: Number.isFinite(durationValue) ? durationValue : 0,
-//     priceLabel: formatPrice(priceValue),
-//     durationLabel: Number.isFinite(durationValue)
-//       ? `${durationValue} min`
-//       : "N/A",
-//     isActive: service.is_active !== false,
-//   };
-// };

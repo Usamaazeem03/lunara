@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
+import { fixedLabel } from "../../../i18n/fixedLabels.js";
 import { useEffect, useRef } from "react";
-import StepConfirm from "./StepConfirm";
 import Button from "../../../Shared/Button";
 import StepDateTime from "./StepDateTime";
-import StepPayment from "./StepPayment";
+import StepCustomerDetails from "./StepCustomerDetails.jsx";
+import StepEmailVerification from "./StepEmailVerification.jsx";
 import StepServices from "./StepServices";
 import StepStaff from "./StepStaff";
 
@@ -44,8 +46,15 @@ function BookingStepViews({
   setSelectedMethod,
   activePayment,
   activeMethod,
+  customerDetails,
+  onCustomerDetailsChange,
+  verificationState,
+  onRequestVerification,
+  onVerifyCode,
+  onRetryBooking,
   handleBack,
 }) {
+  const { t } = useTranslation();
   const contentRef = useRef(null);
   const previousStep = useRef(step);
   useEffect(() => {
@@ -66,7 +75,7 @@ function BookingStepViews({
             variant="custom"
             unstyled
             onClick={handleBack}
-            aria-label="Go back"
+            aria-label={t("booking.goBack")}
             className="border-ink/20 text-ink hover:bg-ink hover:text-cream flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition"
           >
             &larr;
@@ -103,18 +112,18 @@ function BookingStepViews({
       {step === 1 && (
         <div className="mt-5 space-y-3">
           <label className="block">
-            <span className="sr-only">Search services</span>
+            <span className="sr-only">{t("booking.searchServices")}</span>
             <input
               type="search"
               value={serviceQuery}
               onChange={(event) => setServiceQuery(event.target.value)}
-              placeholder="Search haircuts, facials, and more..."
+              placeholder={t("booking.searchHaircutsFacialsAndMore")}
               className="border-ink/15 text-ink focus:border-ink focus:ring-ink/10 min-h-12 w-full rounded-xl border bg-white px-4 py-3 text-base transition outline-none focus:ring-2"
             />
           </label>
           <div
             className="flex gap-2 overflow-x-auto pb-2"
-            aria-label="Service categories"
+            aria-label={t("booking.serviceCategories")}
           >
             {categories.map((category) => (
               <button
@@ -124,7 +133,7 @@ function BookingStepViews({
                 onClick={() => onCategoryChange(category)}
                 className={`focus-visible:outline-ink min-h-11 shrink-0 rounded-full border px-4 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 ${category === selectedCategory ? "border-ink bg-ink text-cream" : "border-ink/10 text-ink-muted hover:border-ink/40 bg-white"}`}
               >
-                {category}
+                {category === "All" ? t("common.all") : fixedLabel(category, "category")}
               </button>
             ))}
           </div>
@@ -164,18 +173,15 @@ function BookingStepViews({
         )}
 
         {step === 4 && (
-          <StepConfirm
+          <StepCustomerDetails
+            customerDetails={customerDetails}
+            onCustomerDetailsChange={onCustomerDetailsChange}
             activeDate={activeDate ?? ""}
             activeTime={activeTime ?? ""}
             totalDurationLabel={totalDurationLabel ?? ""}
             activeStaff={activeStaff ?? ""}
             selectedServiceList={selectedServiceList ?? []}
             totalPriceLabel={totalPriceLabel ?? ""}
-          />
-        )}
-
-        {step === 5 && (
-          <StepPayment
             paymentOptions={paymentOptions}
             selectedPayment={selectedPayment}
             paymentMethods={paymentMethods}
@@ -183,6 +189,16 @@ function BookingStepViews({
             setSelectedMethod={setSelectedMethod}
             activePayment={activePayment}
             activeMethod={activeMethod}
+          />
+        )}
+        {step === 5 && (
+          <StepEmailVerification
+            key={customerDetails.email.trim().toLowerCase()}
+            email={customerDetails.email.trim()}
+            state={verificationState}
+            onRequestCode={onRequestVerification}
+            onVerifyCode={onVerifyCode}
+            onRetryBooking={onRetryBooking}
           />
         )}
       </div>

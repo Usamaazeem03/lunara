@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 const toStartOfDay = (date) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
@@ -109,14 +110,14 @@ export const getServiceLabels = (appointment, servicesById) => {
   const service = servicesById.get(String(appointment.service_id ?? ""));
 
   if (service) {
-    return [service.category || service.title || service.name || "Service"];
+    return [service.category || service.title || service.name || i18n.t("common.service")];
   }
 
   const serviceName =
     appointment.service_name ??
     appointment.service_title ??
     appointment.service ??
-    "Service";
+    i18n.t("common.service");
 
   return String(serviceName)
     .split(",")
@@ -130,17 +131,17 @@ export const getPaymentLabel = (appointment) => {
   const source = `${method} ${option}`;
 
   if (source.includes("upi")) return "UPI";
-  if (source.includes("wallet")) return "Wallet";
-  if (source.includes("card")) return "Card";
-  if (source.includes("online")) return "Online";
+  if (source.includes("wallet")) return i18n.t("common.wallet");
+  if (source.includes("card")) return i18n.t("common.card");
+  if (source.includes("online")) return i18n.t("common.online");
   if (source.includes("salon") || source.includes("cash"))
-    return "Pay at Salon";
+    return i18n.t("common.payAtSalon");
 
-  return "Unspecified";
+  return i18n.t("reports.unspecified");
 };
 
 export const normalizeStaffKey = (appointment) =>
-  String(appointment.staff_id ?? appointment.staff_name ?? "Unassigned");
+  String(appointment.staff_id ?? appointment.staff_name ?? i18n.t("common.unassigned"));
 
 export const getStaffName = (appointment) =>
-  appointment.staff_name || "Unassigned";
+  appointment.staff_name || i18n.t("common.unassigned");

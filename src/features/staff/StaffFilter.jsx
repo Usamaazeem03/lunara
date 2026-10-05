@@ -1,4 +1,7 @@
+import { useTranslation } from "react-i18next";
+import { fixedLabel } from "../../i18n/fixedLabels.js";
 export default function StaffFilter({ roles, selectedRole, onRoleChange }) {
+  const { t } = useTranslation();
   return (
     <div className="border-ink/20 border-2 bg-white/90 p-3 sm:p-4">
       <div className="flex flex-wrap gap-2">
@@ -15,7 +18,7 @@ export default function StaffFilter({ roles, selectedRole, onRoleChange }) {
                   : "border-ink/20 text-ink-muted hover:border-ink bg-white"
               }`}
             >
-              {role}
+              {role === "All" ? t("common.all") : fixedLabel(role, "role")}
             </button>
           );
         })}

@@ -1,13 +1,16 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useState } from "react";
 import Icon from "./Icon";
 
 export default function UserAvatar({
   src,
-  alt = "User profile",
+  alt = i18n.t("common.userProfile"),
   className = "h-full w-full",
   iconSize = 24,
   fallback,
 }) {
+  useTranslation();
   const [failedSrc, setFailedSrc] = useState(null);
   return src && src !== failedSrc ? (
     <img

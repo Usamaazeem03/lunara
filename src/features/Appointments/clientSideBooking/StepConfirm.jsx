@@ -1,15 +1,17 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../../i18n/i18n.js";
 import calendarIcon from "../../../Shared/assets/icons/calendar.svg";
 import checkIcon from "../../../Shared/assets/icons/checkmark-tick.svg";
 import clockIcon from "../../../Shared/assets/icons/clock.svg";
 import staffIcon from "../../../Shared/assets/icons/staff.svg";
 
 const formatDateLabel = (activeDate) => {
-  if (!activeDate) return "Date pending";
+  if (!activeDate) return i18n.t("booking.datePending");
 
   const day = activeDate.fullDay ?? activeDate.day;
   const date = activeDate.date ?? activeDate.fullDate;
 
-  return [day, date].filter(Boolean).join(", ") || "Date pending";
+  return [day, date].filter(Boolean).join(", ") || i18n.t("booking.datePending");
 };
 
 function StepConfirm({
@@ -20,33 +22,32 @@ function StepConfirm({
   selectedServiceList,
   totalPriceLabel,
 }) {
+  const { t } = useTranslation();
   const dateLabel = formatDateLabel(activeDate);
-  const staffName = activeStaff?.name ?? "No preference";
-  const staffRole = activeStaff?.role ?? "Any available stylist";
-  const staffRating = activeStaff?.rating ? `${activeStaff.rating} rating` : "";
+  const staffName = activeStaff?.name ?? t("booking.noPreference");
+  const staffRole = activeStaff?.role ?? t("common.anyAvailableStylist");
+  const staffRating = activeStaff?.rating ? t("booking.rating", { value1: activeStaff.rating }) : "";
   const selectedCount = selectedServiceList.length;
-  const serviceCountLabel = `${selectedCount} service${
-    selectedCount === 1 ? "" : "s"
-  } selected`;
+  const serviceCountLabel = t("booking.serviceSelected", { count: selectedCount });
 
   const reviewCards = [
     {
-      label: "Date",
+      label: t("common.date"),
       title: dateLabel,
       detail: activeTime,
-      meta: `Total duration: ${totalDurationLabel}`,
+      meta: t("booking.totalDuration", { value1: totalDurationLabel }),
       icon: calendarIcon,
       featured: true,
     },
     {
-      label: "Time",
+      label: t("common.time"),
       title: activeTime,
       detail: totalDurationLabel,
-      meta: "Salon schedule confirmed",
+      meta: t("booking.salonScheduleConfirmed"),
       icon: clockIcon,
     },
     {
-      label: "Staff",
+      label: t("nav.staff"),
       title: staffName,
       detail: staffRole,
       meta: staffRating,
@@ -57,9 +58,7 @@ function StepConfirm({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="mb-3 text-xs tracking-widest text-[#5f544b] uppercase">
-          Review Details
-        </p>
+        <p className="mb-3 text-xs tracking-widest text-[#5f544b] uppercase"> {t("booking.reviewDetails")} </p>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {reviewCards.map((card) => (
             <div
@@ -97,17 +96,13 @@ function StepConfirm({
       <div className="border-2 border-[#2d2620]/30 bg-white">
         <div className="flex flex-col gap-3 border-b-2 border-[#2d2620]/20 bg-[#f3efe9] p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs tracking-widest text-[#5f544b] uppercase">
-              Services
-            </p>
+            <p className="text-xs tracking-widest text-[#5f544b] uppercase"> {t("nav.services")} </p>
             <p className="mt-1 text-lg font-semibold text-[#2d2620]">
               {serviceCountLabel}
             </p>
           </div>
           <div className="flex items-center gap-2 text-xs tracking-widest text-[#2d2620] uppercase">
-            <img src={checkIcon} alt="" className="h-4 w-4" />
-            Ready to book
-          </div>
+            <img src={checkIcon} alt="" className="h-4 w-4" /> {t("booking.readyToBook")} </div>
         </div>
 
         <div className="divide-y-2 divide-[#2d2620]/10">
@@ -135,7 +130,7 @@ function StepConfirm({
         </div>
 
         <div className="flex items-center justify-between border-t-2 border-[#2d2620] bg-[#2d2620] px-4 py-3 text-[#f3efe9]">
-          <span className="text-xs tracking-widest uppercase">Total</span>
+          <span className="text-xs tracking-widest uppercase">{t("common.total")}</span>
           <span className="text-lg font-semibold">{totalPriceLabel}</span>
         </div>
       </div>

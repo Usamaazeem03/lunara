@@ -1,4 +1,5 @@
-import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 import { validateInternationalPhone } from "../../Shared/lib/phoneValidation";
 import Button from "../../Shared/Button.jsx";
 import Icon from "../../Shared/ui/Icon.jsx";
@@ -37,6 +38,7 @@ function CreateAppointmentForm({
   canSaveAppointment,
   staffSelectOptions,
 }) {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -81,15 +83,13 @@ function CreateAppointmentForm({
         {/* Header with Close Button */}
         <div className="border-ink/10 flex items-start justify-between border-b-2 px-5 py-4">
           <div>
-            <p className="text-ink text-base leading-tight font-semibold">
-              Add New Appointment
-            </p>
+            <p className="text-ink text-base leading-tight font-semibold"> {t("appointments.addNewAppointment")} </p>
           </div>
 
           <button
             onClick={handleCancelForm}
             className="border-ink/20 text-ink-muted hover:border-ink hover:text-ink flex h-8 w-8 shrink-0 items-center justify-center border-2 text-xs transition"
-            aria-label="Close"
+            aria-label={t("common.close")}
           >
             ✕
           </button>
@@ -102,9 +102,7 @@ function CreateAppointmentForm({
             className="space-y-4"
           >
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Client Name *
-                <SearchableSelectBox
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("appointments.clientName")} <SearchableSelectBox
                   value={formState.clientName}
                   onValueChange={(val) => {
                     const textOnlyName = val.replace(/[^a-zA-Z\s'-]/g, "");
@@ -138,14 +136,14 @@ function CreateAppointmentForm({
                       shouldValidate: true,
                     });
                   }}
-                  placeholder="Search existing client or type name"
-                  noOptionsText="No clients found"
+                  placeholder={t("appointments.searchExistingClientOrTypeName")}
+                  noOptionsText={t("clients.noClientsFound")}
                   className="mt-2"
                 />
                 <input
                   type="hidden"
                   {...register("clientName", {
-                    required: "Client name is required",
+                    required: t("appointments.clientNameIsRequired"),
                   })}
                 />
                 {errors.clientName && (
@@ -154,24 +152,18 @@ function CreateAppointmentForm({
                   </p>
                 )}
                 {formState.clientId && (
-                  <p className="mt-1 text-[0.65rem] tracking-widest text-green-600 uppercase">
-                    ✓ Linked to existing client profile
-                  </p>
+                  <p className="mt-1 text-[0.65rem] tracking-widest text-green-600 uppercase"> {t("appointments.linkedToExistingClientProfile")} </p>
                 )}
                 {!formState.clientId && formState.clientName && (
-                  <p className="mt-1 text-[0.65rem] tracking-widest text-amber-600 uppercase">
-                    New client profile will be created automatically
-                  </p>
+                  <p className="mt-1 text-[0.65rem] tracking-widest text-amber-600 uppercase"> {t("appointments.newClientProfileWillBeCreatedAutomatically")} </p>
                 )}
               </label>
               {/* // that same use login page */}
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Phone
-                <input
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("common.phone")} <input
                   name="clientPhone"
                   {...register("clientPhone", {
                     validate: validateInternationalPhone,
-                    required: "Client Phone Number is required",
+                    required: t("appointments.clientPhoneNumberIsRequired"),
                   })}
                   type="tel"
                   placeholder="+44 1234 567890"
@@ -184,16 +176,14 @@ function CreateAppointmentForm({
                 )}
               </label>
 
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Email
-                <input
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("common.email")} <input
                   name="clientEmail"
                   {...register("clientEmail", {
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Enter a valid email address",
+                      message: t("appointments.enterAValidEmailAddress"),
                     },
-                    required: "Client Email is required",
+                    required: t("appointments.clientEmailIsRequired"),
                   })}
                   type="email"
                   placeholder="client@email.com"
@@ -206,42 +196,36 @@ function CreateAppointmentForm({
                 )}
               </label>
 
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Status
-                <SearchableSelectBox
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("common.status")} <SearchableSelectBox
                   value={formState.status}
                   options={STATUS_OPTIONS}
                   selectedValue={formState.status}
                   onOptionSelect={handleSelectStatusOption}
-                  placeholder="Select status"
+                  placeholder={t("appointments.selectStatus")}
                   searchable={false}
                   className="mt-2"
                 />
               </label>
 
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Staff *
-                <SearchableSelectBox
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("appointments.staff2")} <SearchableSelectBox
                   value={staffSearchValue}
                   onValueChange={handleStaffSearchChange}
                   options={staffSelectOptions}
                   selectedValue={formState.staffId}
                   onOptionSelect={handleSelectStaffOption}
-                  placeholder="Search and select staff"
+                  placeholder={t("appointments.searchAndSelectStaff")}
                   required
-                  noOptionsText="No staff found"
+                  noOptionsText={t("staff.noStaffFound")}
                   className="mt-2"
                 />
               </label>
 
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Search Services
-                <ServiceSearchInput
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("appointments.searchServices")} <ServiceSearchInput
                   value={serviceSearchQuery}
                   onChange={(event) =>
                     setServiceSearchQuery(event.target.value)
                   }
-                  aria-label="Search services"
+                  aria-label={t("booking.searchServices")}
                   className="border-ink/20 text-ink focus:border-ink mt-2 w-full bg-white px-3 py-2 text-sm tracking-normal normal-case placeholder:text-[#5f544b]/70 sm:px-3 sm:text-sm"
                 />
               </label>
@@ -249,9 +233,7 @@ function CreateAppointmentForm({
 
             {/* Services Selection with Cards */}
             <div>
-              <p className="text-ink-muted mb-3 text-xs tracking-widest uppercase">
-                Select Services * (Choose one or more)
-              </p>
+              <p className="text-ink-muted mb-3 text-xs tracking-widest uppercase"> {t("appointments.selectServicesChooseOneOrMore")} </p>
               {services.length > 0 ? (
                 filteredServices.length > 0 ? (
                   <div className="scrollbar-hidden flex gap-3 overflow-x-auto pb-2">
@@ -288,7 +270,7 @@ function CreateAppointmentForm({
                           {isSelected && (
                             <span
                               className="bg-ink text-cream flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[0.6rem]"
-                              aria-label="Selected"
+                              aria-label={t("booking.selected2")}
                             >
                               ✓
                             </span>
@@ -298,14 +280,10 @@ function CreateAppointmentForm({
                     })}
                   </div>
                 ) : (
-                  <div className="border-ink/30 bg-cream-soft text-ink-muted border-2 border-dashed p-4 text-center text-sm sm:p-6">
-                    No services found. Try a different search.
-                  </div>
+                  <div className="border-ink/30 bg-cream-soft text-ink-muted border-2 border-dashed p-4 text-center text-sm sm:p-6"> {t("booking.noServicesFoundTryADifferentSearch")} </div>
                 )
               ) : (
-                <div className="border-ink/30 bg-cream-soft text-ink-muted border-2 border-dashed p-4 text-center text-sm sm:p-6">
-                  No services available. Add services first.
-                </div>
+                <div className="border-ink/30 bg-cream-soft text-ink-muted border-2 border-dashed p-4 text-center text-sm sm:p-6"> {t("appointments.noServicesAvailableAddServicesFirst")} </div>
               )}
             </div>
 
@@ -313,32 +291,23 @@ function CreateAppointmentForm({
             {selectedServices.length > 0 && (
               <div className="border-ink/20 bg-cream grid gap-2 border-2 p-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase">
-                    Services Selected
-                  </p>
+                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase"> {t("appointments.servicesSelected")} </p>
                   <p className="text-sm font-semibold">
-                    {selectedServices.length} service
-                    {selectedServices.length > 1 ? "s" : ""}
+                    {selectedServices.length} {t("appointments.service")} {selectedServices.length > 1 ? "s" : ""}
                   </p>
                 </div>
                 <div>
-                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase">
-                    Total Price
-                  </p>
+                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase"> {t("appointments.totalPrice")} </p>
                   <p className="text-sm font-semibold">
                     {displayCurrencyCode} {formatNumber(totalPrice)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase">
-                    Total Duration
-                  </p>
-                  <p className="text-sm font-semibold">{totalDuration} min</p>
+                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase"> {t("appointments.totalDuration")} </p>
+                  <p className="text-sm font-semibold">{totalDuration} {t("bookingPass.min")}</p>
                 </div>
                 <div>
-                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase">
-                    Selected Items
-                  </p>
+                  <p className="text-ink-muted text-[0.65rem] tracking-widest uppercase"> {t("appointments.selectedItems")} </p>
                   <div className="flex flex-wrap gap-1">
                     {selectedServices.map((service) => (
                       <span
@@ -354,9 +323,7 @@ function CreateAppointmentForm({
             )}
 
             <div>
-              <p className="text-ink-muted mb-2 text-xs tracking-widest uppercase">
-                Select Date *
-              </p>
+              <p className="text-ink-muted mb-2 text-xs tracking-widest uppercase"> {t("appointments.selectDate2")} </p>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2">
                 {dateOptions.map((option) => {
                   const isSelected = option.value === formState.appointmentDate;
@@ -379,9 +346,7 @@ function CreateAppointmentForm({
             </div>
 
             <div>
-              <p className="text-ink-muted mb-2 text-xs tracking-widest uppercase">
-                Select Time *
-              </p>
+              <p className="text-ink-muted mb-2 text-xs tracking-widest uppercase"> {t("appointments.selectTime")} </p>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(95px,1fr))] gap-2">
                 {formTimeSlots.map((slot) => {
                   const isSelected = slot === formState.appointmentTime;
@@ -408,55 +373,42 @@ function CreateAppointmentForm({
               </div>
             </div>
 
-            <label className="text-ink-muted block text-xs tracking-widest uppercase">
-              Reward code (optional)
-              <input
+            <label className="text-ink-muted block text-xs tracking-widest uppercase"> {t("appointments.rewardCodeOptional")} <input
                 {...register("rewardCode", {
-                  validate: (value) => !value?.trim() || Boolean(formState.clientId) || "Select an existing client before using a reward.",
+                  validate: (value) => !value?.trim() || Boolean(formState.clientId) || t("appointments.selectAnExistingClientBeforeUsingAReward"),
                 })}
                 maxLength={64}
                 autoComplete="off"
-                placeholder="Paste this client's reward code"
+                placeholder={t("appointments.pasteThisClientSRewardCode")}
                 className="border-ink/20 text-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm"
               />
-              <span className="mt-2 block text-xs tracking-normal normal-case">Select the client who received this code. The reward is checked and deducted from the service total when you save.</span>
+              <span className="mt-2 block text-xs tracking-normal normal-case">{t("appointments.selectTheClientWhoReceivedThisCodeTheRewardIs")}</span>
               {errors.rewardCode && <span role="alert" className="mt-1 block text-danger">{errors.rewardCode.message}</span>}
             </label>
 
-            <label className="text-ink-muted block text-xs tracking-widest uppercase">
-              Notes
-              <textarea
+            <label className="text-ink-muted block text-xs tracking-widest uppercase"> {t("common.notes")} <textarea
                 name="notes"
                 {...register("notes")}
                 rows={3}
-                placeholder="Add extra details for this appointment"
+                placeholder={t("appointments.addExtraDetailsForThisAppointment")}
                 className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
               />
             </label>
 
             {services.length === 0 && (
-              <div className="border-danger/40 bg-danger/10 text-danger border-2 p-3 text-sm">
-                No active services found. Add services first.
-              </div>
+              <div className="border-danger/40 bg-danger/10 text-danger border-2 p-3 text-sm"> {t("appointments.noActiveServicesFoundAddServicesFirst")} </div>
             )}
 
             {staffMembers.length === 0 && (
-              <div className="border-danger/40 bg-danger/10 text-danger border-2 p-3 text-sm">
-                No staff found. Add staff members first.
-              </div>
+              <div className="border-danger/40 bg-danger/10 text-danger border-2 p-3 text-sm"> {t("appointments.noStaffFoundAddStaffMembersFirst")} </div>
             )}
 
             {dateOptions.length === 0 && (
-              <div className="border-danger/40 bg-danger/10 text-danger border-2 p-3 text-sm">
-                No open schedule found. Please set working hours first.
-              </div>
+              <div className="border-danger/40 bg-danger/10 text-danger border-2 p-3 text-sm"> {t("appointments.noOpenScheduleFoundPleaseSetWorkingHoursFirst")} </div>
             )}
 
             {!isAppointmentTableReady && (
-              <div className="border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-                Appointments table is missing. Saves will be local only until
-                you create that table in Supabase.
-              </div>
+              <div className="border-2 border-amber-300 bg-amber-50 p-3 text-sm text-amber-800"> {t("appointments.appointmentsTableIsMissingSavesWillBeLocalOnlyUntil")} </div>
             )}
 
             {(saveError || saveSuccess) && (
@@ -477,17 +429,13 @@ function CreateAppointmentForm({
                 variant="primary"
                 loading={isSaving}
                 disabled={!canSaveAppointment}
-              >
-                Save Appointment
-              </Button>
+              > {t("appointments.saveAppointment")} </Button>
               <Button
                 type="button"
                 variant="secondary"
                 onClick={handleCancelForm}
                 disabled={isSaving}
-              >
-                Cancel
-              </Button>
+              > {t("common.cancel")} </Button>
             </div>
           </form>
         </div>

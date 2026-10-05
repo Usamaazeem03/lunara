@@ -1,3 +1,4 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase.js";
 
 export async function getOwnerId(ownerIdOverride = null) {
@@ -11,7 +12,7 @@ export async function getOwnerId(ownerIdOverride = null) {
 
   if (error) {
     console.error("Failed to load owner id:", error);
-    throw new Error("owner_id could not be loaded");
+    throw localizedError("services.ownerIdCouldNotBeLoaded");
   }
 
   return user?.id ?? null;

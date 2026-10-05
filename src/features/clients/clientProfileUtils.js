@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 import { slugifyClientName } from "./clientUtils.js";
 import { parseTimeToMinutes } from "../../utils/appointmentUtils.js";
 import { formatCurrency } from "../../utils/currency.js";
@@ -35,11 +36,11 @@ function dateValue(value) {
 
 export function formatClientDate(value) {
   return (
-    dateValue(value)?.toLocaleDateString(undefined, {
+    dateValue(value)?.toLocaleDateString(i18n.resolvedLanguage, {
       day: "numeric",
       month: "short",
       year: "numeric",
-    }) ?? "No visits"
+    }) ?? i18n.t("clients.noVisits")
   );
 }
 
@@ -55,7 +56,7 @@ const statusLabel = (status) => {
   const value = String(status ?? "")
     .trim()
     .toLowerCase();
-  return value ? value[0].toUpperCase() + value.slice(1) : "Unknown";
+  return value ? value[0].toUpperCase() + value.slice(1) : i18n.t("common.unknown");
 };
 
 export function getClientProfileMetrics(client, now = new Date()) {
@@ -94,8 +95,8 @@ export function buildClientAppointmentRows(client, currencyCode) {
       const minutes = parseTimeToMinutes(appointment.appointment_time);
       const timeLabel =
         minutes === null
-          ? "Time unavailable"
-          : `${Math.floor(minutes / 60) % 12 || 12}:${String(minutes % 60).padStart(2, "0")} ${minutes >= 720 ? "PM" : "AM"}`;
+          ? i18n.t("bookingPass.timeUnavailable")
+          : `${Math.floor(minutes / 60) % 12 || 12}:${String(minutes % 60).padStart(2, "0")} ${minutes >= 720 ? i18n.t("common.pm") : i18n.t("common.am")}`;
       const amount =
         appointment.price == null || appointment.price === ""
           ? NaN
@@ -112,18 +113,18 @@ export function buildClientAppointmentRows(client, currencyCode) {
         appointmentDate: appointment.appointment_date,
         dateLabel: dateValue(appointment.appointment_date)
           ? formatClientDate(appointment.appointment_date)
-          : "Date unavailable",
+          : i18n.t("common.dateUnavailable"),
         timeLabel,
-        service: appointment.service_name || "Service not recorded",
+        service: appointment.service_name || i18n.t("clients.serviceNotRecorded"),
         serviceSummary: getServiceSummary(appointment.service_name),
-        staff: appointment.staff_name || "Unassigned",
+        staff: appointment.staff_name || i18n.t("common.unassigned"),
         duration: Number.isFinite(duration)
-          ? `${duration} min`
-          : "Not recorded",
+          ? i18n.t("common.min", { value1: duration })
+          : i18n.t("clients.notRecorded"),
         price:
           Number.isFinite(amount) && currencyCode
             ? formatCurrency(amount, currencyCode)
-            : "Unavailable",
+            : i18n.t("common.unavailable"),
         status: statusLabel(appointment.status),
         notes: appointment.notes || null,
         rewardDiscount: Number(appointment.reward_discount) > 0 && currencyCode

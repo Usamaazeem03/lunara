@@ -1,3 +1,5 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { completeAppointment as completeAppointmentApi } from "../../services/apiAppointment";
@@ -5,13 +7,14 @@ import { appointmentsQueryKey } from "../../globalHooks/useAppointments";
 import { notify } from "../../Shared/lib/toast";
 
 export function useCompleteAppointment(ownerId) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const { mutate: completeAppointment, isPending: isCompleting } = useMutation({
     mutationFn: async (appointmentId) => {
       const { data, error } = await completeAppointmentApi(appointmentId);
       if (error) {
-        throw new Error(error.message || "Unable to complete appointment.");
+        throw new Error(error.message || t("appointments.unableToCompleteAppointment"));
       }
       return data;
     },
@@ -24,7 +27,7 @@ export function useCompleteAppointment(ownerId) {
           queryKey: appointmentsQueryKey(ownerId, true),
         });
       }
-      notify.success("Appointment marked as completed.");
+      notify.success(translatedMessage("appointments.appointmentMarkedAsCompleted"));
     },
     onError: (error) => notify.error(error.message),
   });

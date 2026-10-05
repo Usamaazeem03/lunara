@@ -1,4 +1,5 @@
-﻿import LandingHeader from "../features/marketing/LandingHeader";
+import { useTranslation } from "react-i18next";
+import LandingHeader from "../features/marketing/LandingHeader";
 import HeroMainSection from "../features/marketing/HeroMainSection";
 import FeaturesGridSection from "../features/marketing/FeaturesGridSection";
 import WorkflowStepsSection from "../features/marketing/WorkflowStepsSection";
@@ -10,17 +11,18 @@ import LandingFooter from "../features/marketing/LandingFooter";
 import "../features/marketing/marketing.css";
 
 export default function LandingPage() {
+  const { t } = useTranslation();
   return (
     <div className="marketing-page">
-      <a className="marketing-skip" href="#main-content">Skip to content</a>
+      <a className="marketing-skip" href="#main-content">{t("marketing.skipToContent")}</a>
       <LandingHeader />
       <main id="main-content">
         <HeroMainSection />
-        <div className="marketing-ribbon" aria-label="Made for your everyday">
-          <span>YOUR SALON. YOUR RHYTHM.</span>
-          <span>Bookings</span><i aria-hidden="true">✦</i>
-          <span>People</span><i aria-hidden="true">✦</i>
-          <span>A little more breathing room</span>
+        <div className="marketing-ribbon" aria-label={t("marketing.madeForYourEveryday")}>
+          <span>{t("marketing.yourSalonYourRhythm")}</span>
+          <span>{t("marketing.bookings")}</span><i aria-hidden="true">✦</i>
+          <span>{t("marketing.people")}</span><i aria-hidden="true">✦</i>
+          <span>{t("marketing.aLittleMoreBreathingRoom")}</span>
         </div>
         <FeaturesGridSection />
         <DashboardPreviewSection />

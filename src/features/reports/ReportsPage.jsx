@@ -1,3 +1,5 @@
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import AppHeader from "../../AppLayout/AppHeader";
 import Button from "../../Shared/Button";
@@ -18,6 +20,7 @@ import {
 } from "./reportExport";
 
 const ReportsPage = () => {
+  const { t } = useTranslation();
   const data = useReportsPage();
   const {
     dateRange,
@@ -44,7 +47,7 @@ const ReportsPage = () => {
       else if (format === "png") await downloadPng(report);
       else await printReport(report);
     } catch {
-      setExportError("Export failed. Please try again.");
+      setExportError(t("reports.exportFailedPleaseTryAgain"));
     } finally {
       setExporting("");
     }
@@ -53,47 +56,44 @@ const ReportsPage = () => {
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <AppHeader
-          eyebrow="Reports"
-          title="Reports & Analytics"
-          description="Comprehensive business insights and performance metrics."
+          eyebrow={t("nav.reports")}
+          title={t("reports.reportsAnalytics")}
+          description={t("reports.comprehensiveBusinessInsightsAndPerformanceMetrics")}
         />
         <div className="flex flex-wrap items-center gap-2">
           <select
-            aria-label="Report date range"
+            aria-label={t("reports.reportDateRange")}
             value={dateRange}
             onChange={(event) => setDateRange(event.target.value)}
             className="border-ink/30 text-ink border-2 bg-white px-4 py-2 text-xs tracking-widest uppercase focus:outline-none"
           >
             {dateRangeOptions.map((option) => (
-              <option key={option}>{option}</option>
+              <option key={option} value={option}>{fixedLabel(option, "range")}</option>
             ))}
           </select>
           <Button
             disabled={isLoading || !!loadError || !!exporting}
             onClick={() => handleExport("png")}
           >
-            {exporting ? "Preparing..." : "Export PNG (3x)"}
+            {exporting ? t("payments.preparing") : t("reports.exportPng3x")}
           </Button>
           <Button
             variant="primary"
             disabled={isLoading || !!loadError || !!exporting}
             onClick={() => handleExport("pdf")}
-          >
-            Print / Save PDF
-          </Button>
+          > {t("reports.printSavePdf")} </Button>
         </div>
       </div>
 
       <p className="text-ink-muted text-sm">
-        {period} | Revenue includes completed appointments only.
-      </p>
+        {period} {t("reports.revenueIncludesCompletedAppointmentsOnly")} </p>
       {(loadError || exportError) && (
         <p role="alert" className="text-red-700">
           {exportError ||
-            "Unable to load reports. Please refresh and try again."}
+            t("reports.unableToLoadReportsPleaseRefreshAndTryAgain")}
         </p>
       )}
-      {isLoading && <p role="status">Loading report data...</p>}
+      {isLoading && <p role="status">{t("reports.loadingReportData")}</p>}
       <section className="grid gap-3 lg:grid-cols-4">
         {statCards.map((card) => (
           <ReportStatCard key={card.title} {...card} />
@@ -105,11 +105,8 @@ const ReportsPage = () => {
           <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold">Revenue Trend</h2>
-              <p className="text-ink-muted text-sm">
-                Completed revenue for the selected period, compared with the
-                preceding period.
-              </p>
+              <h2 className="text-lg font-semibold">{t("reports.revenueTrend")}</h2>
+              <p className="text-ink-muted text-sm"> {t("reports.completedRevenueForTheSelectedPeriodComparedWithThePreceding")} </p>
             </div>
             <span className="border-ink/30 bg-cream text-ink rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase">
               {dateRange}
@@ -129,10 +126,8 @@ const ReportsPage = () => {
           <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-lg font-semibold">Service Popularity</h2>
-              <p className="text-ink-muted text-sm">
-                Bookings by service category.
-              </p>
+              <h2 className="text-lg font-semibold">{t("reports.servicePopularity")}</h2>
+              <p className="text-ink-muted text-sm"> {t("reports.bookingsByServiceCategory")} </p>
             </div>
             <span className="border-ink/30 bg-cream text-ink rounded-full border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase">
               {dateRange}
@@ -148,10 +143,8 @@ const ReportsPage = () => {
         <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">Staff Performance</h2>
-            <p className="text-ink-muted text-sm">
-              Revenue generated by each staff member.
-            </p>
+            <h2 className="text-lg font-semibold">{t("reports.staffPerformance")}</h2>
+            <p className="text-ink-muted text-sm"> {t("reports.revenueGeneratedByEachStaffMember")} </p>
           </div>
         </div>
         <div className="mt-4">
@@ -166,10 +159,8 @@ const ReportsPage = () => {
         <div className="border-ink/20 relative flex flex-col overflow-hidden border-2 bg-white/90 p-4 sm:p-5">
           <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <div>
-            <h2 className="text-lg font-semibold">Payment Methods</h2>
-            <p className="text-ink-muted text-sm">
-              Distribution of payment types.
-            </p>
+            <h2 className="text-lg font-semibold">{t("common.paymentMethods")}</h2>
+            <p className="text-ink-muted text-sm"> {t("reports.distributionOfPaymentTypes")} </p>
           </div>
           <div className="mt-4 space-y-4">
             {paymentMethods.map((method) => (
@@ -181,11 +172,8 @@ const ReportsPage = () => {
         <div className="border-ink/20 relative flex flex-col overflow-hidden border-2 bg-white/90 p-4 sm:p-5">
           <div className="bg-ink/5 absolute -top-10 -right-10 h-24 w-24 rounded-full"></div>
           <div>
-            <h2 className="text-lg font-semibold">Export Reports</h2>
-            <p className="text-ink-muted text-sm">
-              CSV reports use the selected dates. PNG and PDF include the
-              complete summary.
-            </p>
+            <h2 className="text-lg font-semibold">{t("reports.exportReports")}</h2>
+            <p className="text-ink-muted text-sm"> {t("reports.csvReportsUseTheSelectedDatesPngAndPdfInclude")} </p>
           </div>
           <div className="mt-4 space-y-3">
             {exportReports.map((label) => (
@@ -197,7 +185,7 @@ const ReportsPage = () => {
                 <button
                   type="button"
                   disabled={isLoading || !!loadError || !!exporting}
-                  onClick={() => handleExport("csv", label)}
+                  onClick={() => handleExport("csv", t(label))}
                   className="border-ink/30 text-ink hover:border-ink border-2 px-3 py-1 text-[0.65rem] tracking-widest uppercase transition"
                 >
                   CSV

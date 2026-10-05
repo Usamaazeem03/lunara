@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useMemo } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useOwnerId } from "../../globalHooks/useOwnerId";
@@ -12,6 +14,7 @@ import {
 } from "./clientProfileUtils";
 
 export function useClientProfile() {
+  const { t } = useTranslation();
   const { clientSlug, slug } = useParams();
   const location = useLocation();
   const { ownerId, isLoading: ownerLoading, error: ownerError } = useOwnerId();
@@ -19,7 +22,7 @@ export function useClientProfile() {
   const currency = useCurrencyCode(ownerId);
   const clients = useMemo(
     () => mergeClients(query.clients, query.appointments),
-    [query.clients, query.appointments],
+    [query.clients, query.appointments, i18n.resolvedLanguage],
   );
   const clientId =
     new URLSearchParams(location.search).get("client") ||
@@ -32,7 +35,7 @@ export function useClientProfile() {
     avatars[client?.avatarProfileId] || client?.avatar_img || null;
   const rows = useMemo(
     () => buildClientAppointmentRows(client, currency.currencyCode),
-    [client, currency.currencyCode],
+    [client, currency.currencyCode, i18n.resolvedLanguage],
   );
   const isLoading = ownerLoading || query.isLoading;
   return {
@@ -49,7 +52,7 @@ export function useClientProfile() {
     loadError:
       ownerError?.message ||
       query.error?.message ||
-      (!isLoading && !ownerId ? "Please sign in to load this client." : ""),
+      (!isLoading && !ownerId ? t("clients.pleaseSignInToLoadThisClient") : ""),
     backPath: slug ? `/owner/salon/${slug}/clients` : "/dashboard/clients",
     retry: query.refetch,
   };

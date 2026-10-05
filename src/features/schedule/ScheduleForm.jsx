@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import StatCards from "../Dashboard/Client/StatCards";
 import calendarIcon from "../../Shared/assets/icons/calendar.svg";
-import { useForm, useWatch } from "react-hook-form";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
+import { useWatch } from "react-hook-form";
 import clockIcon from "../../Shared/assets/icons/clock.svg";
 import { getDefaultSchedule, validateScheduleDay } from "./scheduleUtils";
 import { useSaveSchedule } from "./useSaveSchedule";
@@ -10,6 +12,7 @@ import AppHeader from "../../AppLayout/AppHeader";
 import Button from "../../Shared/Button";
 
 export default function ScheduleForm({ ownerId, schedule }) {
+  const { t } = useTranslation();
   const {
     register,
     control,
@@ -46,9 +49,9 @@ export default function ScheduleForm({ ownerId, schedule }) {
       className="flex h-full flex-col pb-6"
     >
       <AppHeader
-        eyebrow="Schedule"
-        title="Working Schedule"
-        description="Manage your salon opening days and booking hours."
+        eyebrow={t("nav.schedule")}
+        title={t("schedule.workingSchedule")}
+        description={t("schedule.manageYourSalonOpeningDaysAndBookingHours")}
       >
         <Button
           type="submit"
@@ -56,9 +59,7 @@ export default function ScheduleForm({ ownerId, schedule }) {
           loading={isSaving}
           disabled={!ownerId}
           className="min-h-11"
-        >
-          Save Schedule
-        </Button>
+        > {t("schedule.saveSchedule")} </Button>
       </AppHeader>
       {error && (
         <p
@@ -72,21 +73,21 @@ export default function ScheduleForm({ ownerId, schedule }) {
         lgGridCols={3}
         stats={[
           {
-            title: "Open Days",
+            title: t("schedule.openDays"),
             value: `${openDays.length} / 7`,
-            subtitle: "Weekly availability",
+            subtitle: t("schedule.weeklyAvailability"),
             icon: calendarIcon,
           },
           {
-            title: "Weekly Hours",
+            title: t("schedule.weeklyHours"),
             value: hoursLabel,
-            subtitle: "Scheduled opening hours",
+            subtitle: t("schedule.scheduledOpeningHours"),
             icon: clockIcon,
           },
           {
-            title: "Closed Days",
+            title: t("schedule.closedDays"),
             value: String(7 - openDays.length),
-            subtitle: "No bookings available",
+            subtitle: t("schedule.noBookingsAvailable"),
             icon: calendarIcon,
           },
         ]}
@@ -102,22 +103,18 @@ export default function ScheduleForm({ ownerId, schedule }) {
                 <img src={clockIcon} alt="" className="h-5 w-5 opacity-70" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold">Weekly Hours</h2>
-                <p className="text-ink-muted mt-1 text-xs">
-                  Switch days on and set your opening times.
-                </p>
+                <h2 className="text-lg font-semibold">{t("schedule.weeklyHours")}</h2>
+                <p className="text-ink-muted mt-1 text-xs"> {t("schedule.switchDaysOnAndSetYourOpeningTimes")} </p>
               </div>
             </div>
           </div>
           <div className="bg-cream/50 border-ink/10 flex flex-wrap items-center gap-2 border-b-2 px-4 py-3 sm:px-5">
-            <span className="text-ink-muted mr-1 text-[10px] tracking-widest uppercase">
-              Quick set
-            </span>
+            <span className="text-ink-muted mr-1 text-[10px] tracking-widest uppercase"> {t("schedule.quickSet")} </span>
             {[
-              ["Open all", () => setAllOpen(true)],
-              ["Close all", () => setAllOpen(false)],
+              [t("schedule.openAll"), () => setAllOpen(true)],
+              [t("schedule.closeAll"), () => setAllOpen(false)],
               [
-                "Use default hours",
+                t("schedule.useDefaultHours"),
                 () =>
                   setValue("days", getDefaultSchedule(), {
                     shouldDirty: true,
@@ -156,10 +153,10 @@ export default function ScheduleForm({ ownerId, schedule }) {
                 className={`h-2 w-2 rounded-full ${isDirty ? "bg-amber-500" : "bg-ink/30"}`}
               />
               {isSaving
-                ? "Saving schedule..."
+                ? t("schedule.savingSchedule")
                 : isDirty
-                  ? "You have unsaved changes"
-                  : "Edit your hours, then save to publish"}
+                  ? t("schedule.youHaveUnsavedChanges")
+                  : t("schedule.editYourHoursThenSaveToPublish")}
             </p>
             <Button
               type="submit"
@@ -167,9 +164,7 @@ export default function ScheduleForm({ ownerId, schedule }) {
               loading={isSaving}
               disabled={!ownerId}
               className="min-h-11"
-            >
-              Save Schedule
-            </Button>
+            > {t("schedule.saveSchedule")} </Button>
           </div>
         </fieldset>
         <SchedulePreview days={days} isDirty={isDirty} />

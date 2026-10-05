@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 import {
   formatPhoneNumberIntl,
   isValidPhoneNumber,
@@ -20,11 +21,11 @@ export function internationalPhoneRules(setValue, name = "phone") {
 
 export function validateInternationalPhone(value) {
   const phone = String(value ?? "").trim();
-  if (!phone) return "Phone number is required.";
+  if (!phone) return i18n.t("common.phoneNumberIsRequired");
   if (!phone.startsWith("+")) {
-    return "Use the full international format, e.g. +44 1234 567890";
+    return i18n.t("common.useTheFullInternationalFormatEG441234567890");
   }
   return (
-    isValidPhoneNumber(phone) || "Enter a valid international phone number"
+    isValidPhoneNumber(phone) || i18n.t("common.enterAValidInternationalPhoneNumber")
   );
 }

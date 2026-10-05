@@ -1,7 +1,4 @@
-import calendarIcon from "../../Shared/assets/icons/calendar.svg";
-import clockIcon from "../../Shared/assets/icons/clock.svg";
-import creditCardIcon from "../../Shared/assets/icons/credit-card.svg";
-import giftIcon from "../../Shared/assets/icons/gift-box-benefits.svg";
+import { useTranslation } from "react-i18next";
 import StatCards from "../Dashboard/Client/StatCards";
 import Icon from "../../Shared/ui/Icon";
 import { formatCurrency } from "../../utils/currency";
@@ -13,38 +10,39 @@ export default function ClientsStats({
   isLoading,
   error,
 }) {
+  const { t } = useTranslation();
   const { totalClients, activeClients, totalRevenue, avgValue } =
     getClientStats(clients);
   const displayValue = (value) =>
-    isLoading ? "..." : error ? "Unavailable" : value;
+    isLoading ? "..." : error ? t("common.unavailable") : value;
   const displayMoney = (value) =>
-    currencyCode ? formatCurrency(value, currencyCode) : "Unavailable";
+    currencyCode ? formatCurrency(value, currencyCode) : t("common.unavailable");
   const stats = [
     {
-      title: "Total Clients",
+      title: t("common.totalClients"),
       value: displayValue(totalClients),
-      subtitle: "All time",
+      subtitle: t("common.allTime"),
       icon: <Icon name="users" size={20} className="text-ink-muted/70" />,
     },
     {
-      title: "Active Clients",
+      title: t("clients.activeClients"),
       value: displayValue(activeClients),
-      subtitle: "Visited in 90 days",
+      subtitle: t("clients.visitedIn90Days"),
       icon: (
         <Icon name="user-profile" size={20} className="text-ink-muted/70" />
       ),
     },
     {
-      title: "Total Revenue",
+      title: t("clients.totalRevenue"),
       value: displayValue(displayMoney(totalRevenue)),
-      subtitle: "Completed visits",
+      subtitle: t("common.completedVisits"),
 
       icon: <Icon name="credit-card-alt" size={20} className="text-ink-muted/70" />,
     },
     {
-      title: "Avg. Lifetime Value",
+      title: t("clients.avgLifetimeValue"),
       value: displayValue(displayMoney(avgValue)),
-      subtitle: "Per client",
+      subtitle: t("clients.perClient"),
             icon: <Icon name="tachometer-average" size={20} className="text-ink-muted/70" />,
 
     },

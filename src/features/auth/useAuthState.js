@@ -8,7 +8,7 @@ import {
   clearSavedSessionsForUser,
 } from "../../utils/savedAccountSessions";
 
-export function useAuthState() {
+export function useAuthState({ loadProfile = true } = {}) {
   const client = useQueryClient();
   const [user, setUser] = useState(null);
   const [checkingSession, setCheckingSession] = useState(true);
@@ -43,7 +43,7 @@ export function useAuthState() {
   const profileQuery = useQuery({
     queryKey: ["auth-profile", user?.id],
     queryFn: () => authApi.getAuthProfile(user.id),
-    enabled: Boolean(user?.id),
+    enabled: loadProfile && Boolean(user?.id),
     staleTime: 60_000,
     retry: 1,
   });
@@ -81,7 +81,8 @@ export function useAuthState() {
   return {
     user,
     profile: profileQuery.data || null,
-    loading: checkingSession || Boolean(user && profileQuery.isPending),
+    loading:
+      checkingSession || Boolean(loadProfile && user && profileQuery.isPending),
     profileError: profileQuery.error,
     refetchProfile: profileQuery.refetch,
     isAuthenticated: Boolean(user),

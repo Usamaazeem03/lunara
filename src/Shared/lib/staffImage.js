@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 export const STAFF_IMAGE_TYPES = [
   "image/jpeg",
   "image/png",
@@ -9,8 +10,8 @@ export const STAFF_IMAGE_MAX_SIZE = 5 * 1024 * 1024;
 export function validateStaffImage(file) {
   if (!file) return true;
   if (!STAFF_IMAGE_TYPES.includes(file.type))
-    return "Choose a JPEG, PNG, WebP, or GIF image.";
+    return i18n.t("staff.chooseAJpegPngWebpOrGifImage");
   if (file.size > STAFF_IMAGE_MAX_SIZE)
-    return "Choose an image smaller than 5 MB.";
+    return i18n.t("staff.chooseAnImageSmallerThan5Mb");
   return true;
 }

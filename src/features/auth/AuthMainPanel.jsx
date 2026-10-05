@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import AnimatedAuthForm from "./AnimatedAuthForm";
 import AuthHeader from "./AuthHeader";
 import AuthRoleToggle from "./AuthRoleToggle";
@@ -17,6 +18,7 @@ function AuthMainPanel({
   onRoleChange,
   onModeChange,
 }) {
+  useTranslation();
   return (
     <div className={MAIN_PANEL_CLASSES}>
       <div className="mx-auto w-full max-w-md">

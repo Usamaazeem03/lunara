@@ -1,3 +1,5 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -15,6 +17,7 @@ import { getAuthDestination } from "./authValidation";
 import { notify } from "../../Shared/lib/toast";
 
 export function useAuthForm({ role, isSignup, onModeChange }) {
+  useTranslation();
   const navigate = useNavigate();
   const { syncProfile } = useAuth();
   const { data: country } = useQuery({
@@ -44,7 +47,7 @@ export function useAuthForm({ role, isSignup, onModeChange }) {
       if (data.profile) syncProfile(data.profile);
       if (isSignup && !data.session) {
         notify.success(
-          "Account created. Check your email to confirm your account, then sign in.",
+          translatedMessage("auth.accountCreatedCheckYourEmailToConfirmYourAccountThen"),
         );
         onModeChange("login");
         return;

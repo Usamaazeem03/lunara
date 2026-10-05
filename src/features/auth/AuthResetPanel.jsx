@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import AuthHeader from "./AuthHeader";
 import AuthRoleToggle from "./AuthRoleToggle";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
@@ -9,17 +10,18 @@ export default function AuthResetPanel({
   onRoleChange,
   onBackToLogin,
 }) {
+  const { t } = useTranslation();
   const { isRecoverySession } = useAuth();
   return (
     <div className="auth-main flex flex-col justify-start p-4 sm:p-6 md:justify-center md:bg-[#f7f5f0] md:p-12">
       <div className="mx-auto w-full max-w-md">
         <AuthHeader
-          eyebrow={`${role === "owner" ? "Owner" : "Client"} Reset Password`}
-          headline="Reset Password"
+          eyebrow={t("auth.resetPassword", { value1: role === "owner" ? t("auth.owner") : t("common.client") })}
+          headline={t("auth.resetPasswordHeading")}
           subhead={
             isRecoverySession
-              ? "Choose and confirm your new password."
-              : "Enter your email to receive a password reset link."
+              ? t("auth.chooseAndConfirmYourNewPassword")
+              : t("auth.enterYourEmailToReceiveAPasswordResetLink")
           }
         />
         {!isRecoverySession && (

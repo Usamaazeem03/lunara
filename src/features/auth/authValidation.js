@@ -1,12 +1,13 @@
+import i18n from "../../i18n/i18n.js";
 export const emailRules = {
-  required: "Email is required.",
+  requiredKey: "auth.emailIsRequired",
   validate: (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ||
-    "Enter a valid email address.",
+    i18n.t("common.enterAValidEmailAddress"),
 };
 export const newPasswordRules = {
-  required: "Password is required.",
-  minLength: { value: 8, message: "Use at least 8 characters." },
+  requiredKey: "auth.passwordIsRequired",
+  minLength: { value: 8, messageKey: "auth.useAtLeast8Characters" },
 };
 export function getAuthDestination(role, ownerId) {
   return role === "client" && ownerId

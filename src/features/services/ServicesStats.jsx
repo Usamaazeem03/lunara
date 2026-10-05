@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useMemo } from "react";
 import { useOwnerId } from "../../globalHooks/useOwnerId";
 import { formatCurrency } from "../../utils/currency";
@@ -8,6 +10,7 @@ import StatCards from "../Dashboard/Client/StatCards";
 import Icon from "../../Shared/ui/Icon";
 
 export const ServicesStats = () => {
+  const { t } = useTranslation();
   const { ownerId } = useOwnerId();
   const { currencyCode } = useCurrencyCode(ownerId);
   const { services } = useServices(ownerId, currencyCode);
@@ -35,41 +38,41 @@ export const ServicesStats = () => {
     const mostPopularService = services.find(
       (service) => String(service.id) === mostPopularServiceId,
     );
-    const mostPopularLabel = mostPopularService?.title ?? "No data yet";
+    const mostPopularLabel = mostPopularService?.title ?? t("services.noDataYet");
 
     return [
       {
-        title: "Total Services",
+        title: t("services.totalServices"),
         value: totalServices.toString(),
-        subtitle: "Across all categories",
+        subtitle: t("services.acrossAllCategories"),
         icon: (
           <Icon name="barber-shop" size={20} className="text-ink-muted/70" />
         ),
       },
       {
-        title: "Avg. Price",
+        title: t("services.avgPrice"),
         value: formatCurrency(avgPriceValue, currencyCode),
-        subtitle: "Based on catalog",
+        subtitle: t("services.basedOnCatalog"),
         icon: (
           <Icon name="credit-card" size={20} className="text-ink-muted/70" />
         ),
       },
       {
-        title: "Most Popular",
+        title: t("services.mostPopular"),
         value: mostPopularLabel,
-        subtitle: "Based on booking data",
+        subtitle: t("services.basedOnBookingData"),
         icon: <Icon name="hair-care" size={20} className="text-ink-muted/70" />,
       },
       {
-        title: "Categories",
+        title: t("services.categories"),
         value: categoryCount.toString(),
-        subtitle: "Service groups",
+        subtitle: t("services.serviceGroups"),
         icon: (
           <Icon name="category-alt" size={20} className="text-ink-muted/70" />
         ),
       },
     ];
-  }, [appointments, currencyCode, services]);
+  }, [appointments, currencyCode, services, i18n.resolvedLanguage, t]);
 
   return <StatCards stats={stats} lgGridCols={4} />;
 };

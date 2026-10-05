@@ -1,7 +1,10 @@
+import { localizedError } from "../../../i18n/localizedError.js";
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 import { readQrFrame } from "./qrScanner.js";
 
 export default function BookingCamera({ onScan, onStop }) {
+  const { t } = useTranslation();
   const videoRef = useRef(null);
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
@@ -32,7 +35,7 @@ export default function BookingCamera({ onScan, onStop }) {
       } catch {
         if (!disposed)
           setError(
-            "Could not read the camera. Try uploading a screenshot or pasting the reference.",
+            t("bookingPass.couldNotReadTheCameraTryUploadingAScreenshotOr"),
           );
         stopTracks();
       }
@@ -40,9 +43,7 @@ export default function BookingCamera({ onScan, onStop }) {
     async function start() {
       try {
         if (!navigator.mediaDevices?.getUserMedia)
-          throw new Error(
-            "Camera scanning needs HTTPS and a browser with camera access. You can upload a screenshot instead.",
-          );
+          throw localizedError("bookingPass.cameraScanningNeedsHttpsAndABrowserWithCameraAccess");
         stream = await navigator.mediaDevices.getUserMedia({
           video: {
             facingMode: { ideal: "environment" },
@@ -64,10 +65,10 @@ export default function BookingCamera({ onScan, onStop }) {
         if (!disposed)
           setError(
             cause.name === "NotAllowedError"
-              ? "Camera access was denied. Allow it in your browser, or upload a screenshot."
+              ? t("bookingPass.cameraAccessWasDeniedAllowItInYourBrowserOr")
               : cause.name === "NotFoundError"
-                ? "No camera found. Upload an image or paste the reference instead."
-                : cause.message || "The camera could not start.",
+                ? t("bookingPass.noCameraFoundUploadAnImageOrPasteTheReference")
+                : cause.message || t("bookingPass.theCameraCouldNotStart"),
           );
       }
     }
@@ -87,12 +88,12 @@ export default function BookingCamera({ onScan, onStop }) {
           autoPlay
           muted
           playsInline
-          aria-label="QR scanner camera preview"
+          aria-label={t("bookingPass.qrScannerCameraPreview")}
           className="aspect-square w-full object-cover"
         />
         <div className="pointer-events-none absolute inset-[18%] rounded-2xl border-2 border-white/80" />
         <p className="absolute inset-x-0 bottom-4 text-center text-sm text-white">
-          {ready ? "Hold the QR inside the frame" : "Starting camera..."}
+          {ready ? t("bookingPass.holdTheQrInsideTheFrame") : t("bookingPass.startingCamera")}
         </p>
       </div>
       {error && (
@@ -104,9 +105,7 @@ export default function BookingCamera({ onScan, onStop }) {
         type="button"
         onClick={onStop}
         className="border-ink/20 min-h-11 w-full rounded-xl border text-sm"
-      >
-        Stop camera
-      </button>
+      > {t("bookingPass.stopCamera")} </button>
     </div>
   );
 }

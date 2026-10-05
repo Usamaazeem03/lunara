@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import staffIcon from "../assets/icons/staff.svg";
 
 export default function StaffAvatar({ image, name, className = "h-12 w-12" }) {
+  const { t } = useTranslation();
   const [failedImage, setFailedImage] = useState(null);
   const showImage = image && image !== failedImage;
 
@@ -12,7 +14,7 @@ export default function StaffAvatar({ image, name, className = "h-12 w-12" }) {
       {showImage ? (
         <img
           src={image}
-          alt={name || "Staff member"}
+          alt={name || t("reports.staffMember")}
           className="h-full w-full object-cover"
           onError={() => setFailedImage(image)}
         />

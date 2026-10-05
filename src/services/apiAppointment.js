@@ -1,12 +1,23 @@
+import i18n from "../i18n/i18n.js";
 import { supabase } from "./supabase";
+import { createAppointmentTransport } from "./appointmentTransport.js";
 
-// Create new Appointment
-export async function createAppointment(appointmentPayload) {
-  const { data, error } = await supabase
-    .from("appointments")
-    .insert(appointmentPayload)
-    .select("*");
-  return { data, error };
+// Enable only after deploying/testing the function. Remove the transitional
+// direct transport alongside audited database enforcement before OTP goes live.
+const createAppointment = createAppointmentTransport(
+  supabase,
+  import.meta.env.VITE_APPOINTMENT_TRANSPORT || "direct",
+);
+
+export async function createOwnerAppointment(appointmentPayload) {
+  return createAppointment("owner", appointmentPayload);
+}
+
+export async function createPublicAppointment(
+  appointmentPayload,
+  verification,
+) {
+  return createAppointment("public", appointmentPayload, verification);
 }
 
 // Load appointments for an owner. Statistics can exclude cancelled rows.
@@ -24,7 +35,7 @@ export async function getAppointmentsByOwner(
 
   if (error) {
     const appointmentError = new Error(
-      error.message || "Appointments could not be loaded!",
+      error.message || i18n.t("services.appointmentsCouldNotBeLoaded"),
     );
     Object.assign(appointmentError, error);
     throw appointmentError;

@@ -1,3 +1,5 @@
+import { localizedError } from "../../i18n/localizedError.js";
+import i18n from "../../i18n/i18n.js";
 import {
   getDateRangeConfig,
   getAppointmentDate,
@@ -44,52 +46,52 @@ export function buildReport(data) {
   const returningClients = currentClients.size - reportData.newClients;
   const sections = [
     {
-      title: "Daily Sales Report",
+      title: i18n.t("reports.dailySalesReport"),
       headers: [
-        "Date",
-        "Completed visits",
-        `Revenue (${currencyCode || "salon currency"})`,
+        i18n.t("common.date"),
+        i18n.t("common.completedVisits"),
+        i18n.t("reports.revenue", { value1: currencyCode || "salon currency" }),
       ],
       rows: aggregate(false),
     },
     {
-      title: "Monthly Revenue Report",
+      title: i18n.t("reports.monthlyRevenueReport"),
       headers: [
-        "Month",
-        "Completed visits",
-        `Revenue (${currencyCode || "salon currency"})`,
+        i18n.t("reports.month"),
+        i18n.t("common.completedVisits"),
+        i18n.t("reports.revenue", { value1: currencyCode || "salon currency" }),
       ],
       rows: aggregate(true),
     },
     {
-      title: "Staff Performance Report",
-      headers: ["Staff member", "Completed revenue"],
+      title: i18n.t("reports.staffPerformanceReport"),
+      headers: [i18n.t("reports.staffMember"), i18n.t("reports.completedRevenue")],
       rows: staffPerformance.map((row) => [row.name, money(row.value)]),
     },
     {
-      title: "Client Retention Report",
-      headers: ["Metric", "Value"],
+      title: i18n.t("reports.clientRetentionReport"),
+      headers: [i18n.t("reports.metric"), i18n.t("reports.value")],
       rows: [
-        ["Unique clients", String(currentClients.size)],
-        ["New clients", String(reportData.newClients)],
-        ["Returning clients", String(Math.max(0, returningClients))],
+        [i18n.t("reports.uniqueClients"), String(currentClients.size)],
+        [i18n.t("reports.newClients"), String(reportData.newClients)],
+        [i18n.t("reports.returningClients"), String(Math.max(0, returningClients))],
         [
-          "Returning client share",
+          i18n.t("reports.returningClientShare"),
           `${currentClients.size ? ((Math.max(0, returningClients) / currentClients.size) * 100).toFixed(1) : 0}%`,
         ],
       ],
     },
     {
-      title: "Service Popularity",
-      headers: ["Category", "Booking share"],
+      title: i18n.t("reports.servicePopularity"),
+      headers: [i18n.t("reports.category"), i18n.t("reports.bookingShare")],
       rows: servicePopularity.map((row) => [
         row.label,
         `${row.displayValue ?? row.value}%`,
       ]),
     },
     {
-      title: "Payment Methods",
-      headers: ["Method", "Revenue", "Share"],
+      title: i18n.t("common.paymentMethods"),
+      headers: [i18n.t("common.method"), i18n.t("common.revenue"), i18n.t("reports.share")],
       rows: paymentMethods.map((row) => [
         row.label,
         row.value,
@@ -98,9 +100,9 @@ export function buildReport(data) {
     },
   ];
   return {
-    title: "Reports & Analytics",
-    period: `${isoDate(start)} to ${isoDate(end)}`,
-    generated: new Date().toLocaleString(),
+    title: i18n.t("reports.reportsAnalytics"),
+    period: i18n.t("reports.to", { value1: isoDate(start), value2: isoDate(end) }),
+    generated: new Date().toLocaleString(i18n.resolvedLanguage),
     filename: `lunara-reports-${isoDate(start)}-${isoDate(end)}`,
     stats: statCards,
     sections,
@@ -127,14 +129,14 @@ export function serializeCsv(rows) {
 }
 export function downloadCsv(report, label) {
   const section = report.sections.find((item) => item.title === label);
-  if (!section) throw new Error("Unknown report");
+  if (!section) throw localizedError("reports.unknownReport");
   saveBlob(
     new Blob(
       [
         serializeCsv([
           [label],
-          ["Period", report.period],
-          ["Generated", report.generated],
+          [i18n.t("reports.period"), report.period],
+          [i18n.t("reports.generated"), report.generated],
           [],
           section.headers,
           ...section.rows,
@@ -157,7 +159,7 @@ export async function downloadPng(report) {
   for (const section of report.sections) {
     const rows = section.rows.length
       ? section.rows
-      : [["No data for this period"]];
+      : [[i18n.t("reports.noDataForThisPeriod")]];
     for (let index = 0; index < rows.length; index += 36) {
       const chunk = rows.slice(index, index + 36);
       if (rowCount + chunk.length + 3 > 60 && sections.length) {
@@ -182,7 +184,7 @@ export async function downloadPng(report) {
     canvas.width = width * 3;
     canvas.height = height * 3;
     const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("Canvas unavailable");
+    if (!ctx) throw localizedError("reports.canvasUnavailable");
     ctx.scale(3, 3);
     ctx.fillStyle = "#faf7f2";
     ctx.fillRect(0, 0, width, height);
@@ -201,11 +203,11 @@ export async function downloadPng(report) {
         fitted = fitted.slice(0, -2) + "�";
       ctx.fillText(fitted, x, y);
     };
-    text("LUNARA / BUSINESS REPORT", 48, 48, 15, "#806c59");
+    text(i18n.t("reports.lunaraBusinessReport"), 48, 48, 15, "#806c59");
     text(report.title, 48, 96, 34);
     text(report.period, 48, 129, 17);
     text(
-      `Generated ${report.generated} � ${pageIndex + 1}/${pages.length}`,
+      i18n.t("reports.generated2", { value1: report.generated, value2: pageIndex + 1, value3: pages.length }),
       48,
       158,
       13,
@@ -253,7 +255,7 @@ export async function downloadPng(report) {
       y += 44;
     }
     text(
-      "Revenue: completed appointments only. Returning clients first booked before this period.",
+      i18n.t("reports.revenueCompletedAppointmentsOnlyReturningClientsFirstBookedBeforeThis"),
       48,
       height - 25,
       12,
@@ -261,7 +263,7 @@ export async function downloadPng(report) {
     const blob = await new Promise((resolve, reject) =>
       canvas.toBlob(
         (result) =>
-          result ? resolve(result) : reject(new Error("PNG export failed")),
+          result ? resolve(result) : reject(localizedError("reports.pngExportFailed")),
         "image/png",
       ),
     );
@@ -284,13 +286,13 @@ const escapeHtml = (value) =>
   );
 export async function printReport(report) {
   const frame = document.createElement("iframe");
-  frame.title = "Printable business report";
+  frame.title = i18n.t("reports.printableBusinessReport");
   frame.style.cssText = "position:fixed;width:0;height:0;border:0";
   document.body.append(frame);
   const doc = frame.contentDocument;
   doc.open();
   doc.write(
-    `<!doctype html><html><head><title>${escapeHtml(report.filename)}</title><style>@page{size:A4;margin:16mm}body{font:12px Arial;color:#302821}h1{font-size:28px}h2{font-size:18px;margin-top:26px;break-after:avoid}p{color:#806c59}.stats{display:flex;gap:12px;margin:24px 0}.stat{flex:1;border:1px solid #cbb9a6;padding:12px}.stat strong{display:block;font-size:19px;margin-top:8px}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd;overflow-wrap:anywhere}th{background:#eee5d9}thead{display:table-header-group}tr{break-inside:avoid}footer{margin-top:24px;font-size:10px}</style></head><body><p>LUNARA / BUSINESS REPORT</p><h1>${escapeHtml(report.title)}</h1><p>${escapeHtml(report.period)} � Generated ${escapeHtml(report.generated)}</p><div class="stats">${report.stats.map((stat) => `<div class="stat">${escapeHtml(stat.title)}<strong>${escapeHtml(stat.value)}</strong></div>`).join("")}</div>${report.sections.map((section) => `<h2>${escapeHtml(section.title)}</h2><table><thead><tr>${section.headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead><tbody>${section.rows.length ? section.rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${section.headers.length}">No data for this period</td></tr>`}</tbody></table>`).join("")}<footer>Revenue includes completed appointments only. Returning clients first booked before the selected period.</footer></body></html>`,
+    `<!doctype html><html><head><title>${escapeHtml(report.filename)}</title><style>@page{size:A4;margin:16mm}body{font:12px Arial;color:#302821}h1{font-size:28px}h2{font-size:18px;margin-top:26px;break-after:avoid}p{color:#806c59}.stats{display:flex;gap:12px;margin:24px 0}.stat{flex:1;border:1px solid #cbb9a6;padding:12px}.stat strong{display:block;font-size:19px;margin-top:8px}table{width:100%;border-collapse:collapse;table-layout:fixed}th,td{text-align:left;padding:9px;border-bottom:1px solid #ddd;overflow-wrap:anywhere}th{background:#eee5d9}thead{display:table-header-group}tr{break-inside:avoid}footer{margin-top:24px;font-size:10px}</style></head><body><p>${escapeHtml(i18n.t("reports.lunaraBusinessReport"))}</p><h1>${escapeHtml(report.title)}</h1><p>${escapeHtml(report.period)} � ${escapeHtml(i18n.t("reports.generated"))} ${escapeHtml(report.generated)}</p><div class="stats">${report.stats.map((stat) => `<div class="stat">${escapeHtml(stat.title)}<strong>${escapeHtml(stat.value)}</strong></div>`).join("")}</div>${report.sections.map((section) => `<h2>${escapeHtml(section.title)}</h2><table><thead><tr>${section.headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead><tbody>${section.rows.length ? section.rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("") : `<tr><td colspan="${section.headers.length}">${escapeHtml(i18n.t("reports.noDataForThisPeriod"))}</td></tr>`}</tbody></table>`).join("")}<footer>${escapeHtml(i18n.t("reports.reportScopeNote"))}</footer></body></html>`,
   );
   doc.close();
   try {

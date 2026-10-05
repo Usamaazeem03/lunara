@@ -1,8 +1,12 @@
+import { isValidElement } from "react";
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import i18n from "../../i18n/i18n.js";
 import { toast } from "react-hot-toast";
 
 const normalizeMessage = (message) => {
+  if (isValidElement(message)) return message;
   if (message instanceof Error) {
-    return message.message || "Something went wrong.";
+    return message.message || i18n.t("common.somethingWentWrong");
   }
 
   if (typeof message === "string") {
@@ -40,8 +44,8 @@ export const notify = {
 export const confirmToast = ({
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel = translatedMessage("common.confirm"),
+  cancelLabel = translatedMessage("common.cancel"),
   confirmTone = "danger",
 }) =>
   new Promise((resolve) => {

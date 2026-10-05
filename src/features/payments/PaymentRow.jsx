@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useRef, useState } from "react";
 import { formatCurrency } from "../../utils/currency";
 import { formatPassDate } from "../Appointments/bookingPass/bookingPassUtils";
@@ -7,6 +8,7 @@ export default function PaymentRow({
   currencyCode,
   onDownloadInvoice,
 }) {
+  const { t } = useTranslation();
   const [isDownloading, setIsDownloading] = useState(false);
   const downloadInProgress = useRef(false);
   async function handleDownload() {
@@ -33,7 +35,7 @@ export default function PaymentRow({
         {formatPassDate(appointment.appointment_date)}
       </td>
       <td className="px-3 py-4 font-semibold">
-        <p>{appointment.client_name || "Walk-in"}</p>
+        <p>{appointment.client_name || t("common.walkIn")}</p>
         {appointment.client_phone && (
           <p className="text-ink-muted mt-1 text-xs font-normal">
             {appointment.client_phone}
@@ -46,7 +48,7 @@ export default function PaymentRow({
         )}
       </td>
       <td className="max-w-60 px-3 py-4">
-        {appointment.service_name || "Service"}
+        {appointment.service_name || t("common.service")}
       </td>
       <td className="px-3 py-4 font-semibold whitespace-nowrap">
         {formatCurrency(paymentAmount(appointment), currencyCode)}
@@ -56,7 +58,7 @@ export default function PaymentRow({
         <span
           className={`inline-block rounded-full border px-3 py-1 text-[10px] tracking-widest uppercase ${tone}`}
         >
-          {appointment.status || "Unknown"}
+          {appointment.status || t("common.unknown")}
         </span>
       </td>
       <td className="px-3 py-4">
@@ -66,10 +68,10 @@ export default function PaymentRow({
             disabled={isDownloading}
             aria-busy={isDownloading}
             onClick={handleDownload}
-            aria-label={`Download invoice for ${appointment.client_name || "Walk-in"}, booking ${appointment.id}`}
+            aria-label={t("payments.downloadInvoiceForBooking", { value1: appointment.client_name || t("common.walkIn"), value2: appointment.id })}
             className="border-ink bg-ink text-cream min-h-11 border-2 px-3 text-xs tracking-widest uppercase disabled:opacity-50"
           >
-            {isDownloading ? "Preparing..." : "Download Invoice"}
+            {isDownloading ? t("payments.preparing") : t("payments.downloadInvoice")}
           </button>
         </div>
       </td>

@@ -1,3 +1,6 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useEffect, useMemo, useReducer } from "react";
 
 import { confirmToast, notify } from "../../Shared/lib/toast.jsx";
@@ -12,6 +15,7 @@ import {
 } from "./servicesPageReducer.js";
 
 export function useServicesPage() {
+  useTranslation();
   const { ownerId } = useOwnerId();
   const { currencyCode } = useCurrencyCode(ownerId);
   const { services, isLoading, error } = useServices(ownerId, currencyCode);
@@ -62,7 +66,7 @@ export function useServicesPage() {
       services.map((service) => service.category).filter(Boolean),
     );
     return ["All", ...Array.from(uniqueCategories)];
-  }, [services]);
+  }, [services, i18n.resolvedLanguage]);
 
   const selectedCategory = categories.includes(activeCategory)
     ? activeCategory
@@ -71,7 +75,7 @@ export function useServicesPage() {
   const filteredServices = useMemo(() => {
     if (selectedCategory === "All") return services;
     return services.filter((service) => service.category === selectedCategory);
-  }, [selectedCategory, services]);
+  }, [selectedCategory, services, i18n.resolvedLanguage]);
 
   const openCreateForm = () => {
     dispatch({ type: "openCreateForm" });
@@ -90,10 +94,10 @@ export function useServicesPage() {
 
   const deleteServiceWithConfirmation = async (service) => {
     const confirmed = await confirmToast({
-      title: `Delete "${service.title}"?`,
-      description: "This cannot be undone.",
-      confirmLabel: "Delete service",
-      cancelLabel: "Keep service",
+      title: translatedMessage("services.delete", { value1: service.title }),
+      description: translatedMessage("common.thisCannotBeUndone"),
+      confirmLabel: translatedMessage("services.deleteService"),
+      cancelLabel: translatedMessage("services.keepService"),
       confirmTone: "danger",
     });
 

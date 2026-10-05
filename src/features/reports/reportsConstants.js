@@ -1,10 +1,10 @@
 export const dateRangeOptions = ["Last 30 Days", "Last 90 Days", "This Year"];
 
 export const exportReports = [
-  "Daily Sales Report",
-  "Monthly Revenue Report",
-  "Staff Performance Report",
-  "Client Retention Report",
+  "reports.dailySalesReport",
+  "reports.monthlyRevenueReport",
+  "reports.staffPerformanceReport",
+  "reports.clientRetentionReport",
 ];
 
 export const palette = {

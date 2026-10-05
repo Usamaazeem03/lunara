@@ -1,3 +1,4 @@
+import { localizedError } from "../../i18n/localizedError.js";
 import { supabase } from "../../services/supabase.js";
 
 const normalizeComparableText = (value) =>
@@ -40,11 +41,11 @@ const resolveOwnerClientProfile = async ({
   const normalizedEmail = normalizeComparableText(clientEmail);
 
   if (!ownerId) {
-    throw new Error("Owner ID is required to create a client profile.");
+    throw localizedError("appointments.ownerIdIsRequiredToCreateAClientProfile");
   }
 
   if (!normalizedName && !clientId) {
-    throw new Error("Please select a client or enter a client name.");
+    throw localizedError("appointments.pleaseSelectAClientOrEnterAClientName");
   }
 
   if (clientId) {
@@ -77,7 +78,7 @@ const resolveOwnerClientProfile = async ({
   if (matchedClient) return matchedClient;
 
   if (!normalizedName) {
-    throw new Error("Please enter a client name.");
+    throw localizedError("appointments.pleaseEnterAClientName");
   }
 
   const { data: createdClient, error: createError } = await supabase
@@ -112,11 +113,11 @@ const resolveClientSalonProfile = async ({
   const normalizedEmail = normalizeComparableText(clientEmail);
 
   if (!ownerId) {
-    throw new Error("Owner ID is required to link this salon profile.");
+    throw localizedError("appointments.ownerIdIsRequiredToLinkThisSalonProfile");
   }
 
   if (!userId) {
-    throw new Error("User ID is required to link this salon profile.");
+    throw localizedError("appointments.userIdIsRequiredToLinkThisSalonProfile");
   }
 
   const { data: salonClients, error: lookupError } = await supabase
@@ -152,7 +153,7 @@ const resolveClientSalonProfile = async ({
   }
 
   if (!normalizedName) {
-    throw new Error("Please enter a client name.");
+    throw localizedError("appointments.pleaseEnterAClientName");
   }
 
   const createSalonClient = async (includeAuthId) =>

@@ -1,3 +1,5 @@
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -20,6 +22,7 @@ const DEFAULT_ROLE = "client";
 const DEFAULT_MODE = "signup";
 
 function AuthModal() {
+  useTranslation();
   const navigate = useNavigate();
   const { role: roleParam, mode: modeParam } = useParams();
 
@@ -40,7 +43,7 @@ function AuthModal() {
       : pathMode === "signup"
         ? "signup"
         : "login";
-  const content = ROLE_CONTENT[role];
+  const content = translateConfig(ROLE_CONTENT)[role];
 
   const goTo = (nextRole = role, nextMode = mode) =>
     navigate(

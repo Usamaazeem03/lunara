@@ -1,3 +1,4 @@
+import i18n from "../../../i18n/i18n.js";
 export function getAvailableDates(workingHours, today = new Date(), days = 14) {
   const dates = [];
   for (let offset = 0; offset < days; offset++) {
@@ -10,9 +11,9 @@ export function getAvailableDates(workingHours, today = new Date(), days = 14) {
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     dates.push({
-      day: date.toLocaleString("default", { weekday: "short" }),
-      fullDay: date.toLocaleString("default", { weekday: "long" }),
-      date: `${date.toLocaleString("default", { month: "short" })} ${day}`,
+      day: date.toLocaleString(i18n.resolvedLanguage, { weekday: "short" }),
+      fullDay: date.toLocaleString(i18n.resolvedLanguage, { weekday: "long" }),
+      date: `${date.toLocaleString(i18n.resolvedLanguage, { month: "short" })} ${day}`,
       fullDate: `${date.getFullYear()}-${month}-${day}`,
       dayOfWeek: date.getDay(),
       openTime: config.open_time,
@@ -33,7 +34,7 @@ export function getTimeSlots(date) {
   for (let minute = toMinutes(date.openTime); minute < end; minute += 30) {
     const hour = Math.floor(minute / 60);
     slots.push(
-      `${String(hour % 12 || 12).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`,
+      `${String(hour % 12 || 12).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")} ${hour >= 12 ? i18n.t("common.pm") : i18n.t("common.am")}`,
     );
   }
   return slots;

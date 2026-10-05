@@ -1,19 +1,21 @@
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 
 import Button from "../../Shared/Button.jsx";
 import Icon from "../../Shared/ui/Icon.jsx";
 
 const VIEW_TABS = [
-  { key: "list", label: "List View" },
-  { key: "calendar", label: "Calendar View" },
+  { key: "list", labelKey: "appointments.listView" },
+  { key: "calendar", labelKey: "appointments.calendarView" },
 ];
 
 const STATUS_FILTERS = [
-  { key: "all", label: "All Statuses" },
-  { key: "Pending", label: "Pending" },
-  { key: "Confirmed", label: "Confirmed" },
-  { key: "Completed", label: "Completed" },
-  { key: "Cancelled", label: "Cancelled" },
+  { key: "all", labelKey: "appointments.allStatuses" },
+  { key: "Pending", labelKey: "common.pending" },
+  { key: "Confirmed", labelKey: "common.confirmed" },
+  { key: "Completed", labelKey: "common.completed" },
+  { key: "Cancelled", labelKey: "common.cancelled" },
 ];
 
 const AppointmentsFilter = ({
@@ -25,6 +27,7 @@ const AppointmentsFilter = ({
   selectedStatus,
   setSelectedStatus,
 }) => {
+  const { t } = useTranslation();
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
   const [isDateMenuOpen, setIsDateMenuOpen] = useState(false);
   const filterRef = useRef(null);
@@ -47,9 +50,9 @@ const AppointmentsFilter = ({
       className="border-ink/20 flex flex-wrap items-center justify-between gap-3 border-2 bg-white/90 p-3 sm:p-4"
     >
       <div className="flex flex-wrap items-center gap-2">
-        {VIEW_TABS.map((tab, index) => {
+        {translateConfig(VIEW_TABS).map((tab, index) => {
           const isActive = tab.key === activeView;
-          const isLast = index === VIEW_TABS.length - 1;
+          const isLast = index === translateConfig(VIEW_TABS).length - 1;
           return (
             <Button
               key={tab.key}
@@ -76,9 +79,9 @@ const AppointmentsFilter = ({
             className={`border-ink/20 hover:border-ink flex h-9 w-9 items-center justify-center border-2 bg-white/90 transition ${
               selectedStatus !== "all" ? "bg-cream" : ""
             }`}
-            aria-label="Filter appointments by status"
+            aria-label={t("appointments.filterAppointmentsByStatus")}
             aria-expanded={isStatusMenuOpen}
-            title="Filter by status"
+            title={t("appointments.filterByStatus")}
           >
             <Icon
               name="filter-list"
@@ -89,7 +92,7 @@ const AppointmentsFilter = ({
 
           {isStatusMenuOpen && (
             <div className="border-ink/30 absolute top-full right-0 z-20 mt-2 min-w-44 border-2 bg-white p-1 shadow-lg">
-              {STATUS_FILTERS.map((status) => (
+              {translateConfig(STATUS_FILTERS).map((status) => (
                 <button
                   key={status.key}
                   type="button"
@@ -116,18 +119,16 @@ const AppointmentsFilter = ({
             className={`border-ink/20 hover:border-ink flex h-9 w-9 items-center justify-center border-2 bg-white/90 transition ${
               selectedDate ? "bg-cream" : ""
             }`}
-            aria-label="Filter appointments by date"
+            aria-label={t("appointments.filterAppointmentsByDate")}
             aria-expanded={isDateMenuOpen}
-            title="Filter by date"
+            title={t("appointments.filterByDate")}
           >
             <Icon name="calendar" size={16} className="text-ink opacity-70" />
           </button>
 
           {isDateMenuOpen && (
             <div className="border-ink/30 absolute top-full right-0 z-20 mt-2 min-w-52 border-2 bg-white p-2 shadow-lg">
-              <label className="text-ink-muted block text-[0.65rem] tracking-widest uppercase">
-                Select date
-                <input
+              <label className="text-ink-muted block text-[0.65rem] tracking-widest uppercase"> {t("appointments.selectDate")} <input
                   type="date"
                   value={selectedDate}
                   onChange={(event) => setSelectedDate(event.target.value)}
@@ -142,9 +143,7 @@ const AppointmentsFilter = ({
                     setIsDateMenuOpen(false);
                   }}
                   className="border-ink/20 hover:border-ink border-2 bg-white px-2 py-2 text-[0.65rem] tracking-widest uppercase transition"
-                >
-                  All Dates
-                </button>
+                > {t("appointments.allDates")} </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -152,9 +151,7 @@ const AppointmentsFilter = ({
                     setIsDateMenuOpen(false);
                   }}
                   className="border-ink/20 hover:border-ink border-2 bg-white px-2 py-2 text-[0.65rem] tracking-widest uppercase transition"
-                >
-                  Today
-                </button>
+                > {t("appointments.today")} </button>
               </div>
             </div>
           )}

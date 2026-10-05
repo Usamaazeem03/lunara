@@ -1,5 +1,7 @@
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 
 import Button from "../../Shared/Button.jsx";
 import Icon from "../../Shared/ui/Icon.jsx";
@@ -11,6 +13,7 @@ import { useOwnerId } from "../../globalHooks/useOwnerId.js";
 import { useUpdateService } from "./useUpdateService.js";
 
 function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
+  const { t } = useTranslation();
   const { ownerId } = useOwnerId();
   const { isCreating, createService } = useCreateService(ownerId);
   const { isUpdating, updateService } = useUpdateService(ownerId);
@@ -125,7 +128,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
             id="service-form-title"
             className="text-ink text-base leading-tight font-semibold"
           >
-            {isEditSession ? "Edit Service" : "Add Service"}
+            {isEditSession ? t("services.editService") : t("services.addService")}
           </p>
         </div>
 
@@ -133,7 +136,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
           type="button"
           onClick={onCloseForm}
           className="border-ink/20 text-ink-muted hover:border-ink hover:text-ink flex h-8 w-8 shrink-0 items-center justify-center border-2 text-xs transition"
-          aria-label="Close"
+          aria-label={t("common.close")}
         >
           X
         </button>
@@ -144,17 +147,15 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
           <div className="grid gap-3 sm:grid-cols-2">
             {/* Service Name */}
             <div className="flex flex-col gap-4">
-              <label className="text-ink-muted text-xs tracking-widest uppercase">
-                Service Name
-                <input
+              <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("services.serviceName")} <input
                   id="name"
                   type="text"
-                  placeholder="e.g. Classic Haircut"
+                  placeholder={t("services.eGClassicHaircut")}
                   className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
                   {...register("name", {
-                    required: "Service name is required",
+                    required: t("services.serviceNameIsRequired"),
                     validate: (value) =>
-                      value.trim() !== "" || "Service name is required",
+                      value.trim() !== "" || t("services.serviceNameIsRequired"),
                   })}
                 />
                 {errors.name && (
@@ -165,7 +166,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
               </label>
               {/* Image */}
               <div className="text-ink-muted text-xs tracking-widest uppercase sm:col-span-2">
-                <span>Image</span>
+                <span>{t("services.image")}</span>
                 <div className="mt-2">
                   <input
                     key={fileInputKey}
@@ -194,7 +195,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
                       }`}
                     />
                     <span className="truncate">
-                      {hasImage ? imageFileName : "Upload Image"}
+                      {hasImage ? imageFileName : t("services.uploadImage")}
                     </span>
                   </label>
                 </div>
@@ -202,16 +203,14 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
             </div>
 
             {/* Category */}
-            <label className="text-ink-muted text-xs tracking-widest uppercase">
-              Category
-              <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("reports.category")} <div className="mt-2 grid gap-2 sm:grid-cols-3">
                 {SERVICE_CATEGORIES.map((option) => {
                   const isSelected = selectedCategory === option.key;
                   const isHovered = hoveredCategory === option.key;
 
                   return (
                     <button
-                      key={option.key}
+                      key={fixedLabel(option.key, "category")}
                       type="button"
                       onMouseEnter={() => setHoveredCategory(option.key)}
                       onMouseLeave={() => setHoveredCategory(null)}
@@ -244,12 +243,12 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
               <input
                 id="category"
                 type="text"
-                placeholder="Or type a custom category"
+                placeholder={t("services.orTypeACustomCategory")}
                 className="border-ink/20 text-ink focus:border-ink mt-3 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
                 {...register("category", {
-                  required: "Category is required",
+                  required: t("services.categoryIsRequired"),
                   validate: (value) =>
-                    value.trim() !== "" || "Category is required",
+                    value.trim() !== "" || t("services.categoryIsRequired"),
                 })}
               />
               {errors.category && (
@@ -260,32 +259,29 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
             </label>
 
             {/* Description */}
-            <label className="text-ink-muted text-xs tracking-widest uppercase sm:col-span-2">
-              Description
-              <textarea
+            <label className="text-ink-muted text-xs tracking-widest uppercase sm:col-span-2"> {t("services.description")} <textarea
                 id="description"
                 rows={3}
-                placeholder="Add a short description"
+                placeholder={t("services.addAShortDescription")}
                 className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
                 {...register("description")}
               />
             </label>
 
             {/* Price */}
-            <label className="text-ink-muted text-xs tracking-widest uppercase">
-              Price ({currencyCode})
+            <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("services.price")}{currencyCode})
               <input
                 id="price"
                 type="number"
                 min="0"
                 step="0.01"
-                placeholder="e.g. 45"
+                placeholder={t("common.exampleNumber", { value: 45 })}
                 className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
                 {...register("price", {
-                  required: "Price is required",
+                  required: t("services.priceIsRequired"),
                   min: {
                     value: 0,
-                    message: "Price cannot be negative",
+                    message: t("services.priceCannotBeNegative"),
                   },
                 })}
               />
@@ -297,20 +293,18 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
             </label>
 
             {/* Duration */}
-            <label className="text-ink-muted text-xs tracking-widest uppercase">
-              Duration (minutes)
-              <input
+            <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("services.durationMinutes")} <input
                 id="duration"
                 type="number"
                 min="0"
                 step="1"
-                placeholder="e.g. 45"
+                placeholder={t("common.exampleNumber", { value: 45 })}
                 className="border-ink/20 text-ink focus:border-ink mt-2 w-full border-2 bg-white px-3 py-2 text-sm focus:outline-none"
                 {...register("duration", {
-                  required: "Duration is required",
+                  required: t("services.durationIsRequired"),
                   min: {
                     value: 1,
-                    message: "Duration must be at least 1 minute",
+                    message: t("services.durationMustBeAtLeast1Minute"),
                   },
                 })}
               />
@@ -327,9 +321,7 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
                 type="checkbox"
                 className="border-ink/40 h-4 w-4 border-2"
                 {...register("isActive")}
-              />
-              Active
-            </label>
+              /> {t("services.active")} </label>
           </div>
 
           {(saveError || saveSuccess) && (
@@ -357,16 +349,14 @@ function CreateServiceForm({ formState, saveError, saveSuccess, onCloseForm }) {
             >
               {isCreating || isUpdating
                 ? isEditSession
-                  ? "Updating Service..."
-                  : "Saving Service..."
+                  ? t("services.updatingService")
+                  : t("services.savingService")
                 : isEditSession
-                  ? "Update Service"
-                  : "Save Service"}
+                  ? t("services.updateService")
+                  : t("services.saveService")}
             </Button>
 
-            <Button type="button" variant="secondary" onClick={onCloseForm}>
-              Cancel
-            </Button>
+            <Button type="button" variant="secondary" onClick={onCloseForm}> {t("common.cancel")} </Button>
           </div>
         </form>
       </div>

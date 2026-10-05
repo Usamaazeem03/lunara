@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useId, useState } from "react";
 import Icon from "../../Shared/ui/Icon";
 import PasswordInput from "../../Shared/ui/PasswordInput";
@@ -10,6 +11,7 @@ export default function AuthField({
   registration,
   ...props
 }) {
+  const { t } = useTranslation();
   const id = useId();
   const [visible, setVisible] = useState(false);
   const isPassword = type === "password";
@@ -42,7 +44,7 @@ export default function AuthField({
             type="button"
             disabled={props.disabled}
             onClick={() => setVisible(!visible)}
-            aria-label={visible ? "Hide password" : "Show password"}
+            aria-label={visible ? t("auth.hidePassword") : t("auth.showPassword")}
             aria-pressed={visible}
             className="text-ink/50 absolute top-1/2 right-4 -translate-y-1/2"
           >

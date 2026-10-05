@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import AppHeader from "../../AppLayout/AppHeader.jsx";
 import Button from "../../Shared/Button.jsx";
 import StaffCard from "./StaffCard";
@@ -7,6 +8,7 @@ import CreateStaffForm from "./CreateStaffForm";
 import { useStaffPage } from "./useStaffPage";
 
 export default function StaffPage() {
+  const { t } = useTranslation();
   const {
     ownerId,
     staffMembers,
@@ -28,9 +30,9 @@ export default function StaffPage() {
   return (
     <section className="flex h-full flex-col">
       <AppHeader
-        eyebrow="Staff"
-        title="Staff Management"
-        description="Manage your team members and their schedules."
+        eyebrow={t("nav.staff")}
+        title={t("staff.staffManagement")}
+        description={t("staff.manageYourTeamMembersAndTheirSchedules")}
       >
         <Button
           disabled={!ownerId}
@@ -38,7 +40,7 @@ export default function StaffPage() {
           onClick={showForm ? closeForm : openCreateForm}
           type="button"
         >
-          {showForm ? "Close" : "Add Staff Member"}
+          {showForm ? t("common.close") : t("staff.addStaffMember")}
         </Button>
       </AppHeader>
 
@@ -74,15 +76,11 @@ export default function StaffPage() {
         )}
 
         {isLoading && (
-          <div className="border-ink/20 text-ink-muted border-2 bg-white/90 p-4 text-sm">
-            Loading staff members...
-          </div>
+          <div className="border-ink/20 text-ink-muted border-2 bg-white/90 p-4 text-sm"> {t("staff.loadingStaffMembers")} </div>
         )}
 
         {!isLoading && !loadError && filteredStaff.length === 0 && (
-          <div className="border-ink/30 bg-cream text-ink-muted border-2 border-dashed p-4 text-center text-sm">
-            No staff members yet. Add your first team member above.
-          </div>
+          <div className="border-ink/30 bg-cream text-ink-muted border-2 border-dashed p-4 text-center text-sm"> {t("staff.noStaffMembersYetAddYourFirstTeamMemberAbove")} </div>
         )}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

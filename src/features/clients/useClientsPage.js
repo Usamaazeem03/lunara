@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useOwnerId } from "../../globalHooks/useOwnerId";
@@ -6,6 +8,7 @@ import { useClients } from "./useClients";
 import { mergeClients, slugifyClientName } from "./clientUtils";
 
 export function useClientsPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { slug: ownerRouteSlug } = useParams();
   const {
@@ -25,10 +28,10 @@ export function useClientsPage() {
   const loadError =
     ownerError?.message ||
     error?.message ||
-    (!isLoading && !ownerId ? "Please sign in to load clients." : "");
+    (!isLoading && !ownerId ? t("clients.pleaseSignInToLoadClients") : "");
   const mergedClients = useMemo(
     () => mergeClients(clients, appointments),
-    [clients, appointments],
+    [clients, appointments, i18n.resolvedLanguage],
   );
   const [showAddClient, setShowAddClient] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +60,7 @@ export function useClientsPage() {
         },
       );
     },
-    [navigate, ownerId, ownerRouteSlug],
+    [navigate, ownerId, ownerRouteSlug, i18n.resolvedLanguage],
   );
 
   return {

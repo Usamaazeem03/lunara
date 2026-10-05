@@ -1,3 +1,6 @@
+import { fixedLabel } from "../../../i18n/fixedLabels.js";
+import { translateConfig } from "../../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import checkIcon from "../../../Shared/assets/icons/checkmark-tick.svg";
 import creditCardIcon from "../../../Shared/assets/icons/credit-card.svg";
 import walletIcon from "../../../Shared/assets/icons/wallet-payment.svg";
@@ -5,15 +8,15 @@ import walletIcon from "../../../Shared/assets/icons/wallet-payment.svg";
 const paymentMethodMeta = {
   Cash: {
     icon: walletIcon,
-    description: "Cash at the salon",
+    description: { translationKey: "booking.cashAtTheSalon" },
   },
   Card: {
     icon: creditCardIcon,
-    description: "Card at the salon, if accepted",
+    description: { translationKey: "booking.cardAtTheSalonIfAccepted" },
   },
   Wallet: {
     icon: walletIcon,
-    description: "Wallet at the salon, if accepted",
+    description: { translationKey: "booking.walletAtTheSalonIfAccepted" },
   },
 };
 
@@ -26,12 +29,11 @@ function StepPayment({
   activePayment,
   activeMethod,
 }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <p className="mb-3 text-xs tracking-widest text-[#5f544b] uppercase">
-          Payment Options
-        </p>
+        <p className="mb-3 text-xs tracking-widest text-[#5f544b] uppercase"> {t("booking.paymentOptions")} </p>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {paymentOptions.map((option, index) => {
             const isSelected = index === selectedPayment;
@@ -73,7 +75,7 @@ function StepPayment({
                   </p>
                 </div>
                 <span className="mt-5 text-[0.65rem] tracking-widest text-[#5f544b] uppercase sm:text-xs">
-                  {option.disabled ? "Coming soon" : isSelected ? "Selected option" : "Tap to select"}
+                  {option.disabled ? t("common.comingSoon") : isSelected ? t("booking.selectedOption") : t("booking.tapToSelect")}
                 </span>
               </button>
             );
@@ -82,17 +84,15 @@ function StepPayment({
       </div>
 
       <div>
-        <p className="mb-3 text-xs tracking-widest text-[#5f544b] uppercase">
-          Preferred method at the salon
-        </p>
-        <p className="mb-3 text-sm text-ink-muted">Choose a preference and confirm availability with your salon. You can change how you pay at your visit. No money is collected in this app.</p>
+        <p className="mb-3 text-xs tracking-widest text-[#5f544b] uppercase"> {t("booking.preferredMethodAtTheSalon")} </p>
+        <p className="mb-3 text-sm text-ink-muted">{t("booking.chooseAPreferenceAndConfirmAvailabilityWithYourSalonYou")}</p>
         <div className="grid gap-3 sm:grid-cols-3">
           {paymentMethods.map((method, index) => {
             const isSelected = index === selectedMethod;
-            const meta = paymentMethodMeta[method] ?? paymentMethodMeta.Card;
+            const meta = translateConfig(paymentMethodMeta)[method] ?? translateConfig(paymentMethodMeta).Card;
             return (
               <button
-                key={method}
+                key={fixedLabel(method, "payment")}
                 type="button"
                 onClick={() => setSelectedMethod(index)}
                 aria-pressed={isSelected}
@@ -122,15 +122,13 @@ function StepPayment({
       <div className="rounded-2xl border border-[#2d2620] bg-[#2d2620] p-4 text-[#f3efe9]">
         <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
           <div>
-            <p className="text-xs tracking-widest text-[#f3efe9]/70 uppercase">
-              Pay at your visit
-            </p>
+            <p className="text-xs tracking-widest text-[#f3efe9]/70 uppercase"> {t("booking.payAtYourVisit")} </p>
             <p className="mt-2 text-base font-semibold">
               {activePayment.title}
             </p>
           </div>
           <div className="border-2 border-[#f3efe9]/30 px-4 py-2 text-sm font-semibold">
-            {activeMethod}
+            {fixedLabel(activeMethod, "payment")}
           </div>
         </div>
       </div>

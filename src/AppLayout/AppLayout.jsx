@@ -1,7 +1,8 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/i18n.js";
 import { useState } from "react";
 
 import Sidebar from "./sidebar/Sidebar";
-import MobileNavbar from "../Shared/MobileNavbar";
 import MobileDrawer from "../Shared/MobileDrawer";
 import BackgroundText from "../ui/BackgroundText";
 import PageContent from "./PageContent";
@@ -10,12 +11,13 @@ function AppLayout({
   menuItems = [],
   profileImg = "",
   brand = "LUNARA",
-  portalLabel = "Client Portal",
+  portalLabel = i18n.t("common.clientPortal"),
   footer = null,
-  profileAlt = "User profile",
+  profileAlt = i18n.t("common.userProfile"),
   onProfileClick = null,
   children = null,
 }) {
+  useTranslation();
   // Drawer state for mobile
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -67,8 +69,6 @@ function AppLayout({
         <MobileDrawer
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(!isDrawerOpen)}
-          // onClose={() => setIsDrawerOpen(false)}
-
           menuItems={enhancedMenuItems}
           profileImg={profileImg}
           portalLabel={portalLabel}
@@ -80,16 +80,6 @@ function AppLayout({
 
         {/* Main Content Area */}
         <div className="flex w-full flex-col lg:w-auto lg:flex-1">
-          {/* Mobile Navbar */}
-          {/* <MobileNavbar
-            brand={brand}
-            profileImg={profileImg}
-            profileAlt={profileAlt}
-            isDrawerOpen={isDrawerOpen}
-            onHamburgerClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            onProfileClick={onProfileClick}
-          /> */}
-
           {/* Main Content */}
           <PageContent>{children}</PageContent>
         </div>

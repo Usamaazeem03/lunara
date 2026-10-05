@@ -1,3 +1,6 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import { useUserAvatars } from "../../globalHooks/useUserAvatars";
 import UserAvatar from "../../Shared/ui/UserAvatar";
 import { useOwnerId } from "../../globalHooks/useOwnerId.js";
@@ -20,6 +23,7 @@ const AppointmentDetails = ({
   onAppointmentUpdated,
   onAppointmentDeleted,
 }) => {
+  const { t } = useTranslation();
   const { ownerId } = useOwnerId();
   const { confirmAppointment } = useConfirmAppointment(ownerId);
   const { completeAppointment } = useCompleteAppointment(ownerId);
@@ -51,10 +55,10 @@ const AppointmentDetails = ({
 
   const handleDelete = async (appointmentId) => {
     const confirmed = await confirmToast({
-      title: "Delete this appointment?",
-      description: "This cannot be undone.",
-      confirmLabel: "Delete appointment",
-      cancelLabel: "Keep appointment",
+      title: translatedMessage("appointments.deleteThisAppointment"),
+      description: translatedMessage("common.thisCannotBeUndone"),
+      confirmLabel: translatedMessage("appointments.deleteAppointment"),
+      cancelLabel: translatedMessage("appointments.keepAppointment"),
       confirmTone: "danger",
     });
 
@@ -86,23 +90,21 @@ const AppointmentDetails = ({
             <span className="border-ink/20 bg-cream text-ink-muted flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden border text-sm font-semibold tracking-widest uppercase">
               <UserAvatar
                 src={avatarUrl}
-                alt={`${appointment.client || "Client"} profile`}
+                alt={t("common.profile", { value1: appointment.client || t("common.client") })}
               />
             </span>
             <div>
               <p className="text-ink text-base leading-tight font-semibold">
                 {appointment.client}
               </p>
-              <p className="text-ink-muted mt-0.5 text-xs tracking-widest uppercase">
-                Appointment Details
-              </p>
+              <p className="text-ink-muted mt-0.5 text-xs tracking-widest uppercase"> {t("appointments.appointmentDetails")} </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
             className="border-ink/20 text-ink-muted hover:border-ink hover:text-ink flex h-8 w-8 shrink-0 items-center justify-center border-2 text-xs transition"
-            aria-label="Close"
+            aria-label={t("common.close")}
           >
             ✕
           </button>
@@ -110,68 +112,52 @@ const AppointmentDetails = ({
 
         <div className="bg-ink/10 border-ink/10 grid grid-cols-2 gap-px border-b-2">
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Service
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.service")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.service}
             </p>
           </div>
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Status
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.status")} </p>
             <span
               className={`inline-block rounded-full border-2 px-3 py-0.5 text-[0.65rem] tracking-widest uppercase ${statusBadgeClass}`}
             >
-              {appointment.status}
+              {fixedLabel(appointment.status, "status")}
             </span>
           </div>
           <div className="bg-cream/60 px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Date
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.date")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.dateLabel}
             </p>
           </div>
           <div className="bg-cream/60 px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Time
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.time")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.timeLabel}
             </p>
           </div>
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Staff
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("nav.staff")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.staff}
             </p>
           </div>
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Duration
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.duration")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.duration}
             </p>
           </div>
           <div className="bg-cream col-span-2 px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Price
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.price")} </p>
             <p className="text-ink text-base font-semibold">
               {appointment.price}
             </p>
           </div>
           {appointment.notes && (
             <div className="col-span-2 bg-white px-5 py-4">
-              <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-                Notes
-              </p>
+              <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.notes")} </p>
               <p className="text-ink text-sm leading-relaxed">
                 {appointment.notes}
               </p>
@@ -184,24 +170,18 @@ const AppointmentDetails = ({
             <button
               onClick={() => handleConfirm(appointment.id)}
               className="border-ink/20 text-ink hover:bg-ink hover:text-cream flex-1 border-r-2 px-4 py-3 text-xs tracking-widest uppercase transition"
-            >
-              Confirm
-            </button>
+            > {t("common.confirm")} </button>
           )}
           {appointment.status === "Confirmed" && (
             <button
               onClick={() => handleComplete(appointment.id)}
               className="border-ink/20 text-ink hover:bg-ink hover:text-cream flex-1 border-r-2 px-4 py-3 text-xs tracking-widest uppercase transition"
-            >
-              Mark Complete
-            </button>
+            > {t("appointments.markComplete")} </button>
           )}
           <button
             onClick={() => handleDelete(appointment.id)}
             className="text-danger hover:bg-danger flex-1 px-4 py-3 text-xs tracking-widest uppercase transition hover:text-white"
-          >
-            Delete
-          </button>
+          > {t("common.delete")} </button>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase";
 
 /**
@@ -7,19 +8,19 @@ import { supabase } from "./supabase";
 
 // Upload avatar image to Supabase Storage
 export const uploadAvatar = async (userId, file) => {
-  if (!userId) throw new Error("User ID is required");
-  if (!file) throw new Error("File is required");
+  if (!userId) throw localizedError("services.userIdIsRequired");
+  if (!file) throw localizedError("services.fileIsRequired");
 
   // Validate file type
   const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
   if (!validTypes.includes(file.type)) {
-    throw new Error("Only JPEG, PNG, WebP, and GIF images are allowed");
+    throw localizedError("services.onlyJpegPngWebpAndGifImagesAreAllowed");
   }
 
   // Validate file size (max 5MB)
   const maxSize = 5 * 1024 * 1024;
   if (file.size > maxSize) {
-    throw new Error("File size must be less than 5MB");
+    throw localizedError("services.fileSizeMustBeLessThan5mb");
   }
 
   try {
@@ -29,7 +30,7 @@ export const uploadAvatar = async (userId, file) => {
     const filename = `${userId}_${timestamp}.${ext}`;
 
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from("avatars") // bucket name
       .upload(`public/${filename}`, file, {
         cacheControl: "3600",
@@ -64,45 +65,5 @@ export const uploadAvatar = async (userId, file) => {
   } catch (error) {
     console.error("Avatar upload error:", error);
     throw error;
-  }
-};
-
-// Get avatar URL from storage
-export const getAvatarUrl = (filename) => {
-  if (!filename) return null;
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("avatars").getPublicUrl(`public/${filename}`);
-  return publicUrl;
-};
-
-// Delete old avatar image
-export const deleteAvatar = async (filename) => {
-  if (!filename) return;
-
-  try {
-    await supabase.storage.from("avatars").remove([`public/${filename}`]);
-  } catch (error) {
-    console.error("Avatar delete error:", error);
-    // Don't throw - just log. We still want to save new avatar even if old delete fails
-  }
-};
-
-// Get avatar by user ID
-export const getAvatarByUserId = async (userId) => {
-  if (!userId) return null;
-
-  try {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("avatar_img")
-      .eq("id", userId)
-      .single();
-
-    if (error) throw error;
-    return data?.avatar_img;
-  } catch (error) {
-    console.error("Error fetching avatar:", error);
-    return null;
   }
 };

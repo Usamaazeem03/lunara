@@ -1,3 +1,5 @@
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import { useWatch } from "react-hook-form";
 import { validateScheduleDay } from "./scheduleUtils";
 export default function ScheduleDayRow({
@@ -7,6 +9,7 @@ export default function ScheduleDayRow({
   getValues,
   errors,
 }) {
+  const { t } = useTranslation();
   const day = useWatch({ control, name: `days.${index}` });
   const error = errors?.open_time || errors?.close_time;
   const isToday = day.day_of_week === new Date().getDay();
@@ -19,7 +22,7 @@ export default function ScheduleDayRow({
           <input
             type="checkbox"
             role="switch"
-            aria-label={`Open on ${day.day_name}`}
+            aria-label={t("schedule.openOn", { value1: fixedLabel(day.day_name, "day") })}
             {...register(`days.${index}.is_open`)}
             className="peer sr-only"
           />
@@ -28,15 +31,13 @@ export default function ScheduleDayRow({
         </span>
         <span>
           <span className="flex flex-wrap items-center gap-2 text-sm font-semibold">
-            {day.day_name}
+            {fixedLabel(day.day_name, "day")}
             {isToday && (
-              <span className="border-ink/20 bg-cream text-ink-muted border px-1.5 py-0.5 text-[9px] tracking-wider uppercase">
-                Today
-              </span>
+              <span className="border-ink/20 bg-cream text-ink-muted border px-1.5 py-0.5 text-[9px] tracking-wider uppercase"> {t("appointments.today")} </span>
             )}
           </span>
           <span className="text-ink-muted mt-0.5 block text-xs">
-            {day.is_open ? "Open for bookings" : "Closed for the day"}
+            {day.is_open ? t("schedule.openForBookings") : t("schedule.closedForTheDay")}
           </span>
         </span>
       </label>
@@ -46,11 +47,11 @@ export default function ScheduleDayRow({
         {["open_time", "close_time"].map((field, position) => (
           <label key={field} className="min-w-0">
             <span className="text-ink-muted mb-1.5 block text-[10px] tracking-widest uppercase">
-              {position === 0 ? "Opens at" : "Closes at"}
+              {position === 0 ? t("schedule.opensAt") : t("schedule.closesAt")}
             </span>
             <input
               type="time"
-              aria-label={`${day.day_name} ${position === 0 ? "opening" : "closing"} time`}
+              aria-label={t("schedule.time", { value1: fixedLabel(day.day_name, "day"), value2: position === 0 ? "opening" : "closing" })}
               readOnly={!day.is_open}
               tabIndex={day.is_open ? 0 : -1}
               aria-invalid={Boolean(error) && day.is_open}

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useQuery } from "@tanstack/react-query";
 import { getServices } from "../../services/apiServices";
 import {
@@ -15,17 +17,17 @@ const mapService = (service, currencyCode) => {
 
   return {
     ...service,
-    title: service.name ?? "Untitled Service",
+    title: service.name ?? i18n.t("services.untitledService"),
     category,
     iconName: getServiceIcon(category),
     priceValue: Number.isFinite(priceValue) ? priceValue : 0,
     durationValue: Number.isFinite(durationValue) ? durationValue : 0,
     priceLabel: Number.isFinite(priceValue)
       ? formatCurrency(priceValue, currencyCode)
-      : "N/A",
+      : i18n.t("common.nA"),
     durationLabel: Number.isFinite(durationValue)
-      ? `${durationValue} minutes`
-      : "N/A",
+      ? i18n.t("bookingPass.minutes", { value1: durationValue })
+      : i18n.t("common.nA"),
     isActive: service.is_active !== false,
   };
 };
@@ -33,6 +35,7 @@ const mapService = (service, currencyCode) => {
 export const servicesQueryKey = (ownerId) => ["services", ownerId ?? "all"];
 
 export function useServices(ownerId, currencyCode) {
+  useTranslation();
   const { isLoading, isFetching, data, error, isError } = useQuery({
     queryKey: servicesQueryKey(ownerId),
     queryFn: () => getServices(ownerId),

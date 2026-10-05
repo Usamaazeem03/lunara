@@ -1,8 +1,9 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase";
 // load currency
 export async function getCurrency(ownerId) {
   if (!ownerId) {
-    throw new Error("owner_id is required to load currency");
+    throw localizedError("services.ownerIdIsRequiredToLoadCurrency");
   }
 
   const { data, error } = await supabase
@@ -13,7 +14,7 @@ export async function getCurrency(ownerId) {
 
   if (error) {
     console.error(error);
-    throw new Error("currency_code could not be loaded");
+    throw localizedError("services.currencyCodeCouldNotBeLoaded");
   }
 
   return data?.currency_code ?? null;
@@ -22,10 +23,10 @@ export async function getCurrency(ownerId) {
 // update currency
 export async function updateCurrency(ownerId, currencyCode) {
   if (!ownerId) {
-    throw new Error("owner_id is required to update currency");
+    throw localizedError("services.ownerIdIsRequiredToUpdateCurrency");
   }
   if (!currencyCode) {
-    throw new Error("currency_code is required to update currency");
+    throw localizedError("settings.currencyCodeIsRequiredToUpdateCurrency");
   }
 
   const { data, error } = await supabase
@@ -37,7 +38,7 @@ export async function updateCurrency(ownerId, currencyCode) {
 
   if (error) {
     console.error(error);
-    throw new Error("currency_code could not be updated");
+    throw localizedError("services.currencyCodeCouldNotBeUpdated");
   }
 
   return data?.currency_code ?? null;

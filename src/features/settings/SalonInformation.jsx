@@ -1,42 +1,47 @@
-import { useForm } from "react-hook-form";
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
+import ButtonSpinner from "../../Shared/ui/ButtonSpinner";
+import i18n from "../../i18n/i18n.js";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 import { useSalonInformation } from "./useSalonInformation";
 import { internationalPhoneRules } from "../../Shared/lib/phoneValidation";
 
 const fields = [
   {
     name: "full_name",
-    label: "Salon name",
+    labelKey: "settings.salonName",
     type: "text",
     autoComplete: "organization",
     maxLength: 120,
   },
   {
     name: "address",
-    label: "Salon address",
+    labelKey: "settings.salonAddress",
     type: "text",
     autoComplete: "street-address",
     maxLength: 300,
   },
   {
     name: "phone",
-    label: "Contact phone",
+    labelKey: "clients.contactPhone",
     type: "tel",
     autoComplete: "tel",
     placeholder: "+44 1234 567890",
   },
   {
     name: "email",
-    label: "Contact email",
+    labelKey: "clients.contactEmail",
     type: "email",
     autoComplete: "email",
     maxLength: 254,
     validate: (value) =>
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()) ||
-      "Enter a valid email address.",
+      i18n.t("common.enterAValidEmailAddress"),
   },
 ];
 
 function SalonInformationForm({ salon, save }) {
+  const { t } = useTranslation();
   const {
     register,
     setValue,
@@ -46,7 +51,7 @@ function SalonInformationForm({ salon, save }) {
   } = useForm({
     mode: "onChange",
     defaultValues: Object.fromEntries(
-      fields.map(({ name }) => [name, salon[name] || ""]),
+      translateConfig(fields).map(({ name }) => [name, salon[name] || ""]),
     ),
   });
   return (
@@ -56,7 +61,7 @@ function SalonInformationForm({ salon, save }) {
           onSuccess: (data) =>
             reset(
               Object.fromEntries(
-                fields.map(({ name }) => [name, data[name] || ""]),
+                translateConfig(fields).map(({ name }) => [name, data[name] || ""]),
               ),
             ),
         }),
@@ -64,7 +69,7 @@ function SalonInformationForm({ salon, save }) {
       noValidate
     >
       <fieldset disabled={save.isPending} className="grid gap-5 sm:grid-cols-2">
-        {fields.map(({ name, label, validate, ...input }) => (
+        {translateConfig(fields).map(({ name, label, validate, ...input }) => (
           <label
             key={name}
             className={
@@ -81,11 +86,11 @@ function SalonInformationForm({ salon, save }) {
                 name === "phone"
                   ? internationalPhoneRules(setValue)
                   : {
-                      required: `${label} is required.`,
+                      required: t("common.isRequired", { value1: label }),
                       validate:
                         validate ||
                         ((value) =>
-                          Boolean(value.trim()) || `${label} is required.`),
+                          Boolean(value.trim()) || t("common.isRequired", { value1: label })),
                     },
               )}
               aria-required="true"
@@ -107,12 +112,10 @@ function SalonInformationForm({ salon, save }) {
           </label>
         ))}
       </fieldset>
-      <p className="text-ink-muted mt-4 text-xs">
-        Contact email is shown to clients. Your sign-in email stays the same.
-      </p>
+      <p className="text-ink-muted mt-4 text-xs"> {t("settings.contactEmailIsShownToClientsYourSignInEmail")} </p>
       <div className="border-ink/10 mt-5 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
         <span className="text-ink-muted text-xs" aria-live="polite">
-          {isDirty ? "Unsaved changes" : "All changes saved"}
+          {isDirty ? t("clients.unsavedChanges") : t("clients.allChangesSaved")}
         </span>
         <div className="flex gap-2">
           <button
@@ -120,15 +123,14 @@ function SalonInformationForm({ salon, save }) {
             disabled={!isDirty || save.isPending}
             onClick={() => reset()}
             className="border-ink/20 min-h-11 border-2 px-4 text-xs tracking-widest uppercase disabled:opacity-40"
-          >
-            Reset
-          </button>
+          > {t("clients.reset")} </button>
           <button
             type="submit"
             disabled={!isDirty || !isValid || save.isPending}
+            aria-busy={save.isPending}
             className="bg-ink min-h-11 px-4 text-xs tracking-widest text-white uppercase disabled:opacity-40"
           >
-            {save.isPending ? "Saving..." : "Save salon"}
+            {save.isPending ? <span className="inline-flex items-center gap-2"><ButtonSpinner />{t("common.saving")}</span> : t("settings.saveSalon")}
           </button>
         </div>
       </div>
@@ -137,25 +139,22 @@ function SalonInformationForm({ salon, save }) {
 }
 
 export default function SalonInformation() {
+  const { t } = useTranslation();
   const { data, isPending, error, refetch, save } = useSalonInformation();
   return (
-    <section className="border-ink/20 border-2 bg-white/90 p-4 sm:p-5">
-      <h2 className="text-lg font-semibold">Salon Information</h2>
-      <p className="text-ink-muted mt-1 mb-6 text-sm">
-        Keep your salon name, location and client contact details up to date.
-      </p>
+    <section className="border-ink/20 rounded-none border-2 bg-white/90 p-4 sm:p-5">
+      <h2 className="text-lg font-semibold">{t("settings.salonInformation")}</h2>
+      <p className="text-ink-muted mt-1 mb-6 text-sm"> {t("settings.keepYourSalonNameLocationAndClientContactDetailsUp")} </p>
       {isPending ? (
-        <p role="status">Loading salon information...</p>
+        <p role="status">{t("settings.loadingSalonInformation")}</p>
       ) : error ? (
         <div role="alert">
-          <p>Salon information could not be loaded.</p>
+          <p>{t("settings.salonInformationCouldNotBeLoaded")}</p>
           <button
             type="button"
             onClick={() => refetch()}
             className="mt-3 underline"
-          >
-            Try again
-          </button>
+          > {t("common.tryAgain")} </button>
         </div>
       ) : (
         <SalonInformationForm key={data.id} salon={data} save={save} />

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import countryToCurrency from "country-to-currency";
 
@@ -6,8 +7,9 @@ import { SectionTitle } from "./SettingsPage";
 import { useCurrencyCode } from "./useCurrencyCode.js";
 import { useUpdateCurrency } from "./useUpdateCurrency.js";
 
-const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
-const currencyNames = new Intl.DisplayNames(["en"], { type: "currency" });
+function getCurrencyOptions(language) {
+const countryNames = new Intl.DisplayNames([language], { type: "region" });
+const currencyNames = new Intl.DisplayNames([language], { type: "currency" });
 
 const currencyOptions = Object.entries(countryToCurrency).reduce(
   (options, [countryCode, currencyCode]) => {
@@ -43,7 +45,7 @@ const currencyOptions = Object.entries(countryToCurrency).reduce(
   new Map(),
 );
 
-const formattedCurrencyOptions = [...currencyOptions.values()]
+return [...currencyOptions.values()]
   .sort((first, second) =>
     first.currencyName.localeCompare(second.currencyName),
   )
@@ -53,47 +55,44 @@ const formattedCurrencyOptions = [...currencyOptions.values()]
     searchText: `${option.value} ${option.currencyName} ${option.countries.join(" ")}`,
   }));
 
+}
+
 function Currencies({ creditCardIcon, ownerId }) {
+  const { t, i18n } = useTranslation();
+  const formattedCurrencyOptions = getCurrencyOptions(i18n.resolvedLanguage);
   const { currencyCode } = useCurrencyCode(ownerId);
 
   // Currency & Payments State
   const [currency, setCurrency] = useState(currencyCode);
-  const [currencySearch, setCurrencySearch] = useState(
-    formattedCurrencyOptions.find((option) => option.value === currencyCode)
-      ?.label || "",
-  );
+  const [currencySearch, setCurrencySearch] = useState(null);
   const [taxRate, setTaxRate] = useState("8.5");
   // update currency
   const { mutate } = useUpdateCurrency(ownerId);
 
   return (
-    <div className="border-ink/20 relative flex flex-col gap-4 border-2 bg-white/90 p-4 sm:p-5">
-      <SectionTitle icon={creditCardIcon} title="Currency & Payments" />
+    <div className="border-ink/20 relative flex flex-col gap-4 rounded-none border-2 bg-white/90 p-4 sm:p-5">
+      <SectionTitle icon={creditCardIcon} title={t("settings.currencyPayments")} />
 
       <div className="grid gap-4">
         <div className="space-y-2">
-          <label className="text-ink-muted text-xs tracking-widest uppercase">
-            Currency
-          </label>
+          <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("payments.currency")} </label>
           <SearchableSelectBox
-            value={currencySearch}
+            value={currencySearch ?? formattedCurrencyOptions.find((option) => option.value === (currency || currencyCode))?.label ?? ""}
             onValueChange={setCurrencySearch}
             options={formattedCurrencyOptions}
             selectedValue={currency}
             onOptionSelect={(option) => {
               setCurrency(option.value);
-              setCurrencySearch(option.label);
+              setCurrencySearch(null);
               mutate(option.value);
             }}
-            placeholder="Search country or currency"
-            noOptionsText="No country or currency found"
+            placeholder={t("settings.searchCountryOrCurrency")}
+            noOptionsText={t("settings.noCountryOrCurrencyFound")}
           />
         </div>
 
         <div className="space-y-2">
-          <label className="text-ink-muted text-xs tracking-widest uppercase">
-            Tax Rate (%)
-          </label>
+          <label className="text-ink-muted text-xs tracking-widest uppercase"> {t("settings.taxRate")} </label>
           <input
             type="number"
             value={taxRate}
@@ -102,9 +101,9 @@ function Currencies({ creditCardIcon, ownerId }) {
           />
         </div>
 
-        <div className="border-ink/15 rounded-xl border p-4">
-          <p className="font-semibold">Online payments - Coming soon</p>
-          <p className="mt-2 text-sm text-ink-muted">Clients pay in full at the salon using a method you accept. Online payments and deposits are not available yet.</p>
+        <div className="border-ink/20 rounded-none border-2 p-4">
+          <p className="font-semibold">{t("settings.onlinePaymentsComingSoon")}</p>
+          <p className="mt-2 text-sm text-ink-muted">{t("settings.clientsPayInFullAtTheSalonUsingAMethod")}</p>
         </div>
       </div>
     </div>

@@ -1,3 +1,5 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../hooks/useAuth";
 import {
@@ -7,6 +9,7 @@ import {
 import { notify } from "../../Shared/lib/toast";
 
 export function useClientInformation() {
+  useTranslation();
   const { user, syncProfile } = useAuth();
   const client = useQueryClient();
   const queryKey = ["client-information", user?.id];
@@ -20,7 +23,7 @@ export function useClientInformation() {
     onSuccess: (data) => {
       client.setQueryData(queryKey, data);
       syncProfile(data);
-      notify.success("Personal information updated.");
+      notify.success(translatedMessage("clients.personalInformationUpdated"));
     },
     onError: (error) => notify.error(error.message),
   });

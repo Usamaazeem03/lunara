@@ -7,6 +7,7 @@ import PaymentsPage from "../../payments/PaymentsPage";
 import ReportsPage from "../../reports/ReportsPage";
 import SettingsPage from "../../settings/SettingsPage";
 import WorkingSchedule from "../../schedule/WorkingSchedulePage";
+import WebsiteIntegrationPage from "../../websiteIntegration/WebsiteIntegrationPage";
 export const OWNER_PAGES = {
   dashboard: AdminDashboard,
   appointments: AppointmentPage,
@@ -17,4 +18,5 @@ export const OWNER_PAGES = {
   reports: ReportsPage,
   schedule: WorkingSchedule,
   settings: SettingsPage,
+  "website-integration": WebsiteIntegrationPage,
 };

@@ -1,5 +1,7 @@
+import { translateConfig } from "../../i18n/translateConfig.js";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useLocalizedForm as useForm } from "../../i18n/useLocalizedForm.js";
 import { useNavigate } from "react-router-dom";
 import Icon from "../../Shared/ui/Icon";
 import { internationalPhoneRules } from "../../Shared/lib/phoneValidation";
@@ -10,6 +12,7 @@ import { emailRules, newPasswordRules } from "./authValidation";
 import { getSavedAccounts, removeSavedAccount } from "../../utils/deviceMemory";
 
 export default function AuthForm({ role, mode, onModeChange }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isSignup = mode === "signup";
   const { submit, google, savedAccount, pending, error } = useAuthForm({
@@ -57,32 +60,32 @@ export default function AuthForm({ role, mode, onModeChange }) {
         <fieldset disabled={pending}>
           {isSignup && (
             <AuthField
-              label="Full name"
-              placeholder="Enter your full name"
+              label={t("common.fullName")}
+              placeholder={t("auth.enterYourFullName")}
               required
               iconName="user-profile"
               autoComplete="name"
               registration={register("fullName", {
-                required: "Full name is required.",
+                required: t("common.fullNameIsRequired"),
                 validate: (value) =>
-                  Boolean(value.trim()) || "Full name is required.",
+                  Boolean(value.trim()) || t("common.fullNameIsRequired"),
               })}
               error={errors.fullName}
             />
           )}
           <AuthField
-            label="Email"
+            label={t("common.email")}
             required
             iconName="email-envelope"
             type="email"
             autoComplete="username"
             placeholder="you@lunara.com"
-            registration={register("email", emailRules)}
+            registration={register("email", translateConfig(emailRules))}
             error={errors.email}
           />
           {isSignup && (
             <AuthField
-              label="Phone number"
+              label={t("common.phoneNumber")}
               iconName="phone"
               type="tel"
               autoComplete="tel"
@@ -96,8 +99,8 @@ export default function AuthForm({ role, mode, onModeChange }) {
             />
           )}
           <AuthField
-            label="Password"
-            placeholder={isSignup ? "Create a password" : "Enter your password"}
+            label={t("auth.password")}
+            placeholder={isSignup ? t("auth.createAPassword") : t("auth.enterYourPassword")}
             required
             type="password"
             iconName="access-control-password"
@@ -105,34 +108,30 @@ export default function AuthForm({ role, mode, onModeChange }) {
             registration={register(
               "password",
               isSignup
-                ? newPasswordRules
-                : { required: "Password is required." },
+                ? translateConfig(newPasswordRules)
+                : { required: t("auth.passwordIsRequired") },
             )}
             error={errors.password}
           />
           {!isSignup && (
             <div className="auth-options text-ink/60 mt-4 flex items-center justify-between gap-2 text-xs">
               <label className="flex items-center gap-2">
-                <input type="checkbox" {...register("rememberMe")} />
-                Remember account
-              </label>
+                <input type="checkbox" {...register("rememberMe")} /> {t("auth.rememberAccount")} </label>
               <button
                 type="button"
                 className="underline"
                 onClick={() => navigate(`/auth/${role}/reset-password`)}
-              >
-                Forgot password?
-              </button>
+              > {t("auth.forgotPassword")} </button>
             </div>
           )}
           <AuthSubmitButton pending={pending}>
-            {isSignup ? "Create account" : "Log in"}
+            {isSignup ? t("auth.createAccount2") : t("common.logIn")}
           </AuthSubmitButton>
         </fieldset>
       </form>
       {!isSignup && accounts.length > 0 && (
         <div className="auth-saved-accounts mt-4 space-y-2">
-          <p className="text-ink/50 text-xs">Saved accounts</p>
+          <p className="text-ink/50 text-xs">{t("auth.savedAccounts")}</p>
           {accounts.map((account) => (
             <div
               key={account.email}
@@ -159,35 +158,33 @@ export default function AuthForm({ role, mode, onModeChange }) {
                 <span className="text-ink/50 mt-1 block text-xs">
                   {savedAccount.isPending &&
                   savedAccount.variables?.email === account.email
-                    ? "Opening account..."
-                    : "Click to open account"}
+                    ? t("auth.openingAccount")
+                    : t("auth.clickToOpenAccount")}
                 </span>
               </button>
               <button
                 type="button"
                 disabled={pending}
-                aria-label={`Remove ${account.email}`}
+                aria-label={t("auth.remove", { value1: account.email })}
                 onClick={() => {
                   removeSavedAccount(account.email, role);
                   setAccounts(getSavedAccounts(role));
                 }}
                 className="px-3 text-xs underline"
-              >
-                Remove
-              </button>
+              > {t("auth.remove2")} </button>
             </div>
           ))}
         </div>
       )}
       <p className="auth-signup text-ink/60 mt-4 text-center text-sm">
-        {isSignup ? "Already have an account?" : "New to Lunara?"}{" "}
+        {isSignup ? t("auth.alreadyHaveAnAccount") : t("auth.newToLunara")}{" "}
         <button
           type="button"
           disabled={pending}
           onClick={() => onModeChange(isSignup ? "login" : "signup")}
           className="text-ink underline"
         >
-          {isSignup ? "Log in" : "Create account"}
+          {isSignup ? t("common.logIn") : t("auth.createAccount2")}
         </button>
       </p>
       <button
@@ -197,7 +194,7 @@ export default function AuthForm({ role, mode, onModeChange }) {
         className="border-ink/30 text-ink hover:bg-ink hover:text-cream mt-4 mb-2 flex w-full items-center justify-center gap-3 border bg-white/90 py-3 text-sm font-semibold disabled:opacity-50"
       >
         <Icon name="google" size={20} aria-hidden="true" />
-        {google.isPending ? "Connecting..." : "Continue with Google"}
+        {google.isPending ? t("auth.connecting") : t("auth.continueWithGoogle")}
       </button>
     </div>
   );

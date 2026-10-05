@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useMemo } from "react";
 
 import StatCards from "../Dashboard/Client/StatCards.jsx";
@@ -5,29 +7,30 @@ import Icon from "../../Shared/ui/Icon.jsx";
 import { getAppointmentStats } from "./appointmentStatsUtils.js";
 
 export const AppointmentStats = ({ appointments = [] }) => {
+  const { t } = useTranslation();
   const stats = useMemo(() => {
     const { todayCount, weekCount, confirmedCount, pendingCount } =
       getAppointmentStats(appointments);
 
     return [
       {
-        title: "Today's Appointments",
+        title: t("common.todaySAppointments"),
         value: todayCount.toString(),
-        subtitle: "On the calendar",
+        subtitle: t("appointments.onTheCalendar"),
         icon: <Icon name="calendar" size={20} className="text-ink-muted/70" />,
       },
       {
-        title: "This Week",
+        title: t("appointments.thisWeek"),
         value: weekCount.toString(),
-        subtitle: "Upcoming visits",
+        subtitle: t("appointments.upcomingVisits"),
         icon: (
           <Icon name="calendar-week" size={20} className="text-ink-muted/70" />
         ),
       },
       {
-        title: "Confirmed",
+        title: t("common.confirmed"),
         value: confirmedCount.toString(),
-        subtitle: "Ready to start",
+        subtitle: t("appointments.readyToStart"),
         icon: (
           <Icon
             name="assept-document"
@@ -37,13 +40,13 @@ export const AppointmentStats = ({ appointments = [] }) => {
         ),
       },
       {
-        title: "Pending",
+        title: t("common.pending"),
         value: pendingCount.toString(),
-        subtitle: "Needs review",
+        subtitle: t("appointments.needsReview"),
         icon: <Icon name="pending" size={20} className="text-ink-muted/70" />,
       },
     ];
-  }, [appointments]);
+  }, [appointments, i18n.resolvedLanguage, t]);
 
   return <StatCards stats={stats} lgGridCols={4} />;
 };

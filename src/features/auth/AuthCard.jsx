@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Button from "../../Shared/Button";
 import Icon from "../../Shared/ui/Icon";
 
@@ -10,6 +11,7 @@ const CARD_CLASSES = [
 ].join(" ");
 
 function AuthCard({ children, onClose }) {
+  useTranslation();
   return (
     <div className={CARD_CLASSES} style={{ maxHeight: "94vh" }}>
       <CloseButton onClick={onClose} />
@@ -19,9 +21,10 @@ function AuthCard({ children, onClose }) {
 }
 
 function CloseButton({ onClick }) {
+  const { t } = useTranslation();
   return (
     <Button
-      aria-label="Close"
+      aria-label={t("common.close")}
       onClick={onClick}
       unstyled
       variant="custom"

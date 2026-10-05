@@ -1,3 +1,4 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase.js";
 import { initializeCurrencyCode } from "../features/settings/initialCurrencyCodeUplode.js";
 import { createAuthApi } from "./createAuthApi.js";
@@ -16,7 +17,7 @@ export async function getSignupCountry({ signal }) {
     `https://api.ipinfo.io/lite/me?token=${encodeURIComponent(token)}`,
     { signal },
   );
-  if (!response.ok) throw new Error("Country detection is unavailable.");
+  if (!response.ok) throw localizedError("auth.countryDetectionIsUnavailable");
   const data = await response.json();
   return data.country_code || null;
 }

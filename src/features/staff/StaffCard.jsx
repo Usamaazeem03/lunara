@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import Icon from "../../Shared/ui/Icon.jsx";
 import StaffAvatar from "../../Shared/ui/StaffAvatar";
 const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
+  const { t } = useTranslation();
   return (
     <article className="border-ink/20 relative flex h-full flex-col border-2 bg-white/90 p-4 sm:p-5">
       <div className="bg-ink/5 absolute -top-8 -right-8 h-20 w-20 rounded-full"></div>
@@ -11,9 +13,7 @@ const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
             {member.role}
           </span>
           {member.isOnShift && (
-            <span className="rounded-full border-2 border-green-600/40 bg-green-600/10 px-3 py-1 text-[0.6rem] tracking-widest text-green-700 uppercase">
-              On Shift
-            </span>
+            <span className="rounded-full border-2 border-green-600/40 bg-green-600/10 px-3 py-1 text-[0.6rem] tracking-widest text-green-700 uppercase"> {t("common.onShift")} </span>
           )}
         </div>
       </div>
@@ -27,11 +27,9 @@ const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
           <p className="text-base font-semibold">
             {member.ratingCount > 0
               ? `${member.rating.toFixed(1)} / 5`
-              : "No ratings yet"}
+              : t("common.noRatingsYet")}
           </p>
-          <p className="text-ink-muted text-xs tracking-widest uppercase">
-            Rating
-          </p>
+          <p className="text-ink-muted text-xs tracking-widest uppercase"> {t("staff.rating")} </p>
           {member.ratingCount > 0 && (
             <p className="text-ink-muted mt-1 text-xs">
               {member.ratingCount}{" "}
@@ -41,27 +39,23 @@ const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
         </div>
         <div>
           <p className="text-base font-semibold">{member.appointments}</p>
-          <p className="text-ink-muted text-xs tracking-widest uppercase">
-            Appointments
-          </p>
+          <p className="text-ink-muted text-xs tracking-widest uppercase"> {t("nav.appointments")} </p>
         </div>
       </div>
 
       <div className="mt-4 space-y-2 text-sm">
-        <InfoRow label="Phone" value={member.phone} iconName="phone" />
+        <InfoRow label={t("common.phone")} value={member.phone} iconName="phone" />
         <InfoRow
-          label="Email"
-          value={member.email || "N/A"}
+          label={t("common.email")}
+          value={member.email || t("common.nA")}
           iconName="email-envelope"
         />
-        <InfoRow label="Schedule" value={member.schedule} iconName="clock" />
+        <InfoRow label={t("nav.schedule")} value={member.schedule} iconName="clock" />
       </div>
 
       {member.specialties?.length > 0 && (
         <div className="mt-4">
-          <p className="text-ink-muted text-xs tracking-widest uppercase">
-            Specialties
-          </p>
+          <p className="text-ink-muted text-xs tracking-widest uppercase"> {t("staff.specialties")} </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {member.specialties.map((specialty) => (
               <span
@@ -83,9 +77,7 @@ const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
           className={`border-ink/20 bg-cream hover:border-ink flex-1 border-2 px-4 py-2 text-xs tracking-widest uppercase transition ${
             isDeleting ? "cursor-not-allowed opacity-60" : ""
           }`}
-        >
-          Edit
-        </button>
+        > {t("services.edit")} </button>
         <button
           type="button"
           onClick={() => onDelete?.(member)}
@@ -94,7 +86,7 @@ const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
             isDeleting ? "cursor-not-allowed opacity-60" : ""
           }`}
         >
-          {isDeleting ? "Deleting..." : "Remove"}
+          {isDeleting ? t("services.deleting") : t("auth.remove2")}
         </button>
       </div>
     </article>
@@ -102,6 +94,7 @@ const StaffCard = ({ member, onEdit, onDelete, isDeleting }) => {
 };
 
 const InfoRow = ({ label, value, iconName }) => {
+  useTranslation();
   return (
     <div className="flex items-center gap-3">
       <div className="border-ink/20 bg-cream flex h-8 w-8 items-center justify-center rounded-full border">

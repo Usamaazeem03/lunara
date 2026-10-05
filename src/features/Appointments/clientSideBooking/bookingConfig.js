@@ -1,28 +1,28 @@
 export const BOOKING_STEPS = [
   {
-    label: "Select Service",
-    title: "Select Services",
-    subtitle: "Choose one or more services",
+    labelKey: "booking.selectService",
+    titleKey: "booking.selectServices",
+    subtitleKey: "booking.chooseOneOrMoreServices",
   },
   {
-    label: "Date & Time",
-    title: "Select Date & Time",
-    subtitle: "Choose a date and a time slot",
+    labelKey: "common.dateTime",
+    titleKey: "booking.selectDateTime",
+    subtitleKey: "booking.chooseADateAndATimeSlot",
   },
   {
-    label: "Staff Member",
-    title: "Select Staff Member",
-    subtitle: "Pick a preferred stylist or choose no preference",
+    labelKey: "booking.staffMember",
+    titleKey: "booking.selectStaffMember",
+    subtitleKey: "booking.pickAPreferredStylistOrChooseNoPreference",
   },
   {
-    label: "Review",
-    title: "Review your visit",
-    subtitle: "Please review your appointment details",
+    labelKey: "booking.customerDetails",
+    titleKey: "booking.enterYourDetails",
+    subtitleKey: "booking.enterYourDetailsToFinishBooking",
   },
   {
-    label: "Payment",
-    title: "Payment Options",
-    subtitle: "Pay in full at the salon. No payment is taken online.",
+    labelKey: "booking.emailVerification",
+    titleKey: "booking.verifyYourEmail",
+    subtitleKey: "booking.confirmYourEmailToBook",
   },
 ];
 

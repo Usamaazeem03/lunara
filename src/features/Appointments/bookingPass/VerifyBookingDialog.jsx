@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../../i18n/i18n.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { verifyBookingPass } from "../../../services/apiBookingPass.js";
 import { formatCurrency } from "../../../utils/currency.js";
@@ -15,6 +17,7 @@ export default function VerifyBookingDialog({
   onClose,
   onViewDetails,
 }) {
+  const { t } = useTranslation();
   const dialogRef = useRef(null);
   const mounted = useRef(false);
   const verifying = useRef(false);
@@ -52,7 +55,7 @@ export default function VerifyBookingDialog({
         if (mounted.current) setBusy(false);
       }
     },
-    [ownerId],
+    [ownerId, i18n.resolvedLanguage],
   );
 
   async function upload(event) {
@@ -90,20 +93,14 @@ export default function VerifyBookingDialog({
     >
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
-          <p className="text-ink-muted text-[10px] tracking-[0.2em] uppercase">
-            Lunara front desk
-          </p>
-          <h2 id="verify-booking-title" className="mt-2 text-2xl font-semibold">
-            Verify a booking
-          </h2>
-          <p className="text-ink-muted mt-2 text-sm leading-6">
-            Scan the client's pass to see the latest appointment details.
-          </p>
+          <p className="text-ink-muted text-[10px] tracking-[0.2em] uppercase"> {t("bookingPass.lunaraFrontDesk")} </p>
+          <h2 id="verify-booking-title" className="mt-2 text-2xl font-semibold"> {t("bookingPass.verifyABooking")} </h2>
+          <p className="text-ink-muted mt-2 text-sm leading-6"> {t("bookingPass.scanTheClientSPassToSeeTheLatestAppointment")} </p>
         </div>
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close verification"
+          aria-label={t("bookingPass.closeVerification")}
           className="border-ink/15 h-11 w-11 shrink-0 rounded-full border text-xl"
         >
           &times;
@@ -122,14 +119,10 @@ export default function VerifyBookingDialog({
               setCameraOpen(true);
             }}
             className="bg-ink text-cream min-h-14 rounded-xl px-3 text-sm font-semibold disabled:opacity-50"
-          >
-            Scan with camera
-          </button>
+          > {t("bookingPass.scanWithCamera")} </button>
           <label
             className={`border-ink/15 flex min-h-14 cursor-pointer items-center justify-center rounded-xl border px-3 text-sm font-semibold focus-within:outline-2 focus-within:outline-offset-2 ${busy || !ownerId ? "opacity-50" : ""}`}
-          >
-            Upload QR image
-            <input
+          > {t("bookingPass.uploadQrImage")} <input
               type="file"
               accept="image/*"
               onChange={upload}
@@ -150,9 +143,7 @@ export default function VerifyBookingDialog({
           <label
             htmlFor="booking-reference"
             className="text-ink-muted text-xs font-medium"
-          >
-            Or paste the booking reference
-          </label>
+          > {t("bookingPass.orPasteTheBookingReference")} </label>
           <div className="flex gap-2">
             <input
               id="booking-reference"
@@ -168,17 +159,13 @@ export default function VerifyBookingDialog({
               type="submit"
               disabled={busy || !ownerId || !reference.trim()}
               className="border-ink min-h-12 rounded-xl border px-4 text-sm font-semibold disabled:opacity-40"
-            >
-              Verify
-            </button>
+            > {t("bookingPass.verify")} </button>
           </div>
         </form>
       )}
       <div aria-live="polite" aria-busy={busy}>
         {busy && (
-          <p role="status" className="bg-cream mt-5 rounded-xl p-4 text-sm">
-            Checking the saved appointment...
-          </p>
+          <p role="status" className="bg-cream mt-5 rounded-xl p-4 text-sm"> {t("bookingPass.checkingTheSavedAppointment")} </p>
         )}
         {error && (
           <p
@@ -191,9 +178,7 @@ export default function VerifyBookingDialog({
         {appointment && (
           <div className="border-ink/10 mt-5 space-y-4 rounded-2xl border bg-white p-4">
             <div>
-              <p className="text-ink-muted text-xs font-semibold tracking-widest uppercase">
-                Booking found in your salon
-              </p>
+              <p className="text-ink-muted text-xs font-semibold tracking-widest uppercase"> {t("bookingPass.bookingFoundInYourSalon")} </p>
               <span
                 className={`mt-3 inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${status.tone}`}
               >
@@ -201,19 +186,19 @@ export default function VerifyBookingDialog({
               </span>
             </div>
             <h3 className="text-xl font-semibold">
-              {appointment.client_name || "Guest"}
+              {appointment.client_name || t("common.guest")}
             </h3>
             <p className="text-sm">{appointment.service_name}</p>
             <dl className="grid grid-cols-2 gap-4 text-sm">
               {[
-                ["Date", formatPassDate(appointment.appointment_date)],
-                ["Time", formatPassTime(appointment.appointment_time)],
-                ["Stylist", appointment.staff_name || "Any available stylist"],
+                [t("common.date"), formatPassDate(appointment.appointment_date)],
+                [t("common.time"), formatPassTime(appointment.appointment_time)],
+                [t("common.stylist"), appointment.staff_name || t("common.anyAvailableStylist")],
                 [
-                  "Total",
+                  t("common.total"),
                   currencyCode
                     ? formatCurrency(appointment.price, currencyCode)
-                    : "Currency unavailable",
+                    : t("bookingPass.currencyUnavailable"),
                 ],
               ].map(([label, value]) => (
                 <div key={label}>
@@ -222,26 +207,21 @@ export default function VerifyBookingDialog({
                 </div>
               ))}
             </dl>
-            <p className="text-ink-muted font-mono text-xs break-all">
-              Appointment #{appointment.id}
+            <p className="text-ink-muted font-mono text-xs break-all"> {t("bookingPass.appointment")}{appointment.id}
             </p>
             <button
               type="button"
               onClick={() => onViewDetails(appointment)}
               className="bg-ink text-cream min-h-12 w-full rounded-xl px-4 text-sm font-semibold"
-            >
-              View Appointment Details
-            </button>
+            > {t("bookingPass.viewAppointmentDetails")} </button>
             <p className="border-ink/10 text-ink-muted border-t pt-3 text-xs leading-5">
               {appointment.status === "Cancelled"
-                ? "This booking is cancelled. Do not use it for a visit."
+                ? t("bookingPass.thisBookingIsCancelledDoNotUseItForA")
                 : appointment.status === "Completed"
-                  ? "This visit is already completed."
+                  ? t("bookingPass.thisVisitIsAlreadyCompleted")
                   : appointment.status === "Pending"
-                    ? "This request still needs confirmation in Appointments."
-                    : "Compare these details with the arriving client and the scheduled date."}{" "}
-              Scanning does not confirm, check in, or charge the booking.
-            </p>
+                    ? t("bookingPass.thisRequestStillNeedsConfirmationInAppointments")
+                    : t("bookingPass.compareTheseDetailsWithTheArrivingClientAndTheScheduled")}{" "} {t("bookingPass.scanningDoesNotConfirmCheckInOrChargeTheBooking")} </p>
           </div>
         )}
       </div>

@@ -1,3 +1,6 @@
+import { translatedMessage } from "../../i18n/translatedMessage.jsx";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { useAuth } from "../../hooks/useAuth";
 import { notify } from "../../Shared/lib/toast";
 import { useMemo, useState } from "react";
@@ -11,6 +14,7 @@ import {
   getPaymentSummary,
 } from "./paymentUtils";
 export function usePaymentsPage() {
+  const { t } = useTranslation();
   const { ownerId, isLoading: ownerLoading, error: ownerError } = useOwnerId();
   const {
     currencyCode,
@@ -31,15 +35,15 @@ export function usePaymentsPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const summary = useMemo(
     () => getPaymentSummary(appointments),
-    [appointments],
+    [appointments, i18n.resolvedLanguage],
   );
   const charts = useMemo(
     () => getPaymentCharts(appointments, weekOffset),
-    [appointments, weekOffset],
+    [appointments, weekOffset, i18n.resolvedLanguage],
   );
   const filtered = useMemo(
     () => filterPayments(appointments, search, "completed", invoiceFilters),
-    [appointments, search, invoiceFilters],
+    [appointments, search, invoiceFilters, i18n.resolvedLanguage],
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / 10));
   const currentPage = Math.min(page, totalPages);
@@ -48,14 +52,14 @@ export function usePaymentsPage() {
     ownerError?.message ||
     error?.message ||
     currencyError?.message ||
-    (!isLoading && !ownerId ? "Please sign in to view payments." : "");
+    (!isLoading && !ownerId ? t("payments.pleaseSignInToViewPayments") : "");
   async function downloadInvoice(appointment) {
     try {
       const { downloadAppointmentInvoice } =
         await import("./downloadInvoice.js");
       await downloadAppointmentInvoice(appointment, currencyCode, profile);
     } catch (error) {
-      notify.error(error.message || "Unable to download this invoice.");
+      notify.error(error.message || translatedMessage("payments.unableToDownloadThisInvoice"));
     }
   }
   function exportReport() {

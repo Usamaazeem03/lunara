@@ -1,3 +1,5 @@
+import { fixedLabel } from "../../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import { useUserAvatars } from "../../../globalHooks/useUserAvatars";
 import UserAvatar from "../../../Shared/ui/UserAvatar";
 const statusStyles = {
@@ -15,6 +17,7 @@ function AppointmentDetailsModal({
   onDelete = null,
   showActions = true,
 }) {
+  const { t } = useTranslation();
   const { avatars } = useUserAvatars(
     appointment?.avatarUrl === undefined ? [appointment?.client_id] : [],
   );
@@ -39,16 +42,14 @@ function AppointmentDetailsModal({
             <span className="border-ink/20 bg-cream text-ink-muted flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden border text-sm font-semibold tracking-widest uppercase">
               <UserAvatar
                 src={avatarUrl}
-                alt={`${appointment.client || "Client"} profile`}
+                alt={t("common.profile", { value1: appointment.client || t("common.client") })}
               />
             </span>
             <div>
               <p className="text-ink text-base leading-tight font-semibold">
                 {appointment.client}
               </p>
-              <p className="text-ink-muted mt-0.5 text-xs tracking-widest uppercase">
-                Appointment Details
-              </p>
+              <p className="text-ink-muted mt-0.5 text-xs tracking-widest uppercase"> {t("appointments.appointmentDetails")} </p>
             </div>
           </div>
 
@@ -56,7 +57,7 @@ function AppointmentDetailsModal({
             type="button"
             onClick={onClose}
             className="border-ink/20 text-ink-muted hover:border-ink hover:text-ink flex h-8 w-8 shrink-0 items-center justify-center border-2 text-xs transition"
-            aria-label="Close"
+            aria-label={t("common.close")}
           >
             X
           </button>
@@ -64,76 +65,60 @@ function AppointmentDetailsModal({
 
         <div className="bg-ink/10 border-ink/10 grid grid-cols-2 gap-px border-b-2">
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Service
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.service")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.service}
             </p>
           </div>
 
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Status
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.status")} </p>
             <span
               className={`inline-block rounded-full border-2 px-3 py-0.5 text-[0.65rem] tracking-widest uppercase ${statusBadgeClass}`}
             >
-              {appointment.status}
+              {fixedLabel(appointment.status, "status")}
             </span>
           </div>
 
           <div className="bg-cream/60 px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Date
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.date")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.dateLabel}
             </p>
           </div>
 
           <div className="bg-cream/60 px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Time
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.time")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.timeLabel}
             </p>
           </div>
 
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Staff
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("nav.staff")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.staff}
             </p>
           </div>
 
           <div className="bg-white px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Duration
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.duration")} </p>
             <p className="text-ink text-sm font-semibold">
               {appointment.duration}
             </p>
           </div>
 
           <div className="bg-cream col-span-2 px-5 py-4">
-            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-              Price
-            </p>
+            <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.price")} </p>
             <p className="text-ink text-base font-semibold">
               {appointment.price}
             </p>
-            {appointment.rewardDiscount && <p className="mt-1 text-sm text-ink-muted">Includes a reward discount of {appointment.rewardDiscount}.</p>}
+            {appointment.rewardDiscount && <p className="mt-1 text-sm text-ink-muted">{t("dashboard.includesARewardDiscountOf")} {appointment.rewardDiscount}.</p>}
           </div>
 
           {appointment.notes && (
             <div className="col-span-2 bg-white px-5 py-4">
-              <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase">
-                Notes
-              </p>
+              <p className="text-ink-muted mb-1 text-[0.6rem] tracking-widest uppercase"> {t("common.notes")} </p>
               <p className="text-ink text-sm leading-relaxed">
                 {appointment.notes}
               </p>
@@ -148,9 +133,7 @@ function AppointmentDetailsModal({
                 type="button"
                 onClick={() => onConfirm(appointment.id)}
                 className="border-ink/20 text-ink hover:bg-ink hover:text-cream flex-1 border-r-2 px-4 py-3 text-xs tracking-widest uppercase transition"
-              >
-                Confirm
-              </button>
+              > {t("common.confirm")} </button>
             )}
 
             {appointment.status === "Confirmed" && onComplete && (
@@ -158,9 +141,7 @@ function AppointmentDetailsModal({
                 type="button"
                 onClick={() => onComplete(appointment.id)}
                 className="border-ink/20 text-ink hover:bg-ink hover:text-cream flex-1 border-r-2 px-4 py-3 text-xs tracking-widest uppercase transition"
-              >
-                Mark Complete
-              </button>
+              > {t("appointments.markComplete")} </button>
             )}
 
             {onDelete && (
@@ -168,9 +149,7 @@ function AppointmentDetailsModal({
                 type="button"
                 onClick={() => onDelete(appointment.id)}
                 className="flex-1 px-4 py-3 text-xs tracking-widest text-[#b0412e] uppercase transition hover:bg-[#b0412e] hover:text-white"
-              >
-                Delete
-              </button>
+              > {t("common.delete")} </button>
             )}
           </div>
         )}

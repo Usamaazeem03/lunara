@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/i18n.js";
 import Icon from "./ui/Icon";
 import { useState, useMemo, useId, useEffect, useRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
@@ -10,6 +12,7 @@ const inputBase =
 
 // ─── Small reusable field wrapper ─────────────────────────────────────────────
 function Field({ label, children }) {
+  useTranslation();
   return (
     <div>
       <label htmlFor="profile-salon-url" className="mb-1.5 block text-[11px] font-medium tracking-[0.18em] text-black/50 uppercase">
@@ -27,6 +30,7 @@ const ProfileModal = ({
   brand = "LUNARA",
   salonUrl = null, // still accepted as prop (optional), but auto-generated below if not provided
 }) => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const titleId = useId();
   const dialogRef = useRef(null);
@@ -66,7 +70,7 @@ const ProfileModal = ({
     if (salonUrl) return salonUrl; // use prop if provided
     if (!user?.id) return null;
     return `${window.location.origin}/book/${user.id}`;
-  }, [salonUrl, user?.id]);
+  }, [salonUrl, user?.id, i18n.resolvedLanguage]);
 
   const isGoogleLogin = user?.app_metadata?.provider === "google";
 
@@ -93,12 +97,12 @@ const ProfileModal = ({
       copyTimeout.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
-      setCopyError("Could not copy the link. Select the address above to copy it.");
+      setCopyError(t("common.couldNotCopyTheLinkSelectTheAddressAboveTo"));
     }
   };
 
-  const roleLabel = profile?.role === "owner" ? "Salon Owner" : "Client";
-  const displayName = fields.fullName || "User";
+  const roleLabel = profile?.role === "owner" ? t("common.salonOwner") : t("common.client");
+  const displayName = fields.fullName || t("common.user");
 
   return (
     <div
@@ -110,10 +114,10 @@ const ProfileModal = ({
       <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} onKeyDown={handleDialogKeyDown} className="profile-dialog relative grid h-[94vh] max-h-[94vh] w-full max-w-6xl overflow-x-hidden overflow-y-auto border-8 border-[#f4f1ec] bg-[#f4f1ec] shadow-[0_30px_90px_rgba(0,0,0,0.35)] md:grid-cols-2 md:overflow-hidden">
         {/* ── Close ── */}
         <div className="profile-toolbar">
-          <p className="profile-mobile-title" aria-hidden="true">My Profile</p>
+          <p className="profile-mobile-title" aria-hidden="true">{t("common.myProfile")}</p>
         <button
           type="button"
-          aria-label="Close"
+          aria-label={t("common.close")}
           onClick={onClose}
           className="profile-close absolute top-5 right-5 z-20 grid h-9 w-9 place-items-center border border-neutral-300 bg-white text-xs font-bold text-neutral-600 uppercase transition hover:bg-neutral-900 hover:text-white"
         >
@@ -134,7 +138,7 @@ const ProfileModal = ({
           ) : (
             <div className="profile-photo profile-photo-fallback absolute inset-0 flex items-center justify-center bg-gradient-to-br from-neutral-300 to-neutral-400">
               <div className="flex h-28 w-28 items-center justify-center rounded-full bg-white/20 text-5xl font-bold text-white">
-                <Icon name="user-profile" size={72} aria-label="User profile" />
+                <Icon name="user-profile" size={72} aria-label={t("common.userProfile")} />
               </div>
             </div>
           )}
@@ -149,9 +153,7 @@ const ProfileModal = ({
               {roleLabel}
             </p>
             {isGoogleLogin && (
-              <span className="mt-3 inline-block rounded bg-white/20 px-2 py-0.5 text-[11px] tracking-wider text-white/60">
-                ✓ Google Account
-              </span>
+              <span className="mt-3 inline-block rounded bg-white/20 px-2 py-0.5 text-[11px] tracking-wider text-white/60"> {t("common.googleAccount")} </span>
             )}
           </div>
         </div>
@@ -164,31 +166,25 @@ const ProfileModal = ({
             <p className="profile-brand text-[11px] tracking-[0.4em] text-black/40 uppercase">
               {brand}
             </p>
-            <h2 id={titleId} className="profile-heading mt-2 text-3xl font-bold tracking-[0.15em] text-black md:text-4xl">
-              My Profile
-            </h2>
-            <p className="profile-description mt-2 text-sm text-black/50">
-              Your personal information.
-            </p>
+            <h2 id={titleId} className="profile-heading mt-2 text-3xl font-bold tracking-[0.15em] text-black md:text-4xl"> {t("common.myProfile")} </h2>
+            <p className="profile-description mt-2 text-sm text-black/50"> {t("common.yourPersonalInformation")} </p>
 
             <div className="profile-sections mt-8 space-y-5">
               {/* ── Personal Info ── */}
               <div className="profile-info-card rounded-2xl border border-black/8 bg-white p-5 shadow-sm">
-                <p className="mb-4 text-[11px] font-semibold tracking-[0.2em] text-black/40 uppercase">
-                  Personal Information
-                </p>
+                <p className="mb-4 text-[11px] font-semibold tracking-[0.2em] text-black/40 uppercase"> {t("common.personalInformation")} </p>
                 <dl className="space-y-4">
                   {[
-                    ["Full name", fields.fullName],
-                    ["Email address", fields.email],
-                    ["Phone number", fields.phone],
+                    [t("common.fullName"), fields.fullName],
+                    [t("clients.emailAddress"), fields.email],
+                    [t("common.phoneNumber"), fields.phone],
                   ].map(([label, value]) => (
                     <div key={label}>
                       <dt className="mb-1.5 text-[11px] font-medium tracking-[0.18em] text-black/50 uppercase">
                         {label}
                       </dt>
                       <dd className="text-sm break-words text-black">
-                        {value || "Not provided"}
+                        {value || t("common.notProvided")}
                       </dd>
                     </div>
                   ))}
@@ -198,14 +194,9 @@ const ProfileModal = ({
               {/* ── Salon Sharing — owners only, auto URL ── */}
               {profile?.role === "owner" && resolvedSalonUrl && (
                 <div className="profile-share-card rounded-2xl border border-black/8 bg-white p-5 shadow-sm">
-                  <p className="mb-1 text-[11px] font-semibold tracking-[0.2em] text-black/40 uppercase">
-                    Salon Booking Link
-                  </p>
-                  <p className="mb-4 text-[11px] text-black/40">
-                    Share this link or QR code with clients so they can book
-                    directly.
-                  </p>
-                  <Field label="Your Salon URL">
+                  <p className="mb-1 text-[11px] font-semibold tracking-[0.2em] text-black/40 uppercase"> {t("common.salonBookingLink")} </p>
+                  <p className="mb-4 text-[11px] text-black/40"> {t("common.shareThisLinkOrQrCodeWithClientsSoThey")} </p>
+                  <Field label={t("common.yourSalonUrl")}>
                     <input
                       id="profile-salon-url"
                       type="text"
@@ -219,14 +210,12 @@ const ProfileModal = ({
                     onClick={handleCopyLink}
                     className="profile-copy mt-3 w-full border border-black/25 py-2 text-xs tracking-[0.25em] text-black uppercase transition hover:bg-black hover:text-white"
                   >
-                    {copied ? "✓ Copied!" : "Copy Link"}
+                    {copied ? t("common.copied") : t("salon.copyLink")}
                   </button>
                   {copyError && <p role="alert" className="mt-2 text-xs text-red-700">{copyError}</p>}
-                  <span className="sr-only" role="status">{copied ? "Booking link copied" : ""}</span>
+                  <span className="sr-only" role="status">{copied ? t("common.bookingLinkCopied") : ""}</span>
                   <div className="profile-qr mt-5 flex flex-col items-center gap-2">
-                    <p className="text-[11px] tracking-[0.2em] text-black/40 uppercase">
-                      QR Code — Clients scan this
-                    </p>
+                    <p className="text-[11px] tracking-[0.2em] text-black/40 uppercase"> {t("common.qrCodeClientsScanThis")} </p>
                     <div className="rounded-xl border border-black/8 bg-white p-3">
                       <QRCodeSVG
                         value={resolvedSalonUrl}
@@ -237,9 +226,7 @@ const ProfileModal = ({
                         bgColor="#ffffff"
                       />
                     </div>
-                    <p className="text-center text-[10px] text-black/30">
-                      Scan opens booking page for your salon only
-                    </p>
+                    <p className="text-center text-[10px] text-black/30"> {t("common.scanOpensBookingPageForYourSalonOnly")} </p>
                   </div>
                 </div>
               )}
@@ -249,9 +236,7 @@ const ProfileModal = ({
                   type="button"
                   onClick={onLogout}
                   className="profile-logout w-full border border-black/35 bg-white py-3 text-sm tracking-[0.3em] text-black uppercase transition hover:bg-black hover:text-white"
-                >
-                  Logout
-                </button>
+                > {t("common.logout")} </button>
               </div>
             </div>
           </div>

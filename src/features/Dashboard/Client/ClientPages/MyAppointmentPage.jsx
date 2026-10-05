@@ -1,3 +1,5 @@
+import { fixedLabel } from "../../../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
 import StaffRatingForm from "../../../staff/StaffRatingForm.jsx";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -12,6 +14,7 @@ import ClientBookingPassCard from "../../../Appointments/bookingPass/ClientBooki
 const TABS = ["Upcoming", "Past", "Cancelled"];
 
 export default function MyAppointmentPage() {
+  const { t } = useTranslation();
   const [selectedTab, setActiveTab] = useState(null);
   const [searchParams] = useSearchParams();
   const focusedId = searchParams.get("appointment");
@@ -25,20 +28,18 @@ export default function MyAppointmentPage() {
   return (
     <section className="mx-auto max-w-5xl pb-8">
       <ClientPageHeader
-        eyebrow="Your time, beautifully planned"
-        title="My appointments"
-        description="Your visits and booking passes, all in one place."
+        eyebrow={t("dashboard.yourTimeBeautifullyPlanned")}
+        title={t("dashboard.myAppointments")}
+        description={t("dashboard.yourVisitsAndBookingPassesAllInOnePlace")}
       >
         <Link
           to={bookingPath(appointments[0]?.owner_id)}
           className="bg-ink text-cream flex min-h-12 items-center justify-center rounded-xl px-5 text-sm font-semibold"
-        >
-          Book a visit
-        </Link>
+        > {t("dashboard.bookAVisit")} </Link>
       </ClientPageHeader>
       <div
         className="my-6 flex gap-2 overflow-x-auto pb-1"
-        aria-label="Filter appointments"
+        aria-label={t("dashboard.filterAppointments")}
       >
         {TABS.map((tab) => (
           <button
@@ -48,7 +49,7 @@ export default function MyAppointmentPage() {
             aria-pressed={activeTab === tab}
             className={`min-h-12 shrink-0 rounded-full border px-4 text-sm font-medium ${activeTab === tab ? "border-ink bg-ink text-cream" : "border-ink/15 text-ink-muted bg-white"}`}
           >
-            {tab} <span className="ml-2 opacity-70">{groups[tab].length}</span>
+            {fixedLabel(tab, "status")} <span className="ml-2 opacity-70">{groups[tab].length}</span>
           </button>
         ))}
       </div>
@@ -56,9 +57,7 @@ export default function MyAppointmentPage() {
         <p
           role="status"
           className="text-ink-muted rounded-2xl bg-white/70 p-8 text-center text-sm"
-        >
-          Loading your appointments...
-        </p>
+        > {t("dashboard.loadingYourAppointments")} </p>
       ) : error ? (
         <div
           role="alert"
@@ -71,7 +70,7 @@ export default function MyAppointmentPage() {
             type="button"
             className="mt-3 min-h-11 underline"
           >
-            {isFetching ? "Retrying..." : "Try again"}
+            {isFetching ? t("dashboard.retrying") : t("common.tryAgain")}
           </button>
         </div>
       ) : groups[activeTab].length ? (
@@ -90,13 +89,11 @@ export default function MyAppointmentPage() {
         </div>
       ) : (
         <div className="border-ink/20 rounded-2xl border border-dashed bg-white/60 p-8 text-center">
-          <h2 className="text-xl font-semibold">
-            No {activeTab.toLowerCase()} appointments
-          </h2>
+          <h2 className="text-xl font-semibold"> {t("dashboard.no")} {fixedLabel(activeTab, "status")} {t("dashboard.appointments")} </h2>
           <p className="text-ink-muted mt-3 text-sm leading-6">
             {activeTab === "Upcoming"
-              ? "Make a little time for yourself. Your next booking and QR pass will appear here."
-              : "Your saved visits will appear here."}
+              ? t("dashboard.makeALittleTimeForYourselfYourNextBookingAnd")
+              : t("dashboard.yourSavedVisitsWillAppearHere")}
           </p>
         </div>
       )}

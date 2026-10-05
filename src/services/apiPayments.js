@@ -1,3 +1,5 @@
+import { localizedError } from "../i18n/localizedError.js";
+import i18n from "../i18n/i18n.js";
 import { supabase } from "./supabase";
 
 const PAYMENT_FIELDS =
@@ -5,7 +7,7 @@ const PAYMENT_FIELDS =
 const PAGE_SIZE = 1000;
 
 export async function getPayments(ownerId) {
-  if (!ownerId) throw new Error("Please sign in to load payments.");
+  if (!ownerId) throw localizedError("payments.pleaseSignInToLoadPayments");
   const appointments = [];
   for (let offset = 0; ; offset += PAGE_SIZE) {
     const { data, error } = await supabase
@@ -14,7 +16,7 @@ export async function getPayments(ownerId) {
       .eq("owner_id", ownerId)
       .order("id", { ascending: true })
       .range(offset, offset + PAGE_SIZE - 1);
-    if (error) throw new Error(error.message || "Unable to load payments.");
+    if (error) throw new Error(error.message || i18n.t("payments.unableToLoadPayments"));
     appointments.push(...(data ?? []));
     if (!data || data.length < PAGE_SIZE) return appointments;
   }

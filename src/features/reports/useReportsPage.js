@@ -1,3 +1,7 @@
+import { localizedError } from "../../i18n/localizedError.js";
+import { fixedLabel } from "../../i18n/fixedLabels.js";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import { supabase } from "../../services/supabase";
 import { isCompletedAppointment } from "../Appointments/appointmentStatsUtils.js";
 import { useMemo, useState } from "react";
@@ -28,6 +32,7 @@ import {
   getStaffName,
 } from "./reportsUtils";
 export function useReportsPage() {
+  const { t } = useTranslation();
   const [dateRange, setDateRange] = useState(dateRangeOptions[0]);
   const { ownerId, isLoading: ownerLoading, error: ownerError } = useOwnerId();
   const {
@@ -113,20 +118,20 @@ export function useReportsPage() {
       avgRating,
       ratedStaffCount: ratings.length,
     };
-  }, [appointments, dateRange, staffMembers]);
+  }, [appointments, dateRange, staffMembers, i18n.resolvedLanguage, t]);
 
   const statCards = [
     {
-      title: "Total Revenue",
+      title: t("clients.totalRevenue"),
       value: formatCurrency(reportData.totalRevenue, currencyCode),
-      subtitle: dateRange,
+      subtitle: fixedLabel(dateRange, "range"),
       delta: formatDelta(reportData.totalRevenue, reportData.previousRevenue),
       icon: creditCardIcon,
     },
     {
-      title: "Total Appointments",
+      title: t("reports.totalAppointments"),
       value: reportData.totalAppointments.toString(),
-      subtitle: dateRange,
+      subtitle: fixedLabel(dateRange, "range"),
       delta: formatDelta(
         reportData.totalAppointments,
         reportData.previousAppointmentsCount,
@@ -134,17 +139,17 @@ export function useReportsPage() {
       icon: calendarIcon,
     },
     {
-      title: "New Clients",
+      title: t("reports.newClients2"),
       value: reportData.newClients.toString(),
-      subtitle: dateRange,
+      subtitle: fixedLabel(dateRange, "range"),
       delta: formatDelta(reportData.newClients, reportData.previousNewClients),
       icon: giftIcon,
     },
     {
-      title: "Avg Rating",
+      title: t("reports.avgRating"),
       value: reportData.avgRating ? reportData.avgRating.toFixed(1) : "0.0",
-      subtitle: "Staff average",
-      delta: `${reportData.ratedStaffCount} rated`,
+      subtitle: t("reports.staffAverage"),
+      delta: t("reports.rated", { value1: reportData.ratedStaffCount }),
       icon: clockIcon,
     },
   ];
@@ -166,7 +171,7 @@ export function useReportsPage() {
     if (!total) {
       return [
         {
-          label: "No bookings",
+          label: t("reports.noBookings"),
           value: 0,
           count: 0,
           displayValue: 0,
@@ -183,7 +188,7 @@ export function useReportsPage() {
         value: Math.round((count / total) * 100),
         color: chartColors[index % chartColors.length],
       }));
-  }, [reportData.currentAppointments, services]);
+  }, [reportData.currentAppointments, services, i18n.resolvedLanguage, t]);
 
   const staffPerformance = useMemo(() => {
     const revenueByStaff = new Map();
@@ -192,7 +197,7 @@ export function useReportsPage() {
       revenueByStaff.set(String(staff.id), {
         id: String(staff.id),
         count: 0,
-        name: staff.name ?? "Unassigned",
+        name: staff.name ?? i18n.t("common.unassigned"),
         value: 0,
       });
     });
@@ -215,8 +220,8 @@ export function useReportsPage() {
 
     const rows = [...revenueByStaff.values()].sort((a, b) => b.value - a.value);
 
-    return rows.length ? rows : [{ name: "No staff data", value: 0 }];
-  }, [reportData.currentAppointments, staffMembers]);
+    return rows.length ? rows : [{ name: t("reports.noStaffData"), value: 0 }];
+  }, [reportData.currentAppointments, staffMembers, i18n.resolvedLanguage, t]);
 
   const paymentMethods = useMemo(() => {
     const totals = new Map();
@@ -231,7 +236,7 @@ export function useReportsPage() {
         );
       });
 
-    const orderedLabels = ["Pay at Salon", "Card", "UPI", "Wallet", "Online"];
+    const orderedLabels = [t("common.payAtSalon"), t("common.card"), "UPI", t("common.wallet"), t("common.online")];
     const labels = [
       ...orderedLabels.filter((label) => totals.has(label)),
       ...[...totals.keys()].filter((label) => !orderedLabels.includes(label)),
@@ -249,7 +254,7 @@ export function useReportsPage() {
         color: chartColors[index % chartColors.length],
       };
     });
-  }, [currencyCode, reportData.currentAppointments]);
+  }, [currencyCode, reportData.currentAppointments, i18n.resolvedLanguage, t]);
 
   return {
     dateRange,
@@ -273,7 +278,7 @@ export function useReportsPage() {
       appointmentsError ||
       servicesError ||
       staffError ||
-      (!ownerLoading && !ownerId ? new Error("No salon found.") : null),
+      (!ownerLoading && !ownerId ? localizedError("reports.noSalonFound") : null),
   };
 }
 

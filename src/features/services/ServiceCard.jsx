@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { getServiceIcon } from "../../Shared/lib/serviceCategories";
 import Icon from "../../Shared/ui/Icon";
 
 export const ServiceCard = ({ service, onEdit, onDelete, isDeleting }) => {
+  const { t } = useTranslation();
   const iconName = service.iconName || getServiceIcon(service.category);
   return (
     <article className="border-ink/20 relative flex h-full flex-col border-2 bg-white/90 p-4 sm:p-5">
@@ -24,9 +26,7 @@ export const ServiceCard = ({ service, onEdit, onDelete, isDeleting }) => {
             {service.category}
           </span>
           {!service.isActive && (
-            <span className="border-danger/40 bg-danger/10 text-danger rounded-full border-2 px-3 py-1 text-[0.6rem] tracking-widest uppercase">
-              Inactive
-            </span>
+            <span className="border-danger/40 bg-danger/10 text-danger rounded-full border-2 px-3 py-1 text-[0.6rem] tracking-widest uppercase"> {t("services.inactive")} </span>
           )}
         </div>
       </div>
@@ -57,16 +57,14 @@ export const ServiceCard = ({ service, onEdit, onDelete, isDeleting }) => {
           onClick={() => onEdit?.(service)}
           disabled={isDeleting}
           className={`border-ink/20 bg-cream hover:border-ink flex-1 border-2 px-4 py-2 text-xs tracking-widest uppercase transition ${isDeleting ? "cursor-not-allowed opacity-60" : ""}`}
-        >
-          Edit
-        </button>
+        > {t("services.edit")} </button>
         <button
           type="button"
           onClick={() => onDelete?.(service)}
           disabled={isDeleting}
           className={`border-danger/40 bg-danger/10 text-danger hover:border-danger flex-1 border-2 px-4 py-2 text-xs tracking-widest uppercase transition ${isDeleting ? "cursor-not-allowed opacity-60" : ""}`}
         >
-          {isDeleting ? "Deleting..." : "Delete"}
+          {isDeleting ? t("services.deleting") : t("common.delete")}
         </button>
       </div>
     </article>

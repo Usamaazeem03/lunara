@@ -1,3 +1,4 @@
+import i18n from "../../i18n/i18n.js";
 export const STAFF_ROLES = [
   { key: "Senior Stylist", iconName: "sparkles" },
   { key: "Barber", iconName: "razor-barber" },
@@ -50,11 +51,11 @@ export const mapStaffRow = (staff) => {
   return {
     id: staff.id,
     image: staff.image ?? null,
-    name: staff.name ?? "Unknown",
-    role: staff.role ?? "Staff",
+    name: staff.name ?? i18n.t("common.unknown"),
+    role: staff.role ?? i18n.t("nav.staff"),
     phone: staff.phone ?? "",
     email: staff.email ?? "",
-    schedule: staff.schedule ?? "Mon - Fri",
+    schedule: staff.schedule ?? i18n.t("common.monFri"),
     isOnShift: staff.is_on_shift ?? false,
     rating: Number(staff.rating) || 0,
     ratingCount: Number(staff.rating_count) || 0,

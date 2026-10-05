@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import AppHeader from "../../AppLayout/AppHeader";
 import Button from "../../Shared/Button";
 import { usePaymentsPage } from "./usePaymentsPage";
@@ -8,6 +9,7 @@ import PaymentFilter from "./PaymentFilter";
 import PaymentsTable from "./PaymentsTable";
 
 export default function PaymentsPage() {
+  const { t } = useTranslation();
   const {
     summary,
     charts,
@@ -34,32 +36,28 @@ export default function PaymentsPage() {
   return (
     <section className="flex h-full flex-col pb-6">
       <AppHeader
-        eyebrow="Payments"
-        title="Payments & Revenue"
-        description="Completed visits count as revenue. Pending and confirmed bookings stay in pending amounts."
+        eyebrow={t("marketing.payments")}
+        title={t("payments.paymentsRevenue")}
+        description={t("payments.completedVisitsCountAsRevenuePendingAndConfirmedBookingsStay")}
       >
         <Button
           variant="secondary"
           onClick={() => refetch()}
           disabled={isFetching}
         >
-          {isFetching ? "Refreshing..." : "Refresh"}
+          {isFetching ? t("dashboard.refreshing") : t("payments.refresh")}
         </Button>
         <Button
           variant="primary"
           onClick={exportReport}
           disabled={isLoading || Boolean(loadError) || !totalRows}
-        >
-          Export Report
-        </Button>
+        > {t("payments.exportReport")} </Button>
       </AppHeader>
       {isLoading ? (
         <p
           role="status"
           className="text-ink-muted border-ink/20 mt-5 border-2 bg-white/90 p-8 text-center"
-        >
-          Loading payments...
-        </p>
+        > {t("payments.loadingPayments")} </p>
       ) : loadError ? (
         <div
           role="alert"
@@ -71,9 +69,7 @@ export default function PaymentsPage() {
             onClick={() => refetch()}
             disabled={isFetching}
             className="mt-3 min-h-11 underline"
-          >
-            Try again
-          </button>
+          > {t("common.tryAgain")} </button>
         </div>
       ) : (
         <>

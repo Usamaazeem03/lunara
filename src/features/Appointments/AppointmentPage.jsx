@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n/i18n.js";
 import VerifyBookingDialog from "./bookingPass/VerifyBookingDialog.jsx";
 import {
   startTransition,
@@ -30,11 +32,6 @@ import { EMPTY_APPOINTMENT_FORM } from "./appointmentReducer.js";
 import { useAppointmentLogic } from "./useAppointmentLogic.js";
 const TABLE_NOT_FOUND_CODE = "42P01";
 const APPOINTMENTS_PER_PAGE = 10;
-
-const VIEW_TABS = [
-  { key: "list", label: "List View" },
-  { key: "calendar", label: "Calendar View" },
-];
 
 const APPOINTMENT_STATUSES = ["Pending", "Confirmed", "Completed", "Cancelled"];
 const STATUS_OPTIONS = APPOINTMENT_STATUSES.map((status) => ({
@@ -118,14 +115,14 @@ const toStartOfDay = (isoDate) => {
 
 const formatPrice = (value, currencyCode = "USD") => {
   const numeric = Number(value);
-  if (!Number.isFinite(numeric)) return "N/A";
+  if (!Number.isFinite(numeric)) return i18n.t("common.nA");
   return `${currencyCode} ${formatNumber(numeric)}`;
 };
 
 const formatMinutesToTimeLabel = (minutes) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  const period = hours >= 12 ? "PM" : "AM";
+  const period = hours >= 12 ? i18n.t("common.pm") : i18n.t("common.am");
   const displayHour = hours % 12 || 12;
   return `${displayHour.toString().padStart(2, "0")}:${mins
     .toString()
@@ -134,14 +131,14 @@ const formatMinutesToTimeLabel = (minutes) => {
 
 const formatTimeLabel = (value) => {
   const minutes = parseTimeToMinutes(value);
-  if (minutes === null) return value || "N/A";
+  if (minutes === null) return value || i18n.t("common.nA");
   return formatMinutesToTimeLabel(minutes);
 };
 
 const formatDateLabel = (isoDate) => {
   const date = toStartOfDay(isoDate);
-  if (!date) return isoDate || "No date";
-  return date.toLocaleDateString(undefined, {
+  if (!date) return isoDate || i18n.t("appointments.noDate");
+  return date.toLocaleDateString(i18n.resolvedLanguage, {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -201,7 +198,7 @@ const buildDateOptions = (workingHours, horizonDays = 14) => {
 
     options.push({
       value,
-      label: date.toLocaleDateString(undefined, {
+      label: date.toLocaleDateString(i18n.resolvedLanguage, {
         weekday: "short",
         month: "short",
         day: "numeric",
@@ -241,8 +238,8 @@ const buildTimeSlots = (dateIso, workingHours) => {
 
 const mapStaffRow = (staff) => ({
   id: staff.id,
-  name: staff.name ?? "Unknown Staff",
-  role: staff.role ?? "Staff",
+  name: staff.name ?? i18n.t("appointments.unknownStaff"),
+  role: staff.role ?? i18n.t("nav.staff"),
   isOnShift: staff.is_on_shift ?? false,
   initials: getInitials(staff.name),
 });
@@ -282,13 +279,13 @@ const mapAppointmentRow = (
     "";
 
   const clientName =
-    row.client_name ?? row.customer_name ?? row.client ?? "Walk-in";
+    row.client_name ?? row.customer_name ?? row.client ?? i18n.t("common.walkIn");
   const serviceName =
     row.service_name ??
     row.service_title ??
     serviceFromLookup?.title ??
-    "Service";
-  const staffName = row.staff_name ?? staffFromLookup?.name ?? "Unassigned";
+    i18n.t("common.service");
+  const staffName = row.staff_name ?? staffFromLookup?.name ?? i18n.t("common.unassigned");
   const durationValue = Number(
     row.duration_minutes ?? row.duration ?? serviceFromLookup?.durationValue,
   );
@@ -307,10 +304,10 @@ const mapAppointmentRow = (
     initials: getInitials(clientName),
     service: serviceName,
     staff: staffName,
-    duration: Number.isFinite(durationValue) ? `${durationValue} min` : "N/A",
+    duration: Number.isFinite(durationValue) ? i18n.t("common.min", { value1: durationValue }) : i18n.t("common.nA"),
     price: Number.isFinite(priceValue)
       ? formatPrice(priceValue, currencyCode)
-      : (serviceFromLookup?.priceLabel ?? "N/A"),
+      : (serviceFromLookup?.priceLabel ?? i18n.t("common.nA")),
     status:
       typeof row.status === "string" && row.status.trim()
         ? row.status
@@ -331,6 +328,7 @@ const sortAppointments = (appointments) =>
   });
 
 const AppointmentPage = () => {
+  const { t } = useTranslation();
   const [showVerification, setShowVerification] = useState(false);
   const { ownerId } = useOwnerId();
   const { currencyCode } = useCurrencyCode(ownerId);
@@ -341,7 +339,7 @@ const AppointmentPage = () => {
   );
   const services = useMemo(
     () => loadedServices.filter((service) => service.isActive),
-    [loadedServices],
+    [loadedServices, i18n.resolvedLanguage],
   );
   const serviceLoadError = servicesError?.message ?? "";
   const {
@@ -381,30 +379,30 @@ const AppointmentPage = () => {
   const setCurrentPage = (value) => set("currentPage", value);
   const setStaffMembers = useCallback(
     (value) => set("staffMembers", value),
-    [set],
+    [set, i18n.resolvedLanguage],
   );
   const setWorkingHours = useCallback(
     (value) => set("workingHours", value),
-    [set],
+    [set, i18n.resolvedLanguage],
   );
   const setAppointments = useCallback(
     (value) => update("appointments", value),
-    [update],
+    [update, i18n.resolvedLanguage],
   );
   const setLocalDraftAppointments = useCallback(
     (value) => update("localDraftAppointments", value),
-    [update],
+    [update, i18n.resolvedLanguage],
   );
-  const setClients = useCallback((value) => set("clients", value), [set]);
-  const setIsLoading = useCallback((value) => set("isLoading", value), [set]);
-  const setLoadError = useCallback((value) => set("loadError", value), [set]);
+  const setClients = useCallback((value) => set("clients", value), [set, i18n.resolvedLanguage]);
+  const setIsLoading = useCallback((value) => set("isLoading", value), [set, i18n.resolvedLanguage]);
+  const setLoadError = useCallback((value) => set("loadError", value), [set, i18n.resolvedLanguage]);
   const setIsAppointmentTableReady = useCallback(
     (value) => set("isAppointmentTableReady", value),
-    [set],
+    [set, i18n.resolvedLanguage],
   );
   const setTableMessage = useCallback(
     (value) => set("tableMessage", value),
-    [set],
+    [set, i18n.resolvedLanguage],
   );
   const setShowForm = (value) => set("showForm", value);
   const setFormState = (value) => updateForm(value);
@@ -447,7 +445,7 @@ const AppointmentPage = () => {
         setAppointments([]);
         setIsAppointmentTableReady(false);
         setTableMessage(
-          "Appointments table is not created yet. You can still prepare appointments from this screen, but they will stay local until the table exists.",
+          t("appointments.appointmentsTableIsNotCreatedYetYouCanStillPrepare"),
         );
       });
       return;
@@ -455,7 +453,7 @@ const AppointmentPage = () => {
 
     startTransition(() => {
       setAppointments([]);
-      setLoadError(`Appointments: ${appointmentsError.message}`);
+      setLoadError(t("appointments.appointments", { value1: appointmentsError.message }));
     });
   }, [
     appointmentsError,
@@ -506,14 +504,14 @@ const AppointmentPage = () => {
       const issues = [];
 
       if (staffRes.error) {
-        issues.push(`Staff: ${staffRes.error.message}`);
+        issues.push(t("appointments.staff", { value1: staffRes.error.message }));
         setStaffMembers([]);
       } else {
         setStaffMembers((staffRes.data ?? []).map(mapStaffRow));
       }
 
       if (workingHoursRes.error) {
-        issues.push(`Working hours: ${workingHoursRes.error.message}`);
+        issues.push(t("appointments.workingHours", { value1: workingHoursRes.error.message }));
         setWorkingHours(getDefaultWorkingHours());
       } else {
         setWorkingHours(mergeWorkingHours(workingHoursRes.data ?? []));
@@ -588,7 +586,7 @@ const AppointmentPage = () => {
     .join(" ");
   const dateOptions = useMemo(
     () => buildDateOptions(workingHours, 14),
-    [workingHours],
+    [workingHours, i18n.resolvedLanguage],
   );
 
   const staffOptions = useMemo(() => {
@@ -597,20 +595,20 @@ const AppointmentPage = () => {
       ...staffMembers,
       {
         id: "no-preference",
-        name: "No Preference",
-        role: "Any available staff",
+        name: t("common.noPreference"),
+        role: t("appointments.anyAvailableStaff"),
         isOnShift: true,
         isSynthetic: true,
       },
     ];
-  }, [staffMembers]);
+  }, [staffMembers, i18n.resolvedLanguage, t]);
 
   const servicesById = useMemo(
     () =>
       Object.fromEntries(
         services.map((service) => [String(service.id), service]),
       ),
-    [services],
+    [services, i18n.resolvedLanguage],
   );
 
   const staffById = useMemo(
@@ -618,7 +616,7 @@ const AppointmentPage = () => {
       Object.fromEntries(
         staffMembers.map((staff) => [String(staff.id), staff]),
       ),
-    [staffMembers],
+    [staffMembers, i18n.resolvedLanguage],
   );
 
   const allAppointmentRows = useMemo(
@@ -641,8 +639,7 @@ const AppointmentPage = () => {
       displayCurrencyCode,
       localDraftAppointments,
       servicesById,
-      staffById,
-    ],
+      staffById, i18n.resolvedLanguage, t],
   );
 
   const filteredAppointments = useMemo(() => {
@@ -653,7 +650,7 @@ const AppointmentPage = () => {
         selectedStatus === "all" || appointment.status === selectedStatus;
       return matchesDate && matchesStatus;
     });
-  }, [allAppointmentRows, selectedDate, selectedStatus]);
+  }, [allAppointmentRows, selectedDate, selectedStatus, i18n.resolvedLanguage]);
 
   const totalPages = Math.max(
     1,
@@ -666,7 +663,7 @@ const AppointmentPage = () => {
         (displayedPage - 1) * APPOINTMENTS_PER_PAGE,
         displayedPage * APPOINTMENTS_PER_PAGE,
       ),
-    [displayedPage, filteredAppointments],
+    [displayedPage, filteredAppointments, i18n.resolvedLanguage],
   );
 
   const handleSelectedDateChange = (date) => {
@@ -681,7 +678,7 @@ const AppointmentPage = () => {
 
   const formTimeSlots = useMemo(
     () => buildTimeSlots(formState.appointmentDate, workingHours),
-    [formState.appointmentDate, workingHours],
+    [formState.appointmentDate, workingHours, i18n.resolvedLanguage],
   );
 
   const selectedServices = useMemo(
@@ -689,7 +686,7 @@ const AppointmentPage = () => {
       services.filter((service) =>
         formState.serviceIds.includes(String(service.id)),
       ),
-    [services, formState.serviceIds],
+    [services, formState.serviceIds, i18n.resolvedLanguage],
   );
 
   const filteredServices = useMemo(() => {
@@ -699,18 +696,18 @@ const AppointmentPage = () => {
     return services.filter((service) =>
       service.title.toLowerCase().includes(normalizedQuery),
     );
-  }, [services, serviceSearchQuery]);
+  }, [services, serviceSearchQuery, i18n.resolvedLanguage]);
 
   const totalPrice = useMemo(
     () =>
       selectedServices.reduce((sum, service) => sum + service.priceValue, 0),
-    [selectedServices],
+    [selectedServices, i18n.resolvedLanguage],
   );
 
   const totalDuration = useMemo(
     () =>
       selectedServices.reduce((sum, service) => sum + service.durationValue, 0),
-    [selectedServices],
+    [selectedServices, i18n.resolvedLanguage],
   );
 
   const selectedStaff = useMemo(
@@ -718,7 +715,7 @@ const AppointmentPage = () => {
       staffOptions.find(
         (staff) => String(staff.id) === String(formState.staffId),
       ),
-    [formState.staffId, staffOptions],
+    [formState.staffId, staffOptions, i18n.resolvedLanguage],
   );
 
   const staffSelectOptions = useMemo(
@@ -727,7 +724,7 @@ const AppointmentPage = () => {
         value: staff.id,
         label: getStaffOptionLabel(staff),
       })),
-    [staffOptions],
+    [staffOptions, i18n.resolvedLanguage],
   );
 
   const canSaveAppointment = Boolean(
@@ -862,7 +859,7 @@ const AppointmentPage = () => {
 
       onMissingTable: (payloads) => {
         setIsAppointmentTableReady(false);
-        setTableMessage("Appointments table not found. Saving locally.");
+        setTableMessage(t("appointments.appointmentsTableNotFoundSavingLocally"));
         setLocalDraftAppointments((prev) => [
           ...payloads.map(createLocalDraft),
           ...prev,
@@ -887,23 +884,21 @@ const AppointmentPage = () => {
   return (
     <section className="flex h-full flex-col">
       <AppHeader
-        eyebrow="Appointments"
-        title="Appointments"
-        description="Manage your appointment schedule and create bookings using your real services, staff, and working hours."
+        eyebrow={t("nav.appointments")}
+        title={t("nav.appointments")}
+        description={t("appointments.manageYourAppointmentScheduleAndCreateBookingsUsingYourReal")}
       >
         <Button
           variant="secondary"
           onClick={() => setShowVerification(true)}
           disabled={!ownerId}
-        >
-          Verify booking / Scan QR
-        </Button>
+        > {t("appointments.verifyBookingScanQr")} </Button>
         <Button
           variant="primary"
           type="button"
           onClick={showForm ? handleCancelForm : handleOpenForm}
         >
-          {showForm ? "Close" : "New Appointment"}
+          {showForm ? t("common.close") : t("appointments.newAppointment")}
         </Button>
       </AppHeader>
 

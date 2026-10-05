@@ -1,8 +1,9 @@
+import { localizedError } from "../i18n/localizedError.js";
 import { supabase } from "./supabase.js";
 import { createClient } from "@supabase/supabase-js";
 
 export async function getSalonInformation(ownerId) {
-  if (!ownerId) throw new Error("Sign in to manage your salon.");
+  if (!ownerId) throw localizedError("services.signInToManageYourSalon");
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
@@ -14,7 +15,7 @@ export async function getSalonInformation(ownerId) {
 }
 
 export async function saveSalonInformation(ownerId, values) {
-  if (!ownerId) throw new Error("Sign in to manage your salon.");
+  if (!ownerId) throw localizedError("services.signInToManageYourSalon");
   const updates = Object.fromEntries(
     ["full_name", "address", "phone", "email"].map((key) => [
       key,
@@ -38,7 +39,7 @@ export async function changeAccountPassword({ currentPassword, password }) {
     error: userError,
   } = await supabase.auth.getUser();
   if (userError) throw userError;
-  if (!user?.email) throw new Error("Sign in again to change your password.");
+  if (!user?.email) throw localizedError("services.signInAgainToChangeYourPassword");
   // Verify without replacing the app's session or writing to browser storage.
   const verifier = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -57,12 +58,10 @@ export async function changeAccountPassword({ currentPassword, password }) {
       password: currentPassword,
     });
   if (verificationError)
-    throw new Error(
-      "Current password could not be verified. Check it and try again.",
-    );
+    throw localizedError("services.currentPasswordCouldNotBeVerifiedCheckItAndTry");
   try {
     if (data.user?.id !== user.id)
-      throw new Error("Account could not be verified.");
+      throw localizedError("services.accountCouldNotBeVerified");
     const { error } = await supabase.auth.updateUser({
       password,
       current_password: currentPassword,

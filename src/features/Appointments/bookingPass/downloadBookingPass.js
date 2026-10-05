@@ -1,3 +1,5 @@
+import { localizedError } from "../../../i18n/localizedError.js";
+import i18n from "../../../i18n/i18n.js";
 import {
   formatPassDate,
   formatPassTime,
@@ -19,26 +21,26 @@ const escapeXml = (value) =>
 
 export async function downloadBookingPass(appointment, priceLabel, qrElement) {
   if (!qrElement)
-    throw new Error("Your pass is still loading. Please try again.");
+    throw localizedError("bookingPass.yourPassIsStillLoadingPleaseTryAgain");
   const qr = qrElement.cloneNode(true);
   qr.setAttribute("x", "190");
   qr.setAttribute("y", "190");
   qr.setAttribute("width", "340");
   qr.setAttribute("height", "340");
   const lines = [
-    ["GUEST", appointment.client_name || "Guest"],
-    ["SERVICES", appointment.service_name],
+    [i18n.t("bookingPass.guest"), appointment.client_name || i18n.t("common.guest")],
+    [i18n.t("bookingPass.services"), appointment.service_name],
     [
-      "DATE & TIME",
-      `${formatPassDate(appointment.appointment_date)} at ${formatPassTime(appointment.appointment_time)}`,
+      i18n.t("bookingPass.dateTime"),
+      i18n.t("bookingPass.at2", { value1: formatPassDate(appointment.appointment_date), value2: formatPassTime(appointment.appointment_time) }),
     ],
-    ["STYLIST", appointment.staff_name || "Any available stylist"],
+    [i18n.t("bookingPass.stylist"), appointment.staff_name || i18n.t("common.anyAvailableStylist")],
     [
-      "DURATION / TOTAL",
-      `${appointment.duration_minutes || 0} min / ${priceLabel}`,
+      i18n.t("bookingPass.durationTotal"),
+      i18n.t("bookingPass.min2", { value1: appointment.duration_minutes || 0, value2: priceLabel }),
     ],
-    ["PAYMENT PREFERENCE", appointment.payment_option || "Ask the salon"],
-    ["APPOINTMENT ID", appointment.id],
+    [i18n.t("bookingPass.paymentPreference2"), appointment.payment_option || i18n.t("bookingPass.askTheSalon")],
+    [i18n.t("bookingPass.appointmentId"), appointment.id],
   ];
   let y = 625;
   const text = lines
@@ -66,9 +68,7 @@ export async function downloadBookingPass(appointment, priceLabel, qrElement) {
       image.onload = resolve;
       image.onerror = () =>
         reject(
-          new Error(
-            "Could not save the pass. You can take a screenshot instead.",
-          ),
+          localizedError("bookingPass.couldNotSaveThePassYouCanTakeAScreenshot"),
         );
       image.src = url;
     });
@@ -80,7 +80,7 @@ export async function downloadBookingPass(appointment, priceLabel, qrElement) {
       canvas.toBlob(resolve, "image/png"),
     );
     if (!blob)
-      throw new Error("Could not save the pass. Please take a screenshot.");
+      throw localizedError("bookingPass.couldNotSaveThePassPleaseTakeAScreenshot");
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = downloadUrl;

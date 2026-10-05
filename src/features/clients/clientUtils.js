@@ -192,6 +192,7 @@ export function mergeClients(clientsData, clientsAppointmentsData) {
       avatarProfileId,
       avatar_img: client.avatar_img ?? null,
       full_name: client.full_name || client.name || "Unknown Client",
+      nameFallbackKey: !client.full_name && !client.name || client.full_name === "Unknown Client" ? "common.unknownClient" : null,
       initials: getInitials(client.full_name || client.name),
       phone:
         client.phone ||
@@ -203,6 +204,7 @@ export function mergeClients(clientsData, clientsAppointmentsData) {
         null,
       appointments: clientAppointments,
       lastVisit: lastVisit || "No visits",
+      lastVisitFallbackKey: !lastVisit ? "clients.noVisits" : null,
       totalSpent,
     };
   });
